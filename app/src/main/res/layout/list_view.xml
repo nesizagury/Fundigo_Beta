@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:scaleType="fitXY"
+        android:layout_alignParentTop="true"
+        android:background="@mipmap/pic0" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="27dp"
+        android:text="New Text"
+        android:id="@+id/event_date"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentStart="true"
+        android:textSize="20dp"
+        android:gravity="center_vertical|left"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="3dp"
+        android:layout_alignEnd="@+id/event_name" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="New Text"
+        android:id="@+id/event_name"
+        android:layout_below="@+id/event_date"
+        android:layout_alignParentStart="true"
+        android:gravity="center_vertical|left"
+        android:textStyle="bold"
+        android:textSize="25dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="-6dp" />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@+id/event_name"
+        android:stretchColumns="*"
+        android:layout_marginLeft="5dp"
+        android:divider="#3f3232"   android:baselineAligned="false"
+        android:layout_alignParentStart="true"
+        android:gravity="center_vertical|left"
+        android:weightSum="1"
+        android:id="@+id/tableRow">
+
+        <TextView
+            android:layout_width="217dp"
+            android:layout_height="21dp"
+            android:text="New Text"
+            android:background="@drawable/row_order"
+            android:id="@+id/tags"
+            android:textSize="16dp"
+            android:layout_weight="0.96"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical|left" />
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="21dp"
+            android:background="@drawable/row_order"
+            android:id="@+id/imageView2"
+            android:src="@mipmap/sh"
+            android:layout_marginTop="2dp" />
+
+        <ImageView
+            android:layout_width="75dp"
+            android:layout_height="21dp"
+            android:background="@drawable/row_order"
+            android:id="@+id/imageView3"
+            android:src="@mipmap/wh"
+            android:layout_marginTop="2dp" />
+    </TableRow>
+
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="20dp"
+        android:text="15 - 25 $"
+        android:id="@+id/textView"
+        android:textAlignment="center"
+        android:gravity="center_vertical|right"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/tableRow"
+        android:background="#88000000"
+        android:textSize="12dp"
+        android:textColor="#ffffff"
+        android:textStyle="bold" />
+</RelativeLayout>
