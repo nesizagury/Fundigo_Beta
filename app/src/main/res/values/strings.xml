@@ -3,7 +3,6 @@
 
 
     <string name="app_name">Events</string>
-    <string name="filterPageName">Filter</string>
     <string-array name="eventNames">
 
         <item>Red Carpet Event</item>

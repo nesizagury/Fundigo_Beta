@@ -12,18 +12,8 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:dividerHeight="17px"
         android:id="@+id/listView"
         android:divider="#e6e6e6" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Filter"
-        android:id="@+id/btnFilter"
-        android:layout_alignTop="@+id/listView"
-        android:layout_alignEnd="@+id/listView"
-        android:textColor="#FFFFFF"
-        android:background="#463a91"
-        android:onClick="openFilterPage" />
 </RelativeLayout>
