@@ -1,8 +1,6 @@
 package com.example.events;
 
 
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +11,7 @@ public class Holder {
     TextView date;
     TextView name;
     TextView tags;
+    TextView price;
 
 
     public Holder(View v) {
@@ -21,6 +20,7 @@ public class Holder {
         date = (TextView) v.findViewById(R.id.event_date);
         name = (TextView) v.findViewById(R.id.event_name);
         tags = (TextView) v.findViewById(R.id.tags);
+        price = (TextView) v.findViewById(R.id.event_price);
     }
 
 
