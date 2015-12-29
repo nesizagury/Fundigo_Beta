@@ -11,78 +11,82 @@
         android:background="@mipmap/pic0" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:text="Name"
-        android:id="@+id/eventPage_name"
-        android:textStyle="bold"
-        android:textSize="22sp"
-        android:layout_below="@+id/eventPage_image"
-        android:layout_alignParentEnd="true"
-        android:textAlignment="center"
-        android:textColor="#000000"/>
-
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="@drawable/row_order"
-        android:id="@+id/imageEvenetPageView2"
-        android:src="@mipmap/sh"
-        android:layout_below="@+id/eventPage_image"
-        android:layout_alignParentEnd="true"/>
-
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="30dp"
-        android:background="@drawable/row_order"
-        android:id="@+id/imageEvenetPageView3"
-        android:src="@mipmap/wh"
-        android:layout_below="@+id/eventPage_image"
-        android:layout_toStartOf="@+id/imageEvenetPageView2"/>
-
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="30dp"
-        android:background="@drawable/row_order"
-        android:id="@+id/imageEvenetPageView4"
-        android:src="@mipmap/ic_contacting"
-        android:layout_below="@+id/eventPage_image"
-        android:layout_toEndOf="@+id/imageEvenetPageView5" />
-
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="30dp"
-        android:background="@drawable/row_order"
-        android:id="@+id/imageEvenetPageView5"
-        android:src="@mipmap/ic_mor_information"
-        android:layout_below="@+id/eventPage_image"
-        android:layout_alignParentStart="true" />
-
-
-
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="date"
+        android:text="1.2.16"
         android:id="@+id/eventPage_date"
-        android:textSize="15sp"
+        android:textSize="15dp"
         android:textAlignment="center"
         android:textColor="#000000"
-        android:layout_below="@+id/eventPage_name"
+        android:layout_below="@+id/linearLayoutTop"
         android:layout_centerHorizontal="true"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="location"
+        android:text="Even Gbirol 67, Tel Aviv"
         android:id="@+id/eventPage_location"
-        android:textSize="15sp"
+        android:textSize="17dp"
         android:textAlignment="center"
         android:textColor="#000000"
         android:layout_below="@+id/eventPage_date"
         android:layout_centerHorizontal="true"/>
 
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="35dp"
+        android:weightSum="10.0"
+        android:id="@+id/linearLayoutTop"
+        android:layout_below="@+id/eventPage_image"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageEvenetPageView4"
+            android:src="@mipmap/ic_contacting"
+            android:layout_marginTop="2dp"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageEvenetPageView5"
+            android:src="@mipmap/ic_mor_information"
+            android:layout_marginTop="2dp"/>
+
+        <TextView
+            android:layout_width="0dip"
+            android:layout_weight="6"
+            android:layout_height="fill_parent"
+            android:text="The Best Show in Israel"
+            android:id="@+id/eventPage_name"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:textColor="#000000"
+            android:gravity="center"
+            />
+        <ImageView
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageEvenetPageView3"
+            android:src="@mipmap/wh"
+            android:adjustViewBounds="false"
+            android:layout_marginTop="2dp"/>
+        <ImageView
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageEvenetPageView2"
+            android:src="@mipmap/sh"
+            android:layout_marginTop="2dp"/>
+
+
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -128,19 +132,20 @@
         android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"
-        android:layout_below="@+id/eventPage_location"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/linearLayout">
+        android:layout_above="@+id/linearLayout"
+        android:layout_below="@+id/eventPage_location"
+        android:layout_marginTop="5dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ALUMINIUM CHINA is Asia‘s top trading, sourcing, networking and branding platform for the complete aluminum industry chain, bringing together leading industry figures, cutting edge technologies and advanced applications. Annually held in Shanghai, the event engages the global Aluminium community with new customized matchmaking programs linking application buyers with emerging and established demands and buyers of equipment and accessories with leading suppliers."
             android:id="@+id/eventInfoEventPage"
-            android:textColor="#000000"
+            android:textColor="#3c3c3c"
             android:textSize="17sp"
             android:layout_centerHorizontal="true"
             android:textIsSelectable="false"
-            />
+            android:gravity="center"/>
     </ScrollView>
 
 
