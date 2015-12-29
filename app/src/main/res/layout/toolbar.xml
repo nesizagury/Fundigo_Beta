@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryDark"
+    android:elevation="4dp"
+    android:gravity="center"
+    >
+
+    <Button
+        android:layout_width="127dip"
+        android:layout_height="55dip"
+        android:layout_gravity="right"
+        android:id="@+id/BarEvent_button"
+        android:textSize="15sp"
+        android:background="@null"
+        android:textColor="#000000"
+        android:text="Events"
+        android:gravity="center"
+        android:paddingLeft="20dp"
+        />
+    <Button
+        android:layout_height="55dip"
+        android:layout_width="127dip"
+        android:layout_gravity="right"
+        android:id="@+id/BarSavedEvent_button"
+        android:textSize="15sp"
+        android:background="@color/colorPrimary"
+        android:textColor="#000000"
+        android:text="SavedEvents"
+        android:gravity="center"
+        />
+    <Button
+        android:layout_height="55dip"
+        android:layout_width="127dip"
+        android:layout_gravity="right"
+        android:id="@+id/BarRealTime_button"
+        android:textSize="15sp"
+        android:background="@null"
+        android:textColor="#000000"
+        android:text="Real-Time"
+        android:gravity="center"
+        />
+
+</android.support.v7.widget.Toolbar>

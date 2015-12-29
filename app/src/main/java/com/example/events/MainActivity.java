@@ -1,14 +1,26 @@
 package com.example.events;
 
+
+import android.app.ActionBar;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SpinnerAdapter;
+import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.parse.Parse;
 import com.parse.ParseObject;
@@ -17,11 +29,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,View.OnClickListener {
 
     ListView list_view;
     public static List list;
     public static List<EventInfo> events_data = new ArrayList<EventInfo> ();
+    public Toolbar toolbar;
+
+    private Button Event,SavedEvent,RealTime;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +56,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         list_view.setAdapter (adapts);
         list_view.setSelector (new ColorDrawable (Color.TRANSPARENT));
         list_view.setOnItemClickListener (this);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar (toolbar);
+        Event = (Button) findViewById(R.id.BarEvent_button);
+        SavedEvent = (Button) findViewById(R.id.BarSavedEvent_button);
+        RealTime = (Button) findViewById(R.id.BarRealTime_button);
+        Event.setOnClickListener (this);
+        SavedEvent.setOnClickListener (this);
+        RealTime.setOnClickListener (this);
     }
+    @Override
+    public void onClick(View v) {
+        if(v.getId()==Event.getId())
+        {
+            Toast.makeText(getApplicationContext(),"Event Button",Toast.LENGTH_SHORT).show();
+        }
+        else if(v.getId()==SavedEvent.getId())
+        {
+            Toast.makeText(getApplicationContext(),"SavedEvent Button",Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(),"Real-Time Button",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
     public void uploadUserData() {
 
@@ -55,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         eventDate_list = res.getStringArray (R.array.eventDates);
         eventTag_list = res.getStringArray (R.array.eventTags);
         eventPrice_list = res.getStringArray (R.array.eventPrice);
-        eventInfo_list = res.getStringArray (R.array.eventInfo);
+        eventInfo_list = res.getStringArray(R.array.eventInfo);
 
         for (int i = 0; i < 15; i++) {
             events_data.add ( new EventInfo (
@@ -134,6 +176,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         intent.putExtra ("eventInfo", events_data.get (i).getInfo ());
         b.putInt ("userIndex", i);
         intent.putExtras (b);
-        startActivity (intent);
+        startActivity(intent);
     }
+
+
+
+
+
 }
