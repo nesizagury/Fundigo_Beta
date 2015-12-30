@@ -1,25 +1,16 @@
 package com.example.events;
 
 
-import android.app.ActionBar;
-import android.content.ClipData;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SpinnerAdapter;
-import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.parse.Parse;
@@ -34,8 +25,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ListView list_view;
     public static List list;
     public static List<EventInfo> events_data = new ArrayList<EventInfo> ();
-    public Toolbar toolbar;
-
     private Button Event,SavedEvent,RealTime;
 
 
@@ -56,9 +45,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         list_view.setAdapter (adapts);
         list_view.setSelector (new ColorDrawable (Color.TRANSPARENT));
         list_view.setOnItemClickListener (this);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar (toolbar);
         Event = (Button) findViewById(R.id.BarEvent_button);
         SavedEvent = (Button) findViewById(R.id.BarSavedEvent_button);
         RealTime = (Button) findViewById(R.id.BarRealTime_button);
