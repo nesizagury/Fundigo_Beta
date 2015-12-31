@@ -12,7 +12,7 @@ public class Holder {
     TextView name;
     TextView tags;
     TextView price;
-
+    TextView place;
 
     public Holder(View v) {
 
@@ -21,6 +21,7 @@ public class Holder {
         name = (TextView) v.findViewById(R.id.event_name);
         tags = (TextView) v.findViewById(R.id.tags);
         price = (TextView) v.findViewById(R.id.event_price);
+        place = (TextView) v.findViewById(R.id.event_location);
     }
 
 

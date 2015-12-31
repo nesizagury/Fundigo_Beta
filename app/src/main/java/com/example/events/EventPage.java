@@ -34,6 +34,9 @@ public class EventPage extends Activity {
         String eventInfo = intent.getStringExtra("eventInfo");
         TextView event_info = (TextView) findViewById(R.id.eventInfoEventPage);
         event_info.setText(eventInfo);
+        String eventPlace = intent.getStringExtra("eventPlace");
+        TextView event_place = (TextView) findViewById(R.id.eventPage_location);
+        event_place.setText(eventPlace);
     }
 
 }

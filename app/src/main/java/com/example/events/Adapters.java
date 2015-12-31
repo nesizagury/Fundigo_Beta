@@ -27,45 +27,26 @@ public class Adapters extends BaseAdapter {
         String[] eventTag_list;
         String[] eventPrice_list;
         String[] eventInfo_list;
+        String[] eventPlace_list;
 
         eventName_list = res.getStringArray (R.array.eventNames);
         eventDate_list = res.getStringArray (R.array.eventDates);
         eventTag_list = res.getStringArray (R.array.eventTags);
         eventPrice_list = res.getStringArray (R.array.eventPrice);
         eventInfo_list = res.getStringArray (R.array.eventInfo);
+        eventPlace_list = res.getStringArray(R.array.eventPlace);
 
-        for (int i = 0; i < 14; i++)
-            list.add (new EventInfo (
-                                            R.mipmap.pic0 + i,
-                                            eventDate_list[i],
-                                            eventName_list[i],
-                                            eventTag_list[i],
-                                            eventPrice_list[i],
-                                            eventInfo_list[i]));
-        for (int i = 0; i < 14; i++)
-            list.add (new EventInfo (
-                                            R.mipmap.pic0 + i,
-                                            eventDate_list[i],
-                                            eventName_list[i],
-                                            eventTag_list[i],
-                                            eventPrice_list[i],
-                                            eventInfo_list[i]));
-        for (int i = 0; i < 14; i++)
-            list.add (new EventInfo (
-                                            R.mipmap.pic0 + i,
-                                            eventDate_list[i],
-                                            eventName_list[i],
-                                            eventTag_list[i],
-                                            eventPrice_list[i],
-                                            eventInfo_list[i]));
-        for (int i = 0; i < 8; i++)
-            list.add (new EventInfo (
-                                            R.mipmap.pic0 + i,
-                                            eventDate_list[i],
-                                            eventName_list[i],
-                                            eventTag_list[i],
-                                            eventPrice_list[i],
-                                            eventInfo_list[i]));
+        for (int j = 0; j < 3; j++) {
+            for (int i = 0; i < 14; i++)
+                list.add (new EventInfo (
+                                                R.mipmap.pic0 + i,
+                                                eventDate_list[i],
+                                                eventName_list[i],
+                                                eventTag_list[i],
+                                                eventPrice_list[i],
+                                                eventInfo_list[i],
+                                                eventPlace_list[i]));
+        }
     }
 
 
@@ -107,7 +88,7 @@ public class Adapters extends BaseAdapter {
         holder.name.setText (event.getName ());
         holder.tags.setText (event.getTags ());
         holder.price.setText (event.getPrice ());
-
+        holder.place.setText (event.getPlace ());
 
         return row;
     }

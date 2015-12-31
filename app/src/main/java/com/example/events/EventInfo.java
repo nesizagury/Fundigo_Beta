@@ -8,14 +8,16 @@ public class EventInfo {
     String tags;
     String price;
     String info;
+    String place;
 
-    public EventInfo(int imageId, String date, String name, String tags, String price, String info) {
+    public EventInfo(int imageId, String date, String name, String tags, String price, String info, String place) {
         this.imageId = imageId;
         this.date = date;
         this.name = name;
         this.tags = tags;
         this.price = price;
         this.info = info;
+        this.place = place;
     }
 
 
@@ -65,5 +67,13 @@ public class EventInfo {
 
     public void setInfo(String info) {
         this.info = info;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
     }
 }

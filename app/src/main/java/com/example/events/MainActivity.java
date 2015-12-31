@@ -78,24 +78,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String[] eventTag_list;
         String[] eventPrice_list;
         String[] eventInfo_list;
+        String[] eventPlace_list;
 
         eventName_list = res.getStringArray (R.array.eventNames);
         eventDate_list = res.getStringArray (R.array.eventDates);
         eventTag_list = res.getStringArray (R.array.eventTags);
         eventPrice_list = res.getStringArray (R.array.eventPrice);
+        eventPlace_list = res.getStringArray(R.array.eventPlace);
         eventInfo_list = res.getStringArray(R.array.eventInfo);
 
-        for (int i = 0; i < 15; i++) {
-            events_data.add ( new EventInfo (
-                                                    R.mipmap.pic0 + i,
-                                                    eventDate_list[i],
-                                                    eventName_list[i],
-                                                    eventTag_list[i],
-                                                    eventPrice_list[i],
-                                                    eventInfo_list[i])
-            );
+        for (int j = 0; j < 3; j++) {
+            for (int i = 0; i < 14; i++) {
+                events_data.add (new EventInfo (
+                                                       R.mipmap.pic0 + i,
+                                                       eventDate_list[i],
+                                                       eventName_list[i],
+                                                       eventTag_list[i],
+                                                       eventPrice_list[i],
+                                                       eventInfo_list[i],
+                                                       eventPlace_list[i])
+                );
+            }
         }
-
     }
 
     public List addToList() {
@@ -103,38 +107,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         list = new ArrayList ();
         //String[] userName_list;
         //userName_list = getResources().getStringArray(R.array.userNames);
-
-        for (int i = 0; i < 14; i++) {
-            list.add (new EventInfo (events_data.get (i).getImageId (),
-                                            events_data.get (i).getDate (),
-                                            events_data.get (i).getName (),
-                                            events_data.get (i).getTags (),
-                                            events_data.get (i).getPrice (),
-                                            events_data.get (i).getInfo ()));
-        }
-        for (int i = 0; i < 14; i++) {
-            list.add (new EventInfo (events_data.get (i).getImageId (),
-                                            events_data.get (i).getDate (),
-                                            events_data.get (i).getName (),
-                                            events_data.get (i).getTags (),
-                                            events_data.get (i).getPrice (),
-                                            events_data.get (i).getInfo ()));
-        }
-        for (int i = 0; i < 14; i++) {
-            list.add (new EventInfo (events_data.get (i).getImageId (),
-                                            events_data.get (i).getDate (),
-                                            events_data.get (i).getName (),
-                                            events_data.get (i).getTags (),
-                                            events_data.get (i).getPrice (),
-                                            events_data.get (i).getInfo ()));
-        }
-        for (int i = 0; i < 8; i++) {
-            list.add (new EventInfo (events_data.get (i).getImageId (),
-                                            events_data.get (i).getDate (),
-                                            events_data.get (i).getName (),
-                                            events_data.get (i).getTags (),
-                                            events_data.get (i).getPrice (),
-                                            events_data.get (i).getInfo ()));
+        for (int j = 0; j < 3; j++) {
+            for (int i = 0; i < 14; i++) {
+                list.add (new EventInfo (events_data.get (i).getImageId (),
+                                                events_data.get (i).getDate (),
+                                                events_data.get (i).getName (),
+                                                events_data.get (i).getTags (),
+                                                events_data.get (i).getPrice (),
+                                                events_data.get (i).getInfo (),
+                                                events_data.get (i).getPlace ()));
+            }
         }
         return list;
 
@@ -160,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         intent.putExtra ("eventTags", events_data.get (i).getTags ());
         intent.putExtra ("eventPrice", events_data.get (i).getPrice ());
         intent.putExtra ("eventInfo", events_data.get (i).getInfo ());
+        intent.putExtra ("eventPlace", events_data.get (i).getPlace ());
         b.putInt ("userIndex", i);
         intent.putExtras (b);
         startActivity(intent);

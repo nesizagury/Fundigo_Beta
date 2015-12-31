@@ -86,6 +86,26 @@
 
     </string-array>
 
+    <string-array name="eventPlace">
+
+        <item>Even Gvirol 75, Tel Aviv</item>
+        <item>Chelnov 29, Haifa</item>
+        <item>Derech Hashalom 125, Ramat Gan</item>
+        <item>Begin Road 48, Tiberias</item>
+        <item>Rabin 3, Hertzelia</item>
+        <item>Ben Yehoda 1, Beer Sheva</item>
+        <item>Gaza 102, Jerusalem</item>
+        <item>Kanfei Nesharim 5, Afola</item>
+        <item>Gefen 2, Tel Aviv</item>
+        <item>Jabutinsky 86, Bnei Brak</item>
+        <item>Dovdevan 26, Tiberias</item>
+        <item>Hamakabim 17, Ariel</item>
+        <item>Arlozorov 52, Naaria</item>
+        <item>Hayarkon 4, Akko</item>
+        <item>Moses 84, Eilat</item>
+
+    </string-array>
+
     <string-array name="eventInfo">
 
         <item>
