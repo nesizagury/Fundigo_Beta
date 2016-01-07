@@ -7,7 +7,6 @@
 
 
     <string-array name="eventNames">
-
         <item>Red Carpet Event</item>
         <item>River-Side Show</item>
         <item>Baby Shower</item>
@@ -23,9 +22,26 @@
         <item>K+R Main Show</item>
         <item>Nation On New Theme Theater</item>
         <item>Night Again</item>
+    </string-array>
+    <string-array name="eventPrice">
+
+        <item>40$</item>
+        <item>25$-100$</item>
+        <item>FREE</item>
+        <item>25$</item>
+        <item>0$-40$</item>
+        <item>FREE</item>
+        <item>10$</item>
+        <item>70$</item>
+        <item>5$-30$</item>
+        <item>25$</item>
+        <item>FREE</item>
+        <item>15$-150$</item>
+        <item>20$</item>
+        <item>5$</item>
+        <item>FREE</item>
 
     </string-array>
-
     <string-array name="eventTags">
 
         <item>#Food&amp;Drink #Party</item>
@@ -66,25 +82,7 @@
 
     </string-array>
 
-    <string-array name="eventPrice">
 
-        <item>40$</item>
-        <item>25$-100$</item>
-        <item>FREE</item>
-        <item>25$</item>
-        <item>0$-40$</item>
-        <item>FREE</item>
-        <item>10$</item>
-        <item>70$</item>
-        <item>5$-30$</item>
-        <item>25$</item>
-        <item>FREE</item>
-        <item>15$-150$</item>
-        <item>20$</item>
-        <item>5$</item>
-        <item>FREE</item>
-
-    </string-array>
 
     <string-array name="eventPlace">
 

@@ -3,6 +3,7 @@ package com.example.events;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,23 +21,32 @@ public class EventPage extends Activity {
         ImageView event_image = (ImageView) findViewById(R.id.eventPage_image);
         event_image.setImageResource(image_id);
         String date = intent.getStringExtra ("eventDate");
-        TextView event_date = (TextView) findViewById(R.id.eventPage_date);
+        TextView event_date = (TextView) findViewById (R.id.eventPage_date);
         event_date.setText (date);
         String eventName = intent.getStringExtra("eventName");
         TextView event_name = (TextView) findViewById(R.id.eventPage_name);
-        event_name.setText(eventName);
+        event_name.setText (eventName);
         String eventTags = intent.getStringExtra("eventTags");
         TextView event_tags = (TextView) findViewById(R.id.eventPage_tags);
-        event_tags.setText(eventTags);
+        event_tags.setText (eventTags);
         String eventPrice = intent.getStringExtra("eventPrice");
         TextView event_price = (TextView) findViewById(R.id.priceEventPage);
-        event_price.setText(eventPrice);
+        event_price.setText (eventPrice);
         String eventInfo = intent.getStringExtra("eventInfo");
         TextView event_info = (TextView) findViewById(R.id.eventInfoEventPage);
-        event_info.setText(eventInfo);
+        event_info.setText (eventInfo);
         String eventPlace = intent.getStringExtra("eventPlace");
         TextView event_place = (TextView) findViewById(R.id.eventPage_location);
-        event_place.setText(eventPlace);
+        event_place.setText (eventPlace);
+    }
+
+    public void openTicketsPage(View view) {
+        Bundle b = new Bundle ();
+        Intent ticketsPageIntent = new Intent (this, TicketsPage.class);
+        Intent intentHere = getIntent();
+        ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
+        ticketsPageIntent.putExtras (b);
+        startActivity (ticketsPageIntent);
     }
 
 }

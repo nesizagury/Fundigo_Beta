@@ -31,13 +31,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
+        
         // [Optional] Power your app with Local Datastore. For more info, go to
         // https://parse.com/docs/android/guide#local-datastore
         Parse.enableLocalDatastore (this);
         Parse.initialize (this);
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put ("foo", "bar");
-        testObject.saveInBackground ();
+        ParseObject.registerSubclass (Event.class);
+
         setContentView (R.layout.activity_main);
         uploadUserData ();
         list_view = (ListView) findViewById (R.id.listView);
@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         list_view.setAdapter (adapts);
         list_view.setSelector (new ColorDrawable (Color.TRANSPARENT));
         list_view.setOnItemClickListener (this);
+
         Event = (Button) findViewById(R.id.BarEvent_button);
         SavedEvent = (Button) findViewById(R.id.BarSavedEvent_button);
         RealTime = (Button) findViewById(R.id.BarRealTime_button);
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         else
         {
-            Toast.makeText(getApplicationContext(),"Real-Time Button",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Real-Time Button",Toast.LENGTH_SHORT).show ();
         }
     }
 

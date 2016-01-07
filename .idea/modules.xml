@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Fundigo-master.iml" filepath="$PROJECT_DIR$/Fundigo-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Fundigo_31_12.iml" filepath="$PROJECT_DIR$/Fundigo_31_12.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

@@ -127,7 +127,8 @@
             android:text="GET TICKETS"
             android:id="@+id/button"
             android:background="#3F51B5"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff"
+            android:onClick="openTicketsPage"/>
     </LinearLayout>
 
     <ScrollView
