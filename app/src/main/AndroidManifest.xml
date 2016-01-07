@@ -1,34 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.events" >
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<manifest
+    package="com.example.events"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
         android:debuggable="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Fundigo"
-        android:theme="@style/AppTheme" >
-        <activity android:name=".MainActivity" >
+        android:theme="@style/AppTheme">
+        <activity android:name=".Main2Activity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".EventPage" >
+        <activity android:name=".MainActivity">
         </activity>
-        <activity android:name=".TicketsPage" >
+        <activity android:name=".EventPage">
         </activity>
-        <activity android:name=".FilterPage" >
+        <activity android:name=".TicketsPage">
         </activity>
+        <activity android:name=".FilterPage">
+        </activity>
+        <activity android:name=".RealTime"></activity>
+        <activity android:name=".SavedEvent"></activity>
+        <activity android:name=".Event"></activity>
+
         <meta-data
             android:name="com.parse.APPLICATION_ID"
-            android:value="7FYu4sxa7MuBIdpCmQVWwqNEqX6rxYo6Q0yNKO1v" />
+            android:value="7FYu4sxa7MuBIdpCmQVWwqNEqX6rxYo6Q0yNKO1v"/>
         <meta-data
             android:name="com.parse.CLIENT_KEY"
-            android:value="cHnuYnSDcfIuM5goHbprCiNxjCWaSaTe22zVzXn9" />
+            android:value="cHnuYnSDcfIuM5goHbprCiNxjCWaSaTe22zVzXn9"/>
     </application>
 
 </manifest>

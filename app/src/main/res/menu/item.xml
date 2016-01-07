@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+     <item
+         android:title="setting"
+         android:icon="@drawable/ic_setting"
+         android:id="@+id/settings_item"
+         android:layout_gravity="left"
+         android:layout_alignParentStart="true"
+         android:layout_alignParentLeft="true"
+         app:showAsAction="always"
+         android:orderInCategory="100"
+          />
+    <item
+        android:id="@+id/notification_item"
+        android:orderInCategory="400"
+        android:icon="@drawable/ic_notification"
+        android:title="notifications"
+        app:showAsAction="always"/>
+
+    <item
+        android:title="Tel-Aviv"
+        android:onClick="city"
+        android:id="@+id/city_item"
+        android:orderInCategory="200"
+        app:showAsAction="always"
+        />
+  <item
+        android:title="Filter"
+        android:id="@+id/Filter"
+        android:icon="@drawable/filter_line"
+        android:onClick="openFilterPage"
+        android:orderInCategory="500"
+        app:showAsAction="always"
+        />
+
+    <item android:id="@+id/search"
+        android:title="search_title"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="300"
+        app:showAsAction="always"
+        android:actionViewClass="android.widget.SearchView" />
+
+</menu>

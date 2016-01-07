@@ -7,17 +7,19 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.parse.Parse;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,View.OnClickListener {
@@ -26,50 +28,82 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static List list;
     public static List<EventInfo> events_data = new ArrayList<EventInfo> ();
     private Button Event,SavedEvent,RealTime;
-
+    boolean didInit = false;
+    private Toolbar toolbar2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-        
-        // [Optional] Power your app with Local Datastore. For more info, go to
-        // https://parse.com/docs/android/guide#local-datastore
-        Parse.enableLocalDatastore (this);
-        Parse.initialize (this);
-        ParseObject.registerSubclass (Event.class);
-
+        if(!didInit) {
+            uploadUserData ();
+            didInit = true;
+        }
         setContentView (R.layout.activity_main);
-        uploadUserData ();
         list_view = (ListView) findViewById (R.id.listView);
         Adapters adapts = new Adapters (this);
         list_view.setAdapter (adapts);
         list_view.setSelector (new ColorDrawable (Color.TRANSPARENT));
         list_view.setOnItemClickListener (this);
-
         Event = (Button) findViewById(R.id.BarEvent_button);
         SavedEvent = (Button) findViewById(R.id.BarSavedEvent_button);
         RealTime = (Button) findViewById(R.id.BarRealTime_button);
         Event.setOnClickListener (this);
         SavedEvent.setOnClickListener (this);
         RealTime.setOnClickListener (this);
+        toolbar2 = (Toolbar) findViewById(R.id.toolbar_up);
+        toolbar2.inflateMenu (R.menu.item);
     }
     @Override
     public void onClick(View v) {
+        Intent newIntent = null;
         if(v.getId()==Event.getId())
         {
-            Toast.makeText(getApplicationContext(),"Event Button",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),"Event Button",Toast.LENGTH_SHORT).show();
         }
         else if(v.getId()==SavedEvent.getId())
         {
-            Toast.makeText(getApplicationContext(),"SavedEvent Button",Toast.LENGTH_SHORT).show();
+            newIntent = new Intent(this, SavedEvent.class);
         }
         else
         {
-            Toast.makeText(getApplicationContext(),"Real-Time Button",Toast.LENGTH_SHORT).show ();
+            newIntent = new Intent(this, RealTime.class);
+        }
+        if (v.getId() != Event.getId())startActivity(newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+    }
+
+    public void city(MenuItem item) {
+        ArrayList<String> list = new ArrayList<String>();
+
+        String[] locales = Locale.getISOCountries ();
+
+        for (String countryCode : locales) {
+
+            Locale obj = new Locale("", countryCode);
+
+            System.out.println("Country Name = " + obj.getDisplayCountry());
+            list.add(obj.getDisplayCountry());
+
         }
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.Filter:
+                openFilterPage(item);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+    /**
+     * Called when the user clicks the filter button
+     */
+    public void openFilterPage(MenuItem item) {
+        Intent filterPageIntent = new Intent (this, FilterPage.class);
+        startActivity (filterPageIntent);
+    }
 
     public void uploadUserData() {
 
@@ -123,13 +157,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    /**
-     * Called when the user clicks the filter button
-     */
-    public void openFilterPage(View view) {
-        Intent filterPageIntent = new Intent (this, FilterPage.class);
-        startActivity (filterPageIntent);
-    }
 
     @Override
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
