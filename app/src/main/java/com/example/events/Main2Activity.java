@@ -18,5 +18,6 @@ public class Main2Activity extends AppCompatActivity {
         ParseObject.registerSubclass (Event.class);
         Intent intent = new Intent (this, MainActivity.class);
         startActivity(intent);
+        this.finish ();
     }
 }
