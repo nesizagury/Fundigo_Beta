@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,13 +17,15 @@ import java.io.InputStreamReader;
 
 public class EventPage extends Activity {
 
-    private TextView myText = null;
-    private String name = null;
+    static boolean found = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_event_page);
+
+        found = !readFromFile().equals("");
+
         Intent intent = getIntent ();
         int image_id = intent.getIntExtra ("eventImage", R.mipmap.pic0);
         ImageView event_image = (ImageView) findViewById (R.id.eventPage_image);
@@ -50,45 +51,45 @@ public class EventPage extends Activity {
     }
 
     public void openTicketsPage(View view) {
-        lookForUser ();
-    }
-
-    public void lookForUser() {
-        if (readFromFile ().equals ("")) {
-            Intent intent = new Intent (EventPage.this, LoginActivity.class);
+        if(readFromFile().equals(""))
+        {
+            Bundle b = new Bundle ();
+            Intent intent = new Intent(EventPage.this,LoginActivity.class);
+            Intent intentHere = getIntent ();
+            intent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
+            intent.putExtras (b);
             startActivity (intent);
-        } else {
+        }
+        else {
             Toast.makeText (getApplicationContext (), "already signed!", Toast.LENGTH_SHORT).show ();
-//            Bundle b = new Bundle ();
-//            Intent ticketsPageIntent = new Intent (this, TicketsPage.class);
-//            Intent intentHere = getIntent ();
-//            ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
-//            ticketsPageIntent.putExtras (b);
-//            startActivity (ticketsPageIntent);
+            Bundle b = new Bundle ();
+            Intent ticketsPageIntent = new Intent (EventPage.this, TicketsPage.class);
+            Intent intentHere = getIntent ();
+            ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
+            ticketsPageIntent.putExtras (b);
+            startActivity (ticketsPageIntent);
         }
     }
 
     private String readFromFile() {
         String phone_number = "";
-        File f = new File ("verify.txt");
-        if (f.exists () && !f.isDirectory ()) {
-            try {
-                InputStream inputStream = openFileInput ("verify.txt");
-                if (inputStream != null) {
-                    InputStreamReader inputStreamReader = new InputStreamReader (inputStream);
-                    BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
-                    String receiveString = "";
-                    while ((receiveString = bufferedReader.readLine ()) != null) {
-                        phone_number = receiveString;
-                        Toast.makeText (getApplicationContext (), phone_number, Toast.LENGTH_SHORT).show ();
-                    }
-                    inputStream.close ();
+        try {
+            InputStream inputStream = openFileInput("verify.txt");
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    phone_number = receiveString;
+                    Toast.makeText(getApplicationContext(), phone_number , Toast.LENGTH_SHORT).show();
                 }
-            } catch (FileNotFoundException e) {
-                Log.e ("login activity", "File not found: " + e.toString ());
-            } catch (IOException e) {
-                Log.e ("login activity", "Can not read file: " + e.toString ());
+                inputStream.close();
             }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
         }
         return phone_number;
     }

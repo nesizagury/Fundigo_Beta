@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -143,7 +144,7 @@ public class LoginActivity extends AppCompatActivity {
         if (image_selected) {
             Bitmap bitmap = BitmapFactory.decodeFile (picturePath);
             ByteArrayOutputStream stream = new ByteArrayOutputStream ();
-            bitmap.compress (Bitmap.CompressFormat.PNG, 100, stream);
+            bitmap.compress (CompressFormat.JPEG, 100, stream);
             byte[] image = stream.toByteArray ();
             ParseFile file = new ParseFile ("picturePath", image);
             try {
@@ -157,6 +158,12 @@ public class LoginActivity extends AppCompatActivity {
         try {
             number.save ();
             Toast.makeText (getApplicationContext (), "Successfully Signed up", Toast.LENGTH_SHORT).show ();
+            Bundle b = new Bundle ();
+            Intent ticketsPageIntent = new Intent (LoginActivity.this, TicketsPage.class);
+            Intent intentHere = getIntent ();
+            ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
+            ticketsPageIntent.putExtras (b);
+            startActivity (ticketsPageIntent);
             finish ();
         } catch (ParseException e) {
             Toast.makeText (getApplicationContext (), " Error ): ", Toast.LENGTH_SHORT).show ();
