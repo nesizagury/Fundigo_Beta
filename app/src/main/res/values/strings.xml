@@ -5,6 +5,11 @@
 
     <string name="filterPageName">Filter</string>
 
+    <string name="facebook_app_id">1673502059557977</string>
+
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_purchase">PurchaseActivity</string>
+    <string name="title_activity_facebook_login">FacebookLogin</string>
 
     <string-array name="eventNames">
         <item>Red Carpet Event</item>
@@ -81,7 +86,6 @@
         <item>29.8.16</item>
 
     </string-array>
-
 
 
     <string-array name="eventPlace">

@@ -3,12 +3,65 @@
     android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-    <include
+    <LinearLayout
         android:id="@+id/toolbar_up"
-        layout="@layout/toolbar_up"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:weightSum="700.0"
+        android:background="#FFA500"
+
         >
 
-    </include>
+        <ImageView
+            android:id="@+id/settings_item"
+            android:layout_height="match_parent"
+            android:layout_width="0dip"
+            android:layout_weight="100"
+            android:layout_gravity="left"
+            android:src="@drawable/ic_setting"
+            android:background="#FFA500"
+            android:padding="2dp"/>
+
+        <ImageView
+            android:id="@+id/notification_item"
+            android:layout_height="match_parent"
+            android:layout_width="0dip"
+            android:layout_weight="100"
+            android:src="@drawable/ic_notification"
+            android:background="#FFA500"
+            android:padding="4dp"/>
+
+        <Button
+            android:id="@+id/city_item"
+            android:layout_height="match_parent"
+            android:layout_width="0dip"
+            android:layout_weight="300"
+            android:text="Tel-Aviv"
+            android:background="#FFA500"
+            />
+
+        <ImageView
+            android:id="@+id/Filter"
+            android:layout_height="match_parent"
+            android:layout_width="0dip"
+            android:layout_weight="100"
+            android:src="@drawable/filter_line"
+            android:onClick="openFilterPage"
+            android:background="#FFA500"
+            android:padding="4dp"/>
+
+        <ImageView
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="100"
+            android:id="@+id/search"
+            android:actionViewClass="android.widget.SearchView"
+            android:src="@drawable/ic_search"
+            android:background="#FFA500"
+            android:padding="2dp"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"

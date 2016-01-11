@@ -4,13 +4,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
-import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Created by Benjamin 01/01/2016.
@@ -19,7 +14,6 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
 {
 
          private Button Event,RealTime,SavedEvent;
-         private Toolbar toolbar2;
         @Override
         protected void onCreate(Bundle savedInstanceState)
         {
@@ -34,8 +28,6 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
             RealTime.setOnClickListener(this);
 
             SavedEvent.setTextColor(Color.WHITE);
-            toolbar2 = (Toolbar) findViewById(R.id.toolbar_up);
-            toolbar2.inflateMenu(R.menu.item);
 
         }
 
@@ -61,39 +53,39 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
      * Called when the user clicks the filter button
      */
 
-    public void openFilterPage(MenuItem item) {
+    public void openFilterPage(View v) {
         Intent filterPageIntent = new Intent (this, FilterPage.class);
         startActivity (filterPageIntent);
     }
 
-    public void city(MenuItem item) {
-        ArrayList<String> list = new ArrayList<String>();
-
-        String[] locales = Locale.getISOCountries();
-
-        for (String countryCode : locales) {
-
-            Locale obj = new Locale("", countryCode);
-
-            System.out.println("Country Name = " + obj.getDisplayCountry());
-            list.add(obj.getDisplayCountry());
-
-        }
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.Filter:
-               openFilterPage(item);
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
+//    public void city(MenuItem item) {
+//        ArrayList<String> list = new ArrayList<String>();
+//
+//        String[] locales = Locale.getISOCountries();
+//
+//        for (String countryCode : locales) {
+//
+//            Locale obj = new Locale("", countryCode);
+//
+//            System.out.println("Country Name = " + obj.getDisplayCountry());
+//            list.add(obj.getDisplayCountry());
+//
+//        }
+//    }
+//
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.Filter:
+//               openFilterPage(item);
+//                return true;
+//
+//            default:
+//                // If we got here, the user's action was not recognized.
+//                // Invoke the superclass to handle it.
+//                return super.onOptionsItemSelected(item);
+//
+//        }
+//    }
 
 
 

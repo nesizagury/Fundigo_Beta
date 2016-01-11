@@ -7,17 +7,21 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
@@ -25,7 +29,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static List<EventInfo> events_data = new ArrayList<EventInfo> ();
     private Button Event, SavedEvent, RealTime;
     boolean didInit = false;
-    private Toolbar toolbar2;
+    LoginButton login_button;
+    CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +50,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         RealTime = (Button) findViewById (R.id.BarRealTime_button);
         Event.setOnClickListener (this);
         SavedEvent.setOnClickListener (this);
-        RealTime.setOnClickListener (this);
-        toolbar2 = (Toolbar) findViewById (R.id.toolbar_up);
-        toolbar2.inflateMenu (R.menu.item);
+
+        login_button = (LoginButton) findViewById (R.id.login_button);
+        AccessToken accessToken = AccessToken.getCurrentAccessToken ();
+        if (accessToken != null) {
+            login_button.setVisibility (View.INVISIBLE);
+        }
+
+        callbackManager = CallbackManager.Factory.create ();
+        login_button.registerCallback (callbackManager, new FacebookCallback<LoginResult> () {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+
+            }
+
+            @Override
+            public void onCancel() {
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Toast.makeText (getApplicationContext (), "error", Toast.LENGTH_SHORT).show ();
+            }
+        });
     }
 
     @Override
@@ -62,33 +87,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             startActivity (newIntent.setFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP));
     }
 
-    public void city(MenuItem item) {
-        ArrayList<String> list = new ArrayList<String> ();
+//    public void city(MenuItem item) {
+//        ArrayList<String> list = new ArrayList<String> ();
+//
+//        String[] locales = Locale.getISOCountries ();
+//
+//        for (String countryCode : locales) {
+//
+//            Locale obj = new Locale ("", countryCode);
+//
+//            System.out.println ("Country Name = " + obj.getDisplayCountry ());
+//            list.add (obj.getDisplayCountry ());
+//
+//        }
+//    }
+//
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId ()) {
+//            case R.id.Filter:
+//                openFilterPage (item);
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected (item);
+//
+//        }
+//    }
 
-        String[] locales = Locale.getISOCountries ();
-
-        for (String countryCode : locales) {
-
-            Locale obj = new Locale ("", countryCode);
-
-            System.out.println ("Country Name = " + obj.getDisplayCountry ());
-            list.add (obj.getDisplayCountry ());
-
-        }
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId ()) {
-            case R.id.Filter:
-                openFilterPage (item);
-                return true;
-            default:
-                return super.onOptionsItemSelected (item);
-
-        }
-    }
-
-    public void openFilterPage(MenuItem item) {
+    public void openFilterPage(View v) {
         Intent filterPageIntent = new Intent (this, FilterPage.class);
         startActivity (filterPageIntent);
     }
@@ -141,6 +166,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         b.putInt ("userIndex", i);
         intent.putExtras (b);
         startActivity (intent);
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult (requestCode, resultCode, data);
+        login_button.setVisibility (View.INVISIBLE);
+        callbackManager.onActivityResult (requestCode, resultCode, data);
     }
 
 }
