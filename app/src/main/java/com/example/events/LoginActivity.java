@@ -135,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
     public void Signup(View view) {
 
 
-        saveToFile (getNumber (phone_number, area));
+
 
         username = usernameTE.getText ().toString ();
         Numbers number = new Numbers ();
@@ -163,6 +163,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent intentHere = getIntent ();
             ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
             ticketsPageIntent.putExtras (b);
+            saveToFile (area + phone_number);
             startActivity (ticketsPageIntent);
             finish ();
         } catch (ParseException e) {

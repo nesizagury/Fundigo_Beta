@@ -41,9 +41,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     boolean didInit = false;
     LoginButton login_button;
     CallbackManager callbackManager;
+    static boolean isCustomer = false;
+    static boolean isGuest = false;
+    int customer_id;
     private TextView mLatitudeText, mLongitudeText;
     private Location mLastLocation;
-    private static boolean turnGps=true;
+    private static boolean turnGps = true;
     private AlertDialog.Builder alertDialog;
     private AlertDialog alert;
     boolean gps_enabled = false;
@@ -59,6 +62,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             didInit = true;
         }
         setContentView (R.layout.activity_main);
+        Intent intent = getIntent ();
+        if (intent.getStringExtra ("chat_id") != null) {
+            customer_id = Integer.parseInt (intent.getStringExtra ("chat_id"));
+            isCustomer = true;
+
+        }
+        if (intent.getStringExtra ("is_guest") != null) {
+            isGuest = true;
+        }
+
         list_view = (ListView) findViewById (R.id.listView);
         Adapters adapts = new Adapters (this);
         list_view.setAdapter (adapts);
@@ -93,60 +106,56 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-        Event.setTextColor(Color.WHITE);
-        loc =getLocation();
-        if(loc==null)turnOnGps();
-        if(loc!=null)Toast.makeText(getApplicationContext(),""+loc.getLongitude()+" ,"+loc.getLatitude(),Toast.LENGTH_LONG).show();
+        Event.setTextColor (Color.WHITE);
+        loc = getLocation ();
+        if (loc == null) turnOnGps ();
+        if (loc != null)
+            Toast.makeText (getApplicationContext (), "" + loc.getLongitude () + " ," + loc.getLatitude (), Toast.LENGTH_LONG).show ();
     }
 
-    private void turnOnGps()
-    {
-        turnGps=false;
-        try
-        {
-            gps_enabled = LocationServices.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            network_enabled = LocationServices.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        }
-        catch (Exception x)
-        {
+    private void turnOnGps() {
+        turnGps = false;
+        try {
+            gps_enabled = LocationServices.isProviderEnabled (LocationManager.GPS_PROVIDER);
+            network_enabled = LocationServices.isProviderEnabled (LocationManager.NETWORK_PROVIDER);
+        } catch (Exception x) {
 
         }
-        if(!gps_enabled && !network_enabled)
-        {
-            alertDialog = new AlertDialog.Builder(this);
-            alertDialog.setMessage("turn on your GPS").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        if (!gps_enabled && !network_enabled) {
+            alertDialog = new AlertDialog.Builder (this);
+            alertDialog.setMessage ("turn on your GPS").setPositiveButton ("OK", new DialogInterface.OnClickListener () {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(intent);
-                    dialog.dismiss();
+                    Intent intent = new Intent (Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity (intent);
+                    dialog.dismiss ();
                 }
-            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            }).setNegativeButton ("Cancel", new DialogInterface.OnClickListener () {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+                    dialog.dismiss ();
                 }
             });
-            alertDialog.create();
-            alertDialog.show();
+            alertDialog.create ();
+            alertDialog.show ();
         }
     }
-
 
 
     /**
      * the function return the lastKnowenLocation
+     *
      * @return lastKnowenLocation
      */
     public Location getLocation() {
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) this.getSystemService (Context.LOCATION_SERVICE);
         if (locationManager != null) {
-            Location lastKnownLocationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            Location lastKnownLocationGPS = locationManager.getLastKnownLocation (LocationManager.GPS_PROVIDER);
             if (lastKnownLocationGPS != null) {
                 return lastKnownLocationGPS;
             } else {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission (this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -156,15 +165,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     // for ActivityCompat#requestPermissions for more details.
                     return null;
                 }
-                Location loc = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                Location loc = locationManager.getLastKnownLocation (LocationManager.PASSIVE_PROVIDER);
                 return loc;
             }
         } else {
             return null;
         }
     }
-
-
 
 
     @Override
@@ -247,15 +254,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Bundle b = new Bundle ();
         Intent intent = new Intent (this, EventPage.class);
         Holder holder = (Holder) view.getTag ();
-        EventInfo event = (EventInfo) holder.image.getTag ();
-        intent.putExtra ("eventImage", events_data.get (i).getImageId ());
-        intent.putExtra ("eventDate", events_data.get (i).getDate ());
-        intent.putExtra ("eventName", events_data.get (i).getName ());
-        intent.putExtra ("eventTags", events_data.get (i).getTags ());
-        intent.putExtra ("eventPrice", events_data.get (i).getPrice ());
-        intent.putExtra ("eventInfo", events_data.get (i).getInfo ());
-        intent.putExtra ("eventPlace", events_data.get (i).getPlace ());
-        b.putInt ("userIndex", i);
+        intent.putExtra ("eventDate", events_data.get (i).getDate());
+        intent.putExtra ("eventName", events_data.get (i).getName());
+        intent.putExtra ("eventTags", events_data.get (i).getTags());
+        intent.putExtra ("eventPrice", events_data.get (i).getPrice());
+        intent.putExtra ("eventInfo", events_data.get (i).getInfo());
+        intent.putExtra("eventPlace", events_data.get (i).getPlace());
+        b.putInt("customer_id", customer_id);
+        b.putInt ("producer_id", i + 1);
         intent.putExtras (b);
         startActivity (intent);
     }

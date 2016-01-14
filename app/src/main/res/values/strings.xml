@@ -11,6 +11,11 @@
     <string name="title_activity_purchase">PurchaseActivity</string>
     <string name="title_activity_facebook_login">FacebookLogin</string>
 
+    <string name="profile_me">My Profile Pic</string>
+    <string name="profile_other">Other profile pic</string>
+    <string name="message_hint">Say anything</string>
+    <string name="send">Send</string>
+
     <string-array name="eventNames">
         <item>Red Carpet Event</item>
         <item>River-Side Show</item>
@@ -304,5 +309,7 @@ Dress is trendy or upscale. No, guys, suits are not required. But when you see h
         </item>
 
     </string-array>
+
+    <string name="title_activity_chat">ChatActivity</string>
 
 </resources>

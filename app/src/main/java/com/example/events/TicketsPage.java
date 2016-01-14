@@ -42,7 +42,7 @@ public class TicketsPage extends AppCompatActivity {
                     int tickets = Integer.parseInt (event.getNumOfTicketsLeft ());
                     int t = tickets - 1;
                     String left = Integer.toString (t);
-                    Toast.makeText (TicketsPage.this, "Enjoy Yout Ticket!", Toast.LENGTH_LONG).show ();
+                    Toast.makeText (TicketsPage.this, "Enjoy Yout Ticket!", Toast.LENGTH_SHORT).show ();
                     event.put ("NumOfTicketsLeft", left);
                     try {
                         event.save ();

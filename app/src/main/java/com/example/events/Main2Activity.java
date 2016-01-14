@@ -17,10 +17,12 @@ public class Main2Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-        setContentView (R.layout.activity_main2);
+        setContentView(R.layout.activity_main2);
         Parse.enableLocalDatastore (this);
         Parse.initialize (this);
         ParseObject.registerSubclass (Event.class);
+        ParseObject.registerSubclass (com.example.events.Message.class);
+        ParseObject.registerSubclass(com.example.events.Room.class);
         ParseObject.registerSubclass (com.example.events.Numbers.class);
         FacebookSdk.sdkInitialize (getApplicationContext ());
 

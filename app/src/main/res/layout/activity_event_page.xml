@@ -5,153 +5,164 @@
     android:layout_height="wrap_content">
 
     <ImageView
+        android:id="@+id/eventPage_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/eventPage_image"
-        android:scaleType="fitXY"
         android:layout_alignParentTop="true"
-        android:background="@mipmap/pic0" />
+        android:background="@mipmap/pic0"
+        android:scaleType="fitXY"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1.2.16"
         android:id="@+id/eventPage_date"
-        android:textSize="15dp"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:layout_below="@+id/linearLayoutTop"
-        android:layout_centerHorizontal="true"/>
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Even Gbirol 67, Tel Aviv"
-        android:id="@+id/eventPage_location"
-        android:textSize="17dp"
+        android:layout_below="@+id/linearLayoutTop"
+        android:layout_centerHorizontal="true"
+        android:text="1.2.16"
         android:textAlignment="center"
         android:textColor="#000000"
+        android:textSize="15dp"/>
+
+    <TextView
+        android:id="@+id/eventPage_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/eventPage_date"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:text="Even Gbirol 67, Tel Aviv"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="17dp"/>
 
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/linearLayoutTop"
         android:layout_width="fill_parent"
         android:layout_height="35dp"
-        android:weightSum="10.0"
-        android:id="@+id/linearLayoutTop"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/eventPage_image"
-        android:layout_alignParentStart="true">
+        android:orientation="horizontal"
+        android:weightSum="10.0">
 
         <ImageView
-            android:layout_width="0dip"
-            android:layout_weight="1"
-            android:layout_height="fill_parent"
             android:id="@+id/imageEvenetPageView4"
-            android:src="@mipmap/ic_contacting"
-            android:layout_marginTop="2dp"/>
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:src="@mipmap/ic_contacting"/>
 
         <ImageView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="fill_parent"
             android:id="@+id/imageEvenetPageView5"
-            android:src="@mipmap/ic_mor_information"
-            android:layout_marginTop="2dp"/>
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:src="@mipmap/ic_mor_information"/>
 
         <TextView
-            android:layout_width="0dip"
-            android:layout_weight="6"
-            android:layout_height="fill_parent"
-            android:text="The Best Show in Israel"
             android:id="@+id/eventPage_name"
-            android:textStyle="bold"
-            android:textSize="18dp"
-            android:textColor="#000000"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="6"
             android:gravity="center"
+            android:text="The Best Show in Israel"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:textStyle="bold"
             />
+
         <ImageView
-            android:layout_width="0dip"
-            android:layout_weight="1"
-            android:layout_height="fill_parent"
             android:id="@+id/imageEvenetPageView3"
-            android:src="@mipmap/wh"
-            android:adjustViewBounds="false"
-            android:layout_marginTop="2dp"/>
-        <ImageView
             android:layout_width="0dip"
-            android:layout_weight="1"
             android:layout_height="fill_parent"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:adjustViewBounds="false"
+            android:src="@mipmap/wh"/>
+
+        <ImageView
             android:id="@+id/imageEvenetPageView2"
-            android:src="@mipmap/sh"
-            android:layout_marginTop="2dp"/>
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:src="@mipmap/sh"/>
 
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/linearLayout"
         android:layout_width="fill_parent"
         android:layout_height="35dp"
-        android:weightSum="3.0"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout">
+        android:orientation="horizontal"
+        android:weightSum="3.0">
+
         <Button
-            android:text="15$-25$"
             android:id="@+id/priceEventPage"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill_vertical"
+            android:layout_weight="1"
             android:background="#3F51B5"
-            android:textColor="#ffffff"
-            android:layout_weight="1"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_gravity="fill_vertical"/>
+            android:text="15$-25$"
+            android:textColor="#ffffff"/>
+
         <Button
-            android:layout_height="wrap_content"
-            android:text="#Food&amp;Drink #Convention"
             android:id="@+id/eventPage_tags"
-            android:background="#ffffff"
-            android:textColor="#000000"
-            android:layout_weight="1"
             android:layout_width="0dip"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:layout_weight="1"
+            android:background="#ffffff"
+            android:text="#Food&amp;Drink #Convention"
+            android:textColor="#000000"
             android:textSize="13dp"/>
 
         <Button
+            android:id="@+id/button"
             android:layout_width="0dip"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="fill_vertical"
-            android:text="GET TICKETS"
-            android:id="@+id/button"
+            android:layout_weight="1"
             android:background="#3F51B5"
-            android:textColor="#ffffff"
-            android:onClick="openTicketsPage"/>
+            android:onClick="openTicketsPage"
+            android:text="GET TICKETS"
+            android:textColor="#ffffff"/>
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="360dp"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView"
-        android:layout_centerHorizontal="true"
         android:layout_above="@+id/linearLayout"
         android:layout_below="@+id/eventPage_location"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp">
+
         <TextView
+            android:id="@+id/eventInfoEventPage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ALUMINIUM CHINA is Asia‘s top trading, sourcing, networking and branding platform for the complete aluminum industry chain, bringing together leading industry figures, cutting edge technologies and advanced applications. Annually held in Shanghai, the event engages the global Aluminium community with new customized matchmaking programs linking application buyers with emerging and established demands and buyers of equipment and accessories with leading suppliers."
-            android:id="@+id/eventInfoEventPage"
-            android:textColor="#3c3c3c"
-            android:textSize="17sp"
             android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="ALUMINIUM CHINA is Asia‘s top trading, sourcing, networking and branding platform for the complete aluminum industry chain, bringing together leading industry figures, cutting edge technologies and advanced applications. Annually held in Shanghai, the event engages the global Aluminium community with new customized matchmaking programs linking application buyers with emerging and established demands and buyers of equipment and accessories with leading suppliers."
+            android:textColor="#3c3c3c"
             android:textIsSelectable="false"
-            android:gravity="center"/>
+            android:textSize="17sp"/>
     </ScrollView>
 
-
-
+    <Button
+        android:id="@+id/rt_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/scrollView"
+        android:layout_alignParentStart="true"
+        android:onClick="openChat"
+        android:text="Real Time Chat"/>
 
 </RelativeLayout>
