@@ -1,16 +1,26 @@
 package com.example.events;
 
 
+import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -31,6 +41,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     boolean didInit = false;
     LoginButton login_button;
     CallbackManager callbackManager;
+    private TextView mLatitudeText, mLongitudeText;
+    private Location mLastLocation;
+    private static boolean turnGps=true;
+    private AlertDialog.Builder alertDialog;
+    private AlertDialog alert;
+    boolean gps_enabled = false;
+    boolean network_enabled = false;
+    private LocationManager LocationServices;
+    public static Location loc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +92,80 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Toast.makeText (getApplicationContext (), "error", Toast.LENGTH_SHORT).show ();
             }
         });
+
+        Event.setTextColor(Color.WHITE);
+        loc =getLocation();
+        if(loc==null)turnOnGps();
+        if(loc!=null)Toast.makeText(getApplicationContext(),""+loc.getLongitude()+" ,"+loc.getLatitude(),Toast.LENGTH_LONG).show();
     }
+
+    private void turnOnGps()
+    {
+        turnGps=false;
+        try
+        {
+            gps_enabled = LocationServices.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            network_enabled = LocationServices.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        }
+        catch (Exception x)
+        {
+
+        }
+        if(!gps_enabled && !network_enabled)
+        {
+            alertDialog = new AlertDialog.Builder(this);
+            alertDialog.setMessage("turn on your GPS").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                    dialog.dismiss();
+                }
+            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            alertDialog.create();
+            alertDialog.show();
+        }
+    }
+
+
+
+    /**
+     * the function return the lastKnowenLocation
+     * @return lastKnowenLocation
+     */
+    public Location getLocation() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null) {
+            Location lastKnownLocationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocationGPS != null) {
+                return lastKnownLocationGPS;
+            } else {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return null;
+                }
+                Location loc = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                return loc;
+            }
+        } else {
+            return null;
+        }
+    }
+
+
+
 
     @Override
     public void onClick(View v) {
