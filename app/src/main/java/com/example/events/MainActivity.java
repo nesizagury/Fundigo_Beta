@@ -5,17 +5,21 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -29,11 +33,14 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
+    private final static String TAG = "MainActivity";
 
     ListView list_view;
     public static List<EventInfo> events_data = new ArrayList<EventInfo> ();
@@ -53,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     boolean network_enabled = false;
     private LocationManager LocationServices;
     public static Location loc;
+    static final int REQUEST_CODE_MY_PICK = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         callbackManager = CallbackManager.Factory.create ();
-        login_button.registerCallback (callbackManager, new FacebookCallback<LoginResult> () {
+        login_button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
@@ -102,10 +111,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             @Override
             public void onError(FacebookException exception) {
-                Toast.makeText (getApplicationContext (), "error", Toast.LENGTH_SHORT).show ();
+                Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "" + exception.toString());
             }
         });
-
+//        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("publish_actions", "rsvp_event"));
         Event.setTextColor (Color.WHITE);
         loc = getLocation ();
         if (loc == null) turnOnGps ();
@@ -261,16 +271,44 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         intent.putExtra ("eventInfo", events_data.get (i).getInfo());
         intent.putExtra("eventPlace", events_data.get (i).getPlace());
         b.putInt("customer_id", customer_id);
-        b.putInt ("producer_id", i + 1);
-        intent.putExtras (b);
-        startActivity (intent);
+        b.putInt("producer_id", i + 1);
+        intent.putExtras(b);
+        startActivity(intent);
     }
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult (requestCode, resultCode, data);
-        login_button.setVisibility (View.INVISIBLE);
-        callbackManager.onActivityResult (requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_MY_PICK) {
+            String appName = data.getComponent().flattenToShortString();
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+            String name = sp.getString("name",null);
+            String date = sp.getString("date",null);
+            String place = sp.getString("place",null);
+            Log.e(TAG, "" + name + " " + date + " " + place);
+            Log.e(TAG, "" + appName);
+            if (appName.equals("com.facebook.katana/com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias")) {
+                ShareDialog shareDialog;
+                shareDialog = new ShareDialog(this);
+
+                ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                        .setContentTitle("I`m going to " + name)
+                        .setImageUrl(Uri.parse("https://lh3.googleusercontent.com/-V5wz7jKaQW8/VpvKq0rwEOI/AAAAAAAAB6Y/cZoicmGpQpc/s279-Ic42/pic0.jpg"))
+                        .setContentDescription(
+                                "C u there at " + date + " !" + "\n" + "At " + place)
+                        .setContentUrl(Uri.parse("http://eventpageURL.com/here"))
+                        .build();
+
+                shareDialog.show(linkContent);
+            } else {
+
+                startActivity(data);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+            login_button.setVisibility(View.INVISIBLE);
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+
     }
 
 }

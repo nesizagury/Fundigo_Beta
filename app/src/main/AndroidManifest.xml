@@ -70,7 +70,11 @@
         <activity
             android:name=".ChatActivity"
             android:label="@string/title_activity_chat"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme"/>
+
+        <provider android:authorities="com.facebook.app.FacebookContentProvider1673502059557977"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true" />
     </application>
 
 </manifest>
