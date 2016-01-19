@@ -16,6 +16,87 @@
     <string name="message_hint">Say anything</string>
     <string name="send">Send</string>
 
+    <string-array name="eventServiceTitles">
+        <item>Toilet</item>
+        <item>Parking</item>
+        <item>Capacity</item>
+        <item>ATM</item>
+    </string-array>
+
+    <string-array name="eventToiletService">
+        <item>4, Handicapped 2</item>
+        <item>2, Handicapped 1</item>
+        <item>6, Handicapped 3</item>
+        <item>4, Handicapped 2</item>
+        <item>6, Handicapped 3</item>
+        <item>2, Handicapped 1</item>
+        <item>8, Handicapped 4</item>
+        <item>6, Handicapped 3</item>
+        <item>2, Handicapped 1</item>
+        <item>4, Handicapped 2</item>
+        <item>6, Handicapped 3</item>
+        <item>4, Handicapped 2</item>
+        <item>8, Handicapped 4</item>
+        <item>2, Handicapped 1</item>
+        <item>4, Handicapped 2</item>
+    </string-array>
+
+    <string-array name="eventParkingService">
+        <item>Up To 450</item>
+        <item>Up To 245</item>
+        <item>Up To 200</item>
+        <item>Up To 100</item>
+        <item>Up To 500</item>
+        <item>Up To 1000</item>
+        <item>Up To 500</item>
+        <item>Up To 150</item>
+        <item>Up To 300</item>
+        <item>Up To 245</item>
+        <item>Up To 350</item>
+        <item>Up To 275</item>
+        <item>Up To 420</item>
+        <item>Up To 200</item>
+        <item>Up To 450</item>
+    </string-array>
+
+
+    <string-array name="eventCapacityService">
+        <item>Up To 1000</item>
+        <item>Up To 245</item>
+        <item>Up To 500</item>
+        <item>Up To 700</item>
+        <item>Up To 600</item>
+        <item>Up To 1000</item>
+        <item>Up To 500</item>
+        <item>Up To 400</item>
+        <item>Up To 300</item>
+        <item>Up To 2000</item>
+        <item>Up To 300</item>
+        <item>Up To 800</item>
+        <item>Up To 1500</item>
+        <item>Up To 1200</item>
+        <item>Up To 450</item>
+    </string-array>
+
+    <string-array name="eventATMService">
+        <item>Yes</item>
+        <item>Yes</item>
+        <item>No</item>
+        <item>Yes</item>
+        <item>No</item>
+        <item>Yes</item>
+        <item>No</item>
+        <item>Yes</item>
+        <item>Yes</item>
+        <item>Yes</item>
+        <item>No</item>
+        <item>Yes</item>
+        <item>Yes</item>
+        <item>No</item>
+        <item>Yes</item>
+
+    </string-array>
+
     <string-array name="eventNames">
         <item>Red Carpet Event</item>
         <item>River-Side Show</item>

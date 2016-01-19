@@ -9,8 +9,12 @@ public class EventInfo {
     String price;
     String info;
     String place;
+    String toilet;
+    String parking;
+    String capacity;
+    String atm;
 
-    public EventInfo(int imageId, String date, String name, String tags, String price, String info, String place) {
+    public EventInfo(int imageId, String date, String name, String tags, String price, String info, String place, String toilet,String parking,String capacity,String atm) {
         this.imageId = imageId;
         this.date = date;
         this.name = name;
@@ -18,6 +22,10 @@ public class EventInfo {
         this.price = price;
         this.info = info;
         this.place = place;
+        this.toilet=toilet;
+        this.parking=parking;
+        this.capacity=capacity;
+        this.atm=atm;
     }
 
 
@@ -75,5 +83,34 @@ public class EventInfo {
 
     public void setPlace(String place) {
         this.place = place;
+    }
+
+
+    public String getToilet() {
+        return toilet;
+    }
+    public void setToilet(String toilet) {
+        this.toilet = toilet;
+    }
+
+    public String getParking() {
+        return parking;
+    }
+    public void setParking(String parking) {
+        this.parking = parking;
+    }
+
+    public String getCapacity() {
+        return capacity;
+    }
+    public void setCapacity(String capacity) {
+        this.capacity = capacity;
+    }
+
+    public String getAtm() {
+        return atm;
+    }
+    public void setAtm(String atm) {
+        this.atm = atm;
     }
 }

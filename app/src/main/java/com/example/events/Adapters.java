@@ -55,16 +55,25 @@ public class Adapters extends BaseAdapter {
         eventInfo_list = res.getStringArray(R.array.eventInfo);
         eventPlace_list = res.getStringArray(R.array.eventPlace);
 
+        String arrToilet[] = res.getStringArray(R.array.eventToiletService);
+        String arrParking[] = res.getStringArray(R.array.eventParkingService);
+        String arrCapacity[] = res.getStringArray(R.array.eventCapacityService);
+        String arrATM[] = res.getStringArray(R.array.eventATMService);
+
         for (int j = 0; j < 3; j++) {
             for (int i = 0; i < 14; i++)
-                list.add(new EventInfo(
-                        R.mipmap.pic0 + i,
-                        eventDate_list[i],
-                        eventName_list[i],
-                        eventTag_list[i],
-                        eventPrice_list[i],
-                        eventInfo_list[i],
-                        eventPlace_list[i]));
+                list.add (new EventInfo (
+                                                R.mipmap.pic0 + i,
+                                                eventDate_list[i],
+                                                eventName_list[i],
+                                                eventTag_list[i],
+                                                eventPrice_list[i],
+                                                eventInfo_list[i],
+                                                eventPlace_list[i],
+                                                arrToilet[i],
+                                                arrParking[i],
+                                                arrCapacity[i],
+                                                arrATM[i]));
         }
     }
 
@@ -86,18 +95,27 @@ public class Adapters extends BaseAdapter {
         eventInfo_list = res.getStringArray(R.array.eventInfo);
         eventPlace_list = res.getStringArray(R.array.eventPlace);
 
-        List<EventInfo> ans = new ArrayList<EventInfo>();
+        String arrToilet[] = res.getStringArray(R.array.eventToiletService);
+        String arrParking[] = res.getStringArray(R.array.eventParkingService);
+        String arrCapacity[] = res.getStringArray(R.array.eventCapacityService);
+        String arrATM[] = res.getStringArray(R.array.eventATMService);
+
+        List<EventInfo> ans = new ArrayList<EventInfo> ();
 
         for (int j = 0; j < 1; j++) {
             for (int i = 0; i < 15; i++)
-                ans.add(new EventInfo(
-                        R.mipmap.pic0 + i,
-                        eventDate_list[i],
-                        eventName_list[i],
-                        eventTag_list[i],
-                        eventPrice_list[i],
-                        eventInfo_list[i],
-                        eventPlace_list[i]));
+                ans.add (new EventInfo (
+                                               R.mipmap.pic0 + i,
+                                               eventDate_list[i],
+                                               eventName_list[i],
+                                               eventTag_list[i],
+                                               eventPrice_list[i],
+                                               eventInfo_list[i],
+                                               eventPlace_list[i],
+                                               arrToilet[i],
+                                               arrParking[i],
+                                               arrCapacity[i],
+                                               arrATM[i]));
         }
         boolean flag = true;
         for (int i = 0; i < arrayList.size(); i++) {

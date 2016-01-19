@@ -244,6 +244,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         eventPlace_list = res.getStringArray (R.array.eventPlace);
         eventInfo_list = res.getStringArray (R.array.eventInfo);
 
+        String arrToilet[] = getResources().getStringArray(R.array.eventToiletService);
+        String arrParking[] = getResources().getStringArray(R.array.eventParkingService);
+        String arrCapacity[] = getResources().getStringArray(R.array.eventCapacityService);
+        String arrATM[] = getResources().getStringArray(R.array.eventATMService);
+
         for (int j = 0; j < 3; j++) {
             for (int i = 0; i < 14; i++) {
                 events_data.add (new EventInfo (
@@ -253,7 +258,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                                        eventTag_list[i],
                                                        eventPrice_list[i],
                                                        eventInfo_list[i],
-                                                       eventPlace_list[i])
+                                                       eventPlace_list[i],
+                                                       arrToilet[i],
+                                                       arrParking[i],
+                                                       arrCapacity[i],
+                                                       arrATM[i])
                 );
             }
         }
@@ -271,6 +280,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         intent.putExtra ("eventPrice", events_data.get (i).getPrice());
         intent.putExtra ("eventInfo", events_data.get (i).getInfo());
         intent.putExtra("eventPlace", events_data.get (i).getPlace());
+
+        intent.putExtra("toilet",events_data.get(i).getToilet());
+        intent.putExtra("parking",events_data.get(i).getParking());
+        intent.putExtra("capacity",events_data.get(i).getCapacity());
+        intent.putExtra("atm",events_data.get(i).getAtm());
+
+
         b.putInt("customer_id", customer_id);
         b.putInt("producer_id", i + 1);
         intent.putExtras(b);

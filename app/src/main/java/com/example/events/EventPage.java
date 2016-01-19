@@ -54,7 +54,7 @@ public class EventPage extends Activity implements View.OnClickListener {
 
         found = !readFromFile().equals("");
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         image_id = intent.getIntExtra("eventImage", R.mipmap.pic0);
         ImageView event_image = (ImageView) findViewById(R.id.eventPage_image);
         event_image.setImageResource(image_id);
@@ -81,6 +81,20 @@ public class EventPage extends Activity implements View.OnClickListener {
         customer_id = b.getInt("customer_id");
         iv_share = (ImageView) findViewById(R.id.imageEvenetPageView2);
         iv_share.setOnClickListener(this);
+
+        ImageView  imageEvenetPageView4 = (ImageView) findViewById(R.id.imageEvenetPageView4);
+        imageEvenetPageView4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent2=new Intent(EventPage.this,EventService.class);
+                intent2.putExtra("toilet", intent.getStringExtra("toilet"));
+                intent2.putExtra("parking", intent.getStringExtra("parking"));
+                intent2.putExtra("capacity", intent.getStringExtra("capacity"));
+                intent2.putExtra("atm", intent.getStringExtra("atm"));
+
+                startActivity(intent2);
+            }
+        });
     }
 
     public void openTicketsPage(View view) {
