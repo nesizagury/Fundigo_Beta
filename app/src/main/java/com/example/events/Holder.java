@@ -18,7 +18,7 @@ public class Holder {
 
         image = (ImageView) v.findViewById(R.id.imageView);
         date = (TextView) v.findViewById(R.id.event_date);
-        name = (TextView) v.findViewById(R.id.event_name);
+        name = (TextView) v.findViewById(R.id.event_name_tv);
         tags = (TextView) v.findViewById(R.id.tags);
         price = (TextView) v.findViewById(R.id.event_price);
         place = (TextView) v.findViewById(R.id.event_location);

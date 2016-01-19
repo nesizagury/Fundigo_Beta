@@ -165,4 +165,5 @@
         android:onClick="openChat"
         android:text="Real Time Chat"/>
 
+
 </RelativeLayout>

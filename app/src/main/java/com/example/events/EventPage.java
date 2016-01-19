@@ -97,6 +97,7 @@ public class EventPage extends Activity implements View.OnClickListener {
             Intent ticketsPageIntent = new Intent(EventPage.this, TicketsPage.class);
             Intent intentHere = getIntent();
             ticketsPageIntent.putExtra("eventName", intentHere.getStringExtra("eventName"));
+            ticketsPageIntent.putExtra("eventPrice",intentHere.getStringExtra("eventPrice"));
             ticketsPageIntent.putExtras(b);
             startActivity(ticketsPageIntent);
         }

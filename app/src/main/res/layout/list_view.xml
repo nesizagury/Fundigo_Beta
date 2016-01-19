@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+                android:layout_width="match_parent" android:layout_height="match_parent">
 
     <ImageView
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:text="The Commedy Show"
-        android:id="@+id/event_name"
+        android:id="@+id/event_name_tv"
         android:layout_below="@+id/event_date"
         android:layout_alignParentStart="true"
         android:gravity="center_vertical|left"
@@ -43,7 +43,7 @@
         android:layout_height="27dp"
         android:text="Chelnov 29, Tel Aviv"
         android:id="@+id/event_location"
-        android:layout_below="@+id/event_name"
+        android:layout_below="@+id/event_name_tv"
         android:layout_alignParentStart="true"
         android:textSize="14dp"
         android:gravity="center_vertical|left"

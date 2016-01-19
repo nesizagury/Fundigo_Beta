@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Bundle b = new Bundle ();
         Intent intent = new Intent (this, EventPage.class);
         Holder holder = (Holder) view.getTag ();
+        intent.putExtra ("eventImage", events_data.get (i).getImageId ());
         intent.putExtra ("eventDate", events_data.get (i).getDate());
         intent.putExtra ("eventName", events_data.get (i).getName());
         intent.putExtra ("eventTags", events_data.get (i).getTags());

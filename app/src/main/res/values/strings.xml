@@ -311,5 +311,6 @@ Dress is trendy or upscale. No, guys, suits are not required. But when you see h
     </string-array>
 
     <string name="title_activity_chat">ChatActivity</string>
+    <string name="title_activity_payment">PaymentActivity</string>
 
 </resources>

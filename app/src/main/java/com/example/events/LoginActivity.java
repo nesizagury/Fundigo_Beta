@@ -21,8 +21,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.sinch.verification.CodeInterceptionException;
 import com.sinch.verification.Config;
 import com.sinch.verification.IncorrectCodeException;
@@ -100,10 +103,11 @@ public class LoginActivity extends AppCompatActivity {
                 if ((event != null && (event.getKeyCode () == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     area = s.getSelectedItem ().toString ();
                     username = usernameTE.getText ().toString ();
-                    phone_number = phoneET.getText ().toString ();
+                    phone_number = getNumber (phoneET.getText ().toString (), area);
 
+                    Toast.makeText (getApplicationContext (), phone_number, Toast.LENGTH_SHORT).show ();
 
-                    smsVerify (getNumber (phone_number, area));
+                    smsVerify (phone_number);
 
 
                 }
@@ -134,9 +138,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void Signup(View view) {
 
-
-
-
         username = usernameTE.getText ().toString ();
         Numbers number = new Numbers ();
         number.setName (username);
@@ -154,7 +155,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             number.put ("ImageFile", file);
         }
-        number.setNumber (getNumber (phone_number, area));
+        number.setNumber (phone_number);
         try {
             number.save ();
             Toast.makeText (getApplicationContext (), "Successfully Signed up", Toast.LENGTH_SHORT).show ();
@@ -163,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent intentHere = getIntent ();
             ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
             ticketsPageIntent.putExtras (b);
-            saveToFile (area + phone_number);
+            saveToFile (phone_number);
             startActivity (ticketsPageIntent);
             finish ();
         } catch (ParseException e) {
@@ -176,22 +177,22 @@ public class LoginActivity extends AppCompatActivity {
     public String getNumber(String number, String area) {
         switch (area) {
             case "050":
-                number = "+97250" + number;
+                number = "97250" + number;
                 break;
             case "052":
-                number = "+97252" + number;
+                number = "97252" + number;
                 break;
             case "053":
-                number = "+97253" + number;
+                number = "97253" + number;
                 break;
             case "054":
                 number = "97254" + number;
                 break;
             case "055":
-                number = "+97255" + number;
+                number = "97255" + number;
                 break;
             case "058":
-                number = "+97258" + number;
+                number = "97258" + number;
                 break;
         }
         return number;
@@ -231,8 +232,8 @@ public class LoginActivity extends AppCompatActivity {
         // this will only work for images selected from gallery
         String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery (uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow (MediaStore.Images.Media.DATA);
-        cursor.moveToFirst ();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
         return cursor.getString (column_index);
     }
 
@@ -248,7 +249,6 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onInitiated() {
-            Toast.makeText (getApplicationContext (), "initiated ", Toast.LENGTH_SHORT).show ();
 
         }
 
@@ -265,6 +265,9 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onVerified() {
+
+            // usernameTE.setText(checkUser());
+
             usernameTV.setVisibility (View.VISIBLE);
             usernameTE.setVisibility (View.VISIBLE);
             phoneET.setVisibility (View.INVISIBLE);
@@ -297,6 +300,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+
+
     void saveToFile(String phone_number) {
 
         OutputStreamWriter outputStreamWriter = null;
@@ -316,8 +321,32 @@ public class LoginActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace ();
         }
+    }
 
+
+    private String checkUser() {
+
+
+        String user_number = phone_number;
+        String username = "";
+
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery ("Numbers");
+        query.whereEqualTo("number", user_number);
+        query.getFirstInBackground (new GetCallback<ParseObject> () {
+            public void done(ParseObject object, ParseException e) {
+
+                if (e == null) {
+                    object.deleteInBackground ();
+
+                }
+
+            }
+        });
+
+        return  username;
 
     }
+
 
 }

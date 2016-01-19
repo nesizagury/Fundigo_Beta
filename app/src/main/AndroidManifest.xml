@@ -19,7 +19,6 @@
 
     <application
         android:allowBackup="true"
-        android:debuggable="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Fundigo"
         android:theme="@style/AppTheme">

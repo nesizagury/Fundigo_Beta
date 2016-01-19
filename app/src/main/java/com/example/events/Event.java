@@ -11,48 +11,59 @@ import com.parse.ParseObject;
 @ParseClassName("Event")
 public class Event extends ParseObject {
 
-    private Location loc=new Location("");
+    private Location loc = new Location ("");
 
-    public void setLocation( double x,double y)
-    {
-        loc.setLatitude(x);
-        loc.setLongitude(y);
+    public void setLocation(double x, double y) {
+        loc.setLatitude (x);
+        loc.setLongitude (y);
     }
 
 
-    public float getdis(){return (RealTime.loc.distanceTo(getLocation())/1000);}
-
-    public Location getLocation(){return loc;}
-
-
-    public String getName(){
-        return getString("Name");
+    public float getdis() {
+        return (RealTime.loc.distanceTo (getLocation ()) / 1000);
     }
 
-    public void setName(String name){
-        put("Name", name);
+    public Location getLocation() {
+        return loc;
     }
 
-    public String getNumOfTicketsLeft(){
+
+    public String getName() {
+        return getString ("Name");
+    }
+
+    public void setName(String name) {
+        put ("Name", name);
+    }
+
+    public String getNumOfTicketsLeft() {
         return getString ("NumOfTicketsLeft");
     }
 
-    public void setNumOfTicketsLeft(String numOfTicketsLeft){
-        put("NumOfTicketsLeft", numOfTicketsLeft);
+    public void setNumOfTicketsLeft(String numOfTicketsLeft) {
+        put ("NumOfTicketsLeft", numOfTicketsLeft);
     }
 
-    public String getPrice(){
+    public String getPrice() {
         return getString ("Price");
     }
 
-    public void setPrice(String price){
-        put("Price", price);
+    public void setPrice(String price) {
+        put ("Price", price);
+    }
+
+    public String getAccountBalance() {
+        return getString ("AccountBalance");
+    }
+
+    public void setAccountBalance(String AccountBalance) {
+        put ("AccountBalance", AccountBalance);
     }
 
     @Override
-    public String toString(){
-        return getString("Name") + "\n" +
-                       getString("Price") + "$" + "\n" +
-                       getString("NumOfTicketsLeft");
+    public String toString() {
+        return getString ("Name") + "\n" +
+                       getString ("Price") + "$" + "\n" +
+                       getString ("NumOfTicketsLeft");
     }
 }
