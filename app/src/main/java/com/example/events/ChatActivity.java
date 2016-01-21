@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -50,7 +49,7 @@ public class ChatActivity extends Activity {
         producer_id = intent.getStringExtra("producer_id");
         customer_id = intent.getStringExtra("customer_id");
 
-        Toast.makeText(getApplicationContext(), "cus = " + customer_id + " prod = " + producer_id, Toast.LENGTH_SHORT).show ();
+        //Toast.makeText(getApplicationContext(), "cus = " + customer_id + " prod = " + producer_id, Toast.LENGTH_SHORT).show ();
 
 
       //  combinedConversationId = (producer_id * customer_id);
@@ -89,7 +88,7 @@ public class ChatActivity extends Activity {
         try {
             message.save ();
         } catch (ParseException e) {
-            Toast.makeText(getApplicationContext(), "error save your msg in parse", Toast.LENGTH_SHORT).show ();
+            //Toast.makeText(getApplicationContext(), "error save your msg in parse", Toast.LENGTH_SHORT).show ();
             e.printStackTrace ();
         }
         etMessage.setText("");

@@ -44,10 +44,8 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
             else if(vId==RealTime.getId())
             {
                 newIntent=new Intent(this,RealTime.class);
+                startActivity(newIntent);
             }
-            if(vId!=SavedEvent.getId())startActivity(newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-
-
         }
     /**
      * Called when the user clicks the filter button
@@ -88,5 +86,8 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
 //    }
 
 
-
+    public void openMenuPage(View v) {
+        Intent menuPageIntent = new Intent (this, Menu.class);
+        startActivity (menuPageIntent);
+    }
 }

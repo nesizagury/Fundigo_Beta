@@ -280,21 +280,21 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(Exception e) {
-            Toast.makeText (getApplicationContext (), "a", Toast.LENGTH_SHORT).show ();
+            //Toast.makeText (getApplicationContext (), "a", Toast.LENGTH_SHORT).show ();
 
             if (e instanceof InvalidInputException) {
                 // Incorrect number or code provided
                 Toast.makeText (getApplicationContext (), "invalid phone number try again.", Toast.LENGTH_SHORT).show ();
             } else if (e instanceof CodeInterceptionException) {
                 // Intercepting the verification code automatically failed, input the code manually with verify()
-                Toast.makeText (getApplicationContext (), "b", Toast.LENGTH_SHORT).show ();
+                //Toast.makeText (getApplicationContext (), "b", Toast.LENGTH_SHORT).show ();
 
             } else if (e instanceof IncorrectCodeException) {
-                Toast.makeText (getApplicationContext (), "c", Toast.LENGTH_SHORT).show ();
+                //Toast.makeText (getApplicationContext (), "c", Toast.LENGTH_SHORT).show ();
             } else if (e instanceof ServiceErrorException) {
-                Toast.makeText (getApplicationContext (), "d", Toast.LENGTH_SHORT).show ();
+                //Toast.makeText (getApplicationContext (), "d", Toast.LENGTH_SHORT).show ();
             } else {
-                Toast.makeText (getApplicationContext (), "e", Toast.LENGTH_SHORT).show ();
+                //Toast.makeText (getApplicationContext (), "e", Toast.LENGTH_SHORT).show ();
             }
         }
 

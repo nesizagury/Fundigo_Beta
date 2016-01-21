@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
@@ -106,7 +105,7 @@ public class EventPage extends Activity implements View.OnClickListener {
             intent.putExtras(b);
             startActivity(intent);
         } else {
-            Toast.makeText(getApplicationContext(), "already signed!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "already signed!", Toast.LENGTH_SHORT).show();
             Bundle b = new Bundle();
             Intent ticketsPageIntent = new Intent(EventPage.this, TicketsPage.class);
             Intent intentHere = getIntent();
@@ -127,7 +126,7 @@ public class EventPage extends Activity implements View.OnClickListener {
                 String receiveString = "";
                 while ((receiveString = bufferedReader.readLine()) != null) {
                     phone_number = receiveString;
-                    Toast.makeText(getApplicationContext(), phone_number, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), phone_number, Toast.LENGTH_SHORT).show();
                 }
                 inputStream.close();
             }
