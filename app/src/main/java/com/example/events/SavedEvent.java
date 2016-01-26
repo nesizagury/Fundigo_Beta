@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -39,11 +38,10 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);
+        super.onCreate (savedInstanceState);
 
         setContentView(R.layout.activity_saved_event);
         listView=(ListView)findViewById(R.id.listView);
-        Toast.makeText(this,"before readfile",Toast.LENGTH_SHORT).show();
         readFromFile();
         Event=(Button)findViewById(R.id.BarEvent_button);
         RealTime=(Button)findViewById(R.id.BarRealTime_button);
@@ -55,16 +53,16 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
         popup.getMenuInflater().inflate(R.menu.popup_city, popup.getMenu());
         city=(Button)findViewById(R.id.city_item);
 
-        if(MainActivity.nameOfCurrentCity!=null) {
-            city.setText(MainActivity.nameOfCurrentCity);
-            Adapters atpt=new Adapters(SavedEvent.this,city.getText().toString(),2,arr);
-            listView.setAdapter(atpt);
-        }
-        else
-        {
-            Adapters adapters=new Adapters(this,"SavedEvent",arr);
-            listView.setAdapter(adapters);
-        }
+//        if(MainActivity.currentCityChosen.g!=null) {
+//            city.setText(MainActivity.nameOfCurrentCity);
+//            EventsListAdapter atpt=new EventsListAdapter (SavedEvent.this,city.getText().toString(),2,arr);
+//            listView.setAdapter(atpt);
+//        }
+//        else
+//        {
+            EventsListAdapter eventsListAdapter =new EventsListAdapter (this,"SavedEvent",arr);
+            listView.setAdapter(eventsListAdapter);
+//        }
         city.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +80,7 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         city.setText(item.getTitle());
-                        Adapters atpt=new Adapters(SavedEvent.this,item.getTitle().toString(),2,arr);
+                        EventsListAdapter atpt=new EventsListAdapter (SavedEvent.this,item.getTitle().toString(),2,arr);
                         listView.setAdapter(atpt);
                         return true;
                     }
@@ -158,8 +156,8 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
         startActivity (filterPageIntent);
     }
 
-//    public void city(MenuItem item) {
-//        ArrayList<String> list = new ArrayList<String>();
+//    public void findCurrentCityGPS(MenuItem item) {
+//        ArrayList<String> eventList = new ArrayList<String>();
 //
 //        String[] locales = Locale.getISOCountries();
 //
@@ -168,7 +166,7 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
 //            Locale obj = new Locale("", countryCode);
 //
 //            System.out.println("Country Name = " + obj.getDisplayCountry());
-//            list.add(obj.getDisplayCountry());
+//            eventList.add(obj.getDisplayCountry());
 //
 //        }
 //    }
@@ -191,8 +189,8 @@ public class SavedEvent extends AppCompatActivity implements View.OnClickListene
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Bundle b = new Bundle ();
         Intent intent = new Intent (this, EventPage.class);
-        Holder holder = (Holder) view.getTag ();
-        EventInfo event = (EventInfo) holder.image.getTag ();
+        EventListHolder eventListHolder = (EventListHolder) view.getTag ();
+        EventInfo event = (EventInfo) eventListHolder.image.getTag ();
         intent.putExtra ("eventImage", MainActivity.events_data.get (i).getImageId());
         intent.putExtra ("eventDate", MainActivity.events_data.get (i).getDate());
         intent.putExtra ("eventName", MainActivity.events_data.get (i).getName());

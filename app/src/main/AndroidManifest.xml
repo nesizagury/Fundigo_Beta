@@ -18,17 +18,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
+        android:name="Fundigo"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Fundigo"
         android:theme="@style/AppTheme">
-        <activity android:name=".Main2Activity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
         <activity android:name=".MainActivity">
         </activity>
         <activity android:name=".EventPage">
@@ -37,7 +31,12 @@
         </activity>
         <activity android:name=".FilterPage">
         </activity>
-        <activity android:name=".LoginActivity2">
+        <activity android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
         <activity android:name=".RealTime">
         </activity>
@@ -45,8 +44,9 @@
         </activity>
         <activity android:name=".SavedEvent">
         </activity>
-        <activity android:name=".EventService"
-                  android:theme="@style/AppTheme.PopupServiceEvent"></activity>
+        <activity
+            android:name=".EventService"
+            android:theme="@style/AppTheme.PopupServiceEvent"></activity>
         <activity
             android:name="com.example.events.MessagesRoom"
             />
@@ -62,7 +62,7 @@
             android:value="@string/facebook_app_id"/>
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".SmsSignUpActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme"/>
         <activity
@@ -75,9 +75,10 @@
             android:label="@string/title_activity_chat"
             android:theme="@style/AppTheme"/>
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider1673502059557977"
+        <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:exported="true" />
+            android:authorities="com.facebook.app.FacebookContentProvider1673502059557977"
+            android:exported="true"/>
     </application>
 
 </manifest>

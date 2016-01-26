@@ -19,7 +19,7 @@
             android:id="@+id/imageView"
             android:layout_width="fill_parent"
             android:layout_height="0dip"
-            android:layout_weight="125"
+            android:layout_weight="135"
             android:background="@mipmap/pic0"
             android:scaleType="fitXY"/>
 
@@ -27,7 +27,7 @@
             android:id="@+id/tableRow2"
             android:layout_width="fill_parent"
             android:layout_height="0dip"
-            android:layout_weight="57"
+            android:layout_weight="47"
             android:baselineAligned="false"
             android:contextClickable="true"
             android:gravity="center_vertical|left"

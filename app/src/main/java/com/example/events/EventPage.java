@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
@@ -38,8 +37,8 @@ import java.util.List;
 public class EventPage extends Activity implements View.OnClickListener {
     ImageView save;
     static boolean found = false;
-    int producer_id;
-    int customer_id;
+    String producer_id;
+    String customer_id;
     private ImageView iv_share;
     private final static String TAG = "EventPage";
     private int image_id;
@@ -82,8 +81,8 @@ public class EventPage extends Activity implements View.OnClickListener {
         TextView event_place = (TextView) findViewById (R.id.eventPage_location);
         event_place.setText (eventPlace);
         Bundle b = getIntent ().getExtras ();
-        producer_id = b.getInt ("producer_id");
-        customer_id = b.getInt ("customer_id");
+        producer_id = b.getString ("producer_id");
+        customer_id = b.getString ("customer_id");
         iv_share = (ImageView) findViewById (R.id.imageEvenetPageView2);
         iv_share.setOnClickListener (this);
 
@@ -96,7 +95,6 @@ public class EventPage extends Activity implements View.OnClickListener {
                 intent2.putExtra ("parking", intent.getStringExtra ("parking"));
                 intent2.putExtra ("capacity", intent.getStringExtra ("capacity"));
                 intent2.putExtra ("atm", intent.getStringExtra ("atm"));
-
                 startActivity (intent2);
             }
         });
@@ -107,13 +105,12 @@ public class EventPage extends Activity implements View.OnClickListener {
     public void openTicketsPage(View view) {
         if (readFromFile ().equals ("")) {
             Bundle b = new Bundle ();
-            Intent intent = new Intent (EventPage.this, LoginActivity.class);
+            Intent intent = new Intent (EventPage.this, SmsSignUpActivity.class);
             Intent intentHere = getIntent ();
             intent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
             intent.putExtras (b);
             startActivity (intent);
         } else {
-            //Toast.makeText(getApplicationContext(), "already signed!", Toast.LENGTH_SHORT).show();
             Bundle b = new Bundle ();
             Intent ticketsPageIntent = new Intent (EventPage.this, TicketsPage.class);
             Intent intentHere = getIntent ();
@@ -134,7 +131,6 @@ public class EventPage extends Activity implements View.OnClickListener {
                 String receiveString = "";
                 while ((receiveString = bufferedReader.readLine ()) != null) {
                     phone_number = receiveString;
-                    //Toast.makeText(getApplicationContext(), phone_number, Toast.LENGTH_SHORT).show();
                 }
                 inputStream.close ();
             }
@@ -146,53 +142,42 @@ public class EventPage extends Activity implements View.OnClickListener {
         return phone_number;
     }
 
-
     public void openChat(View view) {
-
         if (MainActivity.isCustomer) {
             Intent intent = new Intent (EventPage.this, ChatActivity.class);
-            intent.putExtra ("producer_id", Integer.toString (producer_id));
-            intent.putExtra ("customer_id", Integer.toString (customer_id));
+            intent.putExtra ("producer_id", producer_id);
+            intent.putExtra ("customer_id", customer_id);
             startActivity (intent);
         } else if (!MainActivity.isGuest)
             loadMessagesPage ();
-
     }
 
     private void loadMessagesPage() {
-
         List<Room> rList = new ArrayList<Room> ();
         List<MessageRoomBean> mrbList = new ArrayList<MessageRoomBean> ();
         ParseQuery<Room> query = ParseQuery.getQuery (Room.class);
-        query.whereEqualTo ("producer_id", Integer.toString (producer_id));
-        // Toast.makeText (getApplicationContext (), "producer_id = " + rList.size(), Toast.LENGTH_SHORT).show();
-
+        query.whereEqualTo ("producer_id", customer_id);
         query.orderByDescending ("createdAt");
         try {
             rList = query.find ();
         } catch (ParseException e) {
             e.printStackTrace ();
         }
-
         for (int i = 0; i < rList.size (); i++) {
-            mrbList.add (new MessageRoomBean (0, null, "", rList.get (i).getCustomer_id (), Integer.toString (producer_id)));
+            mrbList.add (new MessageRoomBean (0, null, "", rList.get (i).getCustomer_id (), producer_id));
         }
         Intent intent = new Intent (this, MessagesRoom.class);
         intent.putExtra ("array", (Serializable) mrbList);
-        intent.putExtra ("producer_id", Integer.toString (producer_id));
+        intent.putExtra ("producer_id", producer_id);
         startActivity (intent);
-
     }
-
 
     @Override
     public void onClick(View v) {
         switch (v.getId ()) {
             case R.id.imageEvenetPageView2:
                 Log.e (TAG, "" + image_id);
-
                 try {
-
                     Bitmap largeIcon = BitmapFactory.decodeResource (getResources (), R.mipmap.pic0);
                     ByteArrayOutputStream bytes = new ByteArrayOutputStream ();
                     largeIcon.compress (Bitmap.CompressFormat.JPEG, 40, bytes);
@@ -202,7 +187,6 @@ public class EventPage extends Activity implements View.OnClickListener {
                     fo.write (bytes.toByteArray ());
                     fo.close ();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace ();
                 }
                 Intent intent = new Intent (Intent.ACTION_SEND);
@@ -223,50 +207,9 @@ public class EventPage extends Activity implements View.OnClickListener {
                 startActivityForResult (intentPick, REQUEST_CODE_MY_PICK);
                 break;
             case R.id.imageEvenetPageView3:
-                int index = this.intent.getIntExtra ("press", 0);
-                if (MainActivity.events_data.get (index).getPress ()) {
-                    MainActivity.events_data.get (index).setPress (false);
-                    save.setBackgroundColor (Color.GRAY);
-                    try {
-                        File inputFile = new File ("saves");
-                        File tempFile = new File ("myTempFile");
-                        BufferedReader reader = new BufferedReader (new FileReader (inputFile));
-                        BufferedWriter writer = new BufferedWriter (new FileWriter (tempFile));
-                        String lineToRemove = eventName;
-                        String currentLine;
-                        Toast.makeText (this, "before while", Toast.LENGTH_SHORT).show ();
-                        while ((currentLine = reader.readLine ()) != null) {
-                            // trim newline when comparing with lineToRemove
-                            String trimmedLine = currentLine.trim ();
-                            if (trimmedLine.equals (lineToRemove)) continue;
-                            writer.write (currentLine);
-                        }
-                        writer.close ();
-                        reader.close ();
-                        boolean successful = tempFile.renameTo (inputFile);
-                        if (successful) {
-                            Toast.makeText (this, "Delete event sucessfuly", Toast.LENGTH_SHORT).show ();
-                        } else {
-                            Toast.makeText (this, "Delete event not sucessfuly", Toast.LENGTH_SHORT).show ();
-                        }
-                    } catch (FileNotFoundException e) {
-                    } catch (IOException e) {
-                    }
-                } else {
-                    MainActivity.events_data.get (index).setPress (true);
-                    save.setBackgroundColor (Color.RED);
-
-                    String filename = "saves";
-
-                    FileOutputStream outputStream;
-                    try {
-                        outputStream = openFileOutput (filename, Context.MODE_PRIVATE);
-                        outputStream.write (eventName.getBytes ());
-                        outputStream.close ();
-                    } catch (Exception e) {
-                        e.printStackTrace ();
-                    }
-                }
+                handleSaveEventClicked (this.intent.getIntExtra ("press", 0),
+                                               eventName,
+                                               save);
                 break;
         }
     }
@@ -275,7 +218,6 @@ public class EventPage extends Activity implements View.OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data != null && requestCode == REQUEST_CODE_MY_PICK) {
             String appName = data.getComponent ().flattenToShortString ();
-
             Log.e (TAG, "" + appName);
             if (appName.equals ("com.facebook.katana/com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias")) {
                 ShareDialog shareDialog;
@@ -288,10 +230,8 @@ public class EventPage extends Activity implements View.OnClickListener {
                                                                                       "C u there at " + date + " !" + "\n" + "At " + eventPlace)
                                                        .setContentUrl (Uri.parse ("http://eventpageURL.com/here"))
                                                        .build ();
-
                 shareDialog.show (linkContent);
             } else {
-
                 startActivity (data);
             }
         }
@@ -301,5 +241,43 @@ public class EventPage extends Activity implements View.OnClickListener {
         int index = intent.getIntExtra ("press", 0);
         if (MainActivity.events_data.get (index).getPress ()) save.setBackgroundColor (Color.RED);
         else save.setBackgroundColor (Color.GRAY);
+    }
+
+    public void handleSaveEventClicked(int index, String eventName, ImageView saveButton) {
+        if (MainActivity.events_data.get (index).getPress ()) {
+            MainActivity.events_data.get (index).setPress (false);
+            save.setBackgroundColor (Color.GRAY);
+            try {
+                File inputFile = new File ("saves");
+                File tempFile = new File ("myTempFile");
+                BufferedReader reader = new BufferedReader (new FileReader (inputFile));
+                BufferedWriter writer = new BufferedWriter (new FileWriter (tempFile));
+                String lineToRemove = eventName;
+                String currentLine;
+                while ((currentLine = reader.readLine ()) != null) {
+                    // trim newline when comparing with lineToRemove
+                    String trimmedLine = currentLine.trim ();
+                    if (trimmedLine.equals (lineToRemove)) continue;
+                    writer.write (currentLine);
+                }
+                writer.close ();
+                reader.close ();
+                tempFile.renameTo (inputFile);
+            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
+            }
+        } else {
+            MainActivity.events_data.get (index).setPress (true);
+            saveButton.setBackgroundColor (Color.RED);
+            String filename = "saves";
+            FileOutputStream outputStream;
+            try {
+                outputStream = openFileOutput (filename, Context.MODE_PRIVATE);
+                outputStream.write (eventName.getBytes ());
+                outputStream.close ();
+            } catch (Exception e) {
+                e.printStackTrace ();
+            }
+        }
     }
 }

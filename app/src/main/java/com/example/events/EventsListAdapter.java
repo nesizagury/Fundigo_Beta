@@ -25,59 +25,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Adapters extends BaseAdapter {
+public class EventsListAdapter extends BaseAdapter {
 
-
-    List<EventInfo> list = new ArrayList<EventInfo> ();
+    List<EventInfo> eventList = new ArrayList<EventInfo> ();
     Context context;
     private ImageView iv_share;
-    private final static String TAG = "Adapters";
+    private final static String TAG = "EventsListAdapter";
     static final int REQUEST_CODE_MY_PICK = 1;
     Uri uri;
 
 
-    public Adapters(Context c) {
-
+    public EventsListAdapter(Context c, List<EventInfo> eventList) {
         this.context = c;
-
-        Resources res = context.getResources ();
-        String[] eventDate_list;
-        String[] eventName_list;
-        String[] eventTag_list;
-        String[] eventPrice_list;
-        String[] eventInfo_list;
-        String[] eventPlace_list;
-
-        eventName_list = res.getStringArray (R.array.eventNames);
-        eventDate_list = res.getStringArray (R.array.eventDates);
-        eventTag_list = res.getStringArray (R.array.eventTags);
-        eventPrice_list = res.getStringArray (R.array.eventPrice);
-        eventInfo_list = res.getStringArray (R.array.eventInfo);
-        eventPlace_list = res.getStringArray (R.array.eventPlace);
-
-        String arrToilet[] = res.getStringArray (R.array.eventToiletService);
-        String arrParking[] = res.getStringArray (R.array.eventParkingService);
-        String arrCapacity[] = res.getStringArray (R.array.eventCapacityService);
-        String arrATM[] = res.getStringArray (R.array.eventATMService);
-
-        for (int j = 0; j < 3; j++) {
-            for (int i = 0; i < 14; i++)
-                list.add (new EventInfo (
-                                                R.mipmap.pic0 + i,
-                                                eventDate_list[i],
-                                                eventName_list[i],
-                                                eventTag_list[i],
-                                                eventPrice_list[i],
-                                                eventInfo_list[i],
-                                                eventPlace_list[i],
-                                                arrToilet[i],
-                                                arrParking[i],
-                                                arrCapacity[i],
-                                                arrATM[i]));
-        }
+        this.eventList = eventList;
     }
 
-    public Adapters(Context c, ArrayList<Event> arrayList) {
+    public EventsListAdapter(Context c, ArrayList<Event> arrayList) {
 
         this.context = c;
 
@@ -88,12 +51,14 @@ public class Adapters extends BaseAdapter {
         String[] eventPrice_list;
         String[] eventInfo_list;
         String[] eventPlace_list;
+        String[] eventCity_list;
         eventName_list = res.getStringArray (R.array.eventNames);
         eventDate_list = res.getStringArray (R.array.eventDates);
         eventTag_list = res.getStringArray (R.array.eventTags);
         eventPrice_list = res.getStringArray (R.array.eventPrice);
         eventInfo_list = res.getStringArray (R.array.eventInfo);
         eventPlace_list = res.getStringArray (R.array.eventPlace);
+        eventCity_list = res.getStringArray (R.array.eventCity);
 
         String arrToilet[] = res.getStringArray (R.array.eventToiletService);
         String arrParking[] = res.getStringArray (R.array.eventParkingService);
@@ -115,14 +80,15 @@ public class Adapters extends BaseAdapter {
                                                arrToilet[i],
                                                arrParking[i],
                                                arrCapacity[i],
-                                               arrATM[i]));
+                                               arrATM[i],
+                                               eventCity_list[i]));
         }
         boolean flag = true;
         for (int i = 0; i < arrayList.size (); i++) {
             for (int j = 0; j < ans.size () && flag; j++) {
                 if (ans.get (j).getName ().equals (arrayList.get (i).getName ()) && flag) {
                     ans.get (j).setPlace (ans.get (j).getPlace () + " " + arrayList.get (i).getdis () + " km away");
-                    list.add (ans.get (j));
+                    eventList.add (ans.get (j));
                     flag = false;
                 }
             }
@@ -130,15 +96,14 @@ public class Adapters extends BaseAdapter {
         }
     }
 
-
     @Override
     public int getCount() {
-        return list.size ();
+        return eventList.size ();
     }
 
     @Override
     public Object getItem(int i) {
-        return list.get (i);
+        return eventList.get (i);
     }
 
     @Override
@@ -149,27 +114,25 @@ public class Adapters extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         View row = view;
-        final Holder holder;
-
+        final EventListHolder eventListHolder;
 
         if (row == null) {
             LayoutInflater inflator = (LayoutInflater) context.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
             row = inflator.inflate (R.layout.list_view, viewGroup, false);
-            holder = new Holder (row);
-            row.setTag (holder);
-
+            eventListHolder = new EventListHolder (row);
+            row.setTag (eventListHolder);
         } else {
-            holder = (Holder) row.getTag ();
+            eventListHolder = (EventListHolder) row.getTag ();
         }
 
-        EventInfo event = list.get (i);
-        holder.image.setImageResource (event.imageId);
+        EventInfo event = eventList.get (i);
+        eventListHolder.image.setImageResource (event.imageId);
 
-        holder.date.setText (event.getDate ());
-        holder.name.setText (event.getName ());
-        holder.tags.setText (event.getTags ());
-        holder.price.setText (event.getPrice ());
-        holder.place.setText (event.getPlace ());
+        eventListHolder.date.setText (event.getDate ());
+        eventListHolder.name.setText (event.getName ());
+        eventListHolder.tags.setText (event.getTags ());
+        eventListHolder.price.setText (event.getPrice ());
+        eventListHolder.place.setText (event.getPlace ());
 
         iv_share = (ImageView) row.findViewById (R.id.imageView2);
         iv_share.setOnClickListener (new View.OnClickListener () {
@@ -194,9 +157,9 @@ public class Adapters extends BaseAdapter {
                         }
                         Intent intent = new Intent (Intent.ACTION_SEND);
                         intent.setType ("image/jpeg");
-                        intent.putExtra (Intent.EXTRA_TEXT, "I`m going to " + holder.name.getText ().toString () +
-                                                                    "\n" + "C u there at " + holder.date.getText ().toString () + " !" +
-                                                                    "\n" + "At " + holder.place.getText ().toString () +
+                        intent.putExtra (Intent.EXTRA_TEXT, "I`m going to " + eventListHolder.name.getText ().toString () +
+                                                                    "\n" + "C u there at " + eventListHolder.date.getText ().toString () + " !" +
+                                                                    "\n" + "At " + eventListHolder.place.getText ().toString () +
                                                                     "\n" + "http://eventpageURL.com/here");
                         String imagePath = Environment.getExternalStorageDirectory () + File.separator + "test.jpg";
                         File imageFileToShare = new File (imagePath);
@@ -209,11 +172,11 @@ public class Adapters extends BaseAdapter {
                         intentPick.putExtra (Intent.EXTRA_INTENT, intent);
                         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences (context);
                         SharedPreferences.Editor editor = sp.edit ();
-                        editor.putString ("name", holder.name.getText ().toString ());
-                        editor.putString ("date", holder.date.getText ().toString ());
-                        editor.putString ("place", holder.place.getText ().toString ());
+                        editor.putString ("name", eventListHolder.name.getText ().toString ());
+                        editor.putString ("date", eventListHolder.date.getText ().toString ());
+                        editor.putString ("place", eventListHolder.place.getText ().toString ());
                         editor.apply ();
-                        Log.e (TAG, "" + holder.name.getText ().toString () + " " + holder.date.getText ().toString () + " " + holder.place.getText ().toString ());
+                        Log.e (TAG, "" + eventListHolder.name.getText ().toString () + " " + eventListHolder.date.getText ().toString () + " " + eventListHolder.place.getText ().toString ());
                         ((Activity) context).startActivityForResult (intentPick, REQUEST_CODE_MY_PICK);
                         break;
                 }
@@ -221,38 +184,34 @@ public class Adapters extends BaseAdapter {
 
 
         });
-
-
         return row;
-
-
     }
 
-    public Adapters(Context c, String name, int from, ArrayList<EventInfo> arrayList) {
+    public EventsListAdapter(Context c, String name, int from, ArrayList<EventInfo> arrayList) {
         this.context = c;
         if (from == 1) {
             for (int i = 0; i < MainActivity.events_data.size (); i++) {
-                if (MainActivity.events_data.get (i).getPlace ().contains (name) && !list.contains (MainActivity.events_data.get (i))) {
-                    list.add (MainActivity.events_data.get (i));
+                if (MainActivity.events_data.get (i).getPlace ().contains (name) && !eventList.contains (MainActivity.events_data.get (i))) {
+                    eventList.add (MainActivity.events_data.get (i));
                 }
             }
         } else {
             for (int i = 0; i < arrayList.size (); i++) {
-                if (arrayList.get (i).getPlace ().contains (name) && !list.contains (arrayList.get (i))) {
-                    list.add (arrayList.get (i));
+                if (arrayList.get (i).getPlace ().contains (name) && !eventList.contains (arrayList.get (i))) {
+                    eventList.add (arrayList.get (i));
                 }
             }
         }
     }
 
-    public Adapters(Context c, String name, ArrayList<EventInfo> arrayList) {
+    public EventsListAdapter(Context c, String name, ArrayList<EventInfo> arrayList) {
         this.context = c;
         if (name.equals ("filter")) {
-            list = arrayList;
+            eventList = arrayList;
         } else {
             for (int i = 0; i < arrayList.size (); i++) {
-                if (arrayList.get (i).getName ().equals (name) && !list.contains (arrayList.get (i)))
-                    list.add (arrayList.get (i));
+                if (arrayList.get (i).getName ().equals (name) && !eventList.contains (arrayList.get (i)))
+                    eventList.add (arrayList.get (i));
             }
         }
     }

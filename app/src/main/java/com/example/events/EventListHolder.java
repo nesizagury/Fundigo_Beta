@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class Holder {
+public class EventListHolder {
 
     ImageView image;
     TextView date;
@@ -14,7 +14,7 @@ public class Holder {
     TextView price;
     TextView place;
 
-    public Holder(View v) {
+    public EventListHolder(View v) {
 
         image = (ImageView) v.findViewById(R.id.imageView);
         date = (TextView) v.findViewById(R.id.event_date);

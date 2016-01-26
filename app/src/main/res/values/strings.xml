@@ -16,20 +16,59 @@
     <string name="message_hint">Say anything</string>
     <string name="send">Send</string>
     <string-array name="popUp">
-
-        <item>Tel Aviv</item>
+        <item>All Cities</item>
         <item>Haifa</item>
         <item>Ramat Gan</item>
         <item>Tiberias</item>
         <item>Hertzelia</item>
         <item>Beer Sheva</item>
         <item>Jerusalem</item>
-        <item>Afola</item>
+        <item>Kiryat Motzkin</item>
         <item>Bnei Brak</item>
-        <item>Ariel</item>
-        <item>Naaria</item>
-        <item>Akko</item>
+        <item>Ari\'el</item>
+        <item>Nahariyya</item>
+        <item>Rehovot</item>
         <item>Eilat</item>
+        <item>Tel Aviv-Yafo</item>
+    </string-array>
+    <string-array name="eventPlace">
+
+        <item>Even Gvirol 75, Tel Aviv-Yafo</item>
+        <item>Chelnov 29, Haifa</item>
+        <item>Derech Hashalom 125, Ramat Gan</item>
+        <item>Begin Road 48, Tiberias</item>
+        <item>Rabin 3, Herzelia</item>
+        <item>Ben Yehoda 1, Be\'er Sheva</item>
+        <item>Gaza 102, Jerusalem</item>
+        <item>Kanfei Nesharim 5, Kiryat Motzkin</item>
+        <item>Gefen 2, Tel Aviv-Yafo</item>
+        <item>Jabutinsky 86, Bnei Brak</item>
+        <item>Dovdevan 26, Tiberias</item>
+        <item>Hamakabim 17, Ari\'el</item>
+        <item>Arlozorov 52, Nahariyya</item>
+        <item>Hayarkon 4, Rehovot</item>
+        <item>Moses 84, Eilat</item>
+
+    </string-array>
+
+    <string-array name="eventCity">
+
+        <item>Tel Aviv-Yafo</item>
+        <item>Haifa</item>
+        <item>Ramat Gan</item>
+        <item>Tiberias</item>
+        <item>Herzelia</item>
+        <item>Be\'er Sheva</item>
+        <item>Jerusalem</item>
+        <item>Kiryat Motzkin</item>
+        <item>Tel Aviv-Yafo</item>
+        <item>Bnei Brak</item>
+        <item>Tiberias</item>
+        <item>Ari\'el</item>
+        <item>Nahariyya</item>
+        <item>Rehovot</item>
+        <item>Eilat</item>
+
     </string-array>
     <string-array name="eventServiceTitles">
         <item>Toilet</item>
@@ -188,27 +227,6 @@
 
     </string-array>
 
-
-    <string-array name="eventPlace">
-
-        <item>Even Gvirol 75, Tel Aviv</item>
-        <item>Chelnov 29, Haifa</item>
-        <item>Derech Hashalom 125, Ramat Gan</item>
-        <item>Begin Road 48, Tiberias</item>
-        <item>Rabin 3, Hertzelia</item>
-        <item>Ben Yehoda 1, Beer Sheva</item>
-        <item>Gaza 102, Jerusalem</item>
-        <item>Kanfei Nesharim 5, Afola</item>
-        <item>Gefen 2, Tel Aviv</item>
-        <item>Jabutinsky 86, Bnei Brak</item>
-        <item>Dovdevan 26, Tiberias</item>
-        <item>Hamakabim 17, Ariel</item>
-        <item>Arlozorov 52, Naaria</item>
-        <item>Hayarkon 4, Akko</item>
-        <item>Moses 84, Eilat</item>
-
-    </string-array>
-
     <string-array name="eventInfo">
 
         <item>
@@ -234,8 +252,8 @@ The Winter Antiques Show marks its 62nd year as the most prestigious art, antiqu
             The Winter Antiques Show marks its 62nd year as the most prestigious art, antiques, and design fair in America, featuring the “best of the best” from Antiquity through the present. Held at the historic Park Avenue Armory in New York City, the Show provides curators, new and established collectors, dealers, and design professionals with opportunities to view and purchase exceptional pieces showcased by 73 exhibitors.
         </item>
         <item>
-            All that glitters is indeed gold at New York City’s most colossal New Year’s Eve celebration hosted by one of the city’s most opulent spaces, the Hammerstein Ballroom. It’s no secret that you’ve spent the last 364 days of this year immersed in hard work so end it with hard play and exquisite amenities like a premium open bar and A-list entertainment at this incomparable NYE party.  The most impeccably cultivated holiday blowout this city has ever seen, Joonbug and the Hammerstein Ballroom invite you to dress exquisitely and act shamelessly this New Year’s Eve.
-                        All that glitters is indeed gold at New York City’s most colossal New Year’s Eve celebration hosted by one of the city’s most opulent spaces, the Hammerstein Ballroom. It’s no secret that you’ve spent the last 364 days of this year immersed in hard work so end it with hard play and exquisite amenities like a premium open bar and A-list entertainment at this incomparable NYE party.  The most impeccably cultivated holiday blowout this city has ever seen, Joonbug and the Hammerstein Ballroom invite you to dress exquisitely and act shamelessly this New Year’s Eve.
+            All that glitters is indeed gold at New York City’s most colossal New Year’s Eve celebration hosted by one of the city’s most opulent spaces, the Hammerstein Ballroom. It’s no secret that you’ve spent the last 364 days of this year immersed in hard work so end it with hard play and exquisite amenities like a premium open bar and A-eventList entertainment at this incomparable NYE party.  The most impeccably cultivated holiday blowout this city has ever seen, Joonbug and the Hammerstein Ballroom invite you to dress exquisitely and act shamelessly this New Year’s Eve.
+                        All that glitters is indeed gold at New York City’s most colossal New Year’s Eve celebration hosted by one of the city’s most opulent spaces, the Hammerstein Ballroom. It’s no secret that you’ve spent the last 364 days of this year immersed in hard work so end it with hard play and exquisite amenities like a premium open bar and A-eventList entertainment at this incomparable NYE party.  The most impeccably cultivated holiday blowout this city has ever seen, Joonbug and the Hammerstein Ballroom invite you to dress exquisitely and act shamelessly this New Year’s Eve.
 
         </item>
         <item>
@@ -293,7 +311,7 @@ Eat, Drink, Bowl, and SHOOT POOL.
 
 PLAY Lounge combines games and nightlife in a great blend to give you an experience that is worth every penny you shed.
 
-The delectable New American menu offers you a list of dishes to choose from, after which you can get back to the game or then just lounge around with your pals. The chic interior is complete with a plush red and grey seating area and a sleek bar make for a cool hub where you can sit back and sip the fresh cocktails while enjoying the atmosphere.
+The delectable New American menu offers you a eventList of dishes to choose from, after which you can get back to the game or then just lounge around with your pals. The chic interior is complete with a plush red and grey seating area and a sleek bar make for a cool hub where you can sit back and sip the fresh cocktails while enjoying the atmosphere.
 New York Citys most elegant and exciting venue with a full service bar and restaurant.
 With six pool tables, ping pong and Foosball.
 + 10 Large Projection Screens w or Surround Sound.
@@ -304,7 +322,7 @@ Eat, Drink, Bowl, and SHOOT POOL.
 
 PLAY Lounge combines games and nightlife in a great blend to give you an experience that is worth every penny you shed.
 
-The delectable New American menu offers you a list of dishes to choose from, after which you can get back to the game or then just lounge around with your pals. The chic interior is complete with a plush red and grey seating area and a sleek bar make for a cool hub where you can sit back and sip the fresh cocktails while enjoying the atmosphere.
+The delectable New American menu offers you a eventList of dishes to choose from, after which you can get back to the game or then just lounge around with your pals. The chic interior is complete with a plush red and grey seating area and a sleek bar make for a cool hub where you can sit back and sip the fresh cocktails while enjoying the atmosphere.
         </item>
         <item>
 THIS IS A FREE GUARANTEE SEAT TICKET. YOU MUST PRESENT I.D. WITH THE TICKET AND HAVE EVERYONE WITH YOU FOR EARLY ENTRY. GUARANTTED SEATING STARTS AT 12 NOON-12:30 ANY SEAT NOT CLAIMED BY 12:30 WILL BE MADE AVAILABLE TO THE STANDING GENERAL PUBLIC

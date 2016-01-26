@@ -2,55 +2,58 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/one"
-        android:title="Tel Aviv"/>
+        android:title=""
+        />
 
     <item
         android:id="@+id/two"
-        android:title="Jerusalem"/>
+        android:title=""/>
 
     <item
         android:id="@+id/three"
-        android:title="Haifa"
+        android:title=""
         />
     <item
         android:id="@+id/four"
-        android:title="Ramat Gan"
+        android:title=""
         />
     <item
         android:id="@+id/five"
-        android:title="Tiberias"
+        android:title=""
         />
     <item
         android:id="@+id/six"
-        android:title="Hertzelia"
+        android:title="H"
         />
     <item
         android:id="@+id/seven"
-        android:title="Beer Sheva"
+        android:title=""
         />
     <item
         android:id="@+id/eight"
-        android:title="Afola"
+        android:title=""
         />
     <item
         android:id="@+id/nine"
-        android:title="Bnei Brak"
+        android:title=""
         />
     <item
-    android:id="@+id/ten"
-    android:title="Ariel"
-    />
+        android:id="@+id/ten"
+        android:title=""
+        />
     <item
         android:id="@+id/eleven"
-        android:title="Naaria"
+        android:title=""
         />
     <item
         android:id="@+id/twelve"
-        android:title="Akko"
+        android:title=""
         />
     <item
         android:id="@+id/thirteen"
-        android:title="Eilat"
+        android:title=""
         />
-
+    <item
+        android:id="@+id/fourtheen"
+        android:title=""/>
 </menu>
