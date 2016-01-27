@@ -31,6 +31,8 @@
         </activity>
         <activity android:name=".FilterPage">
         </activity>
+        <activity android:name=".VerifyCard">
+        </activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

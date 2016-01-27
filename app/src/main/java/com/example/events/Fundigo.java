@@ -15,18 +15,19 @@ import org.acra.annotation.ReportsCrashes;
 public class Fundigo extends Application {
     @Override
     public void onCreate() {
-        super.onCreate();
+        super.onCreate ();
         ACRA.init (this);
         Parse.enableLocalDatastore (this);
-        Parse.initialize(this);
+        Parse.initialize (this);
         ParseObject.registerSubclass (Event.class);
         ParseObject.registerSubclass(com.example.events.Message.class);
         ParseObject.registerSubclass(com.example.events.Room.class);
-        ParseObject.registerSubclass(com.example.events.Numbers.class);
+        ParseObject.registerSubclass (com.example.events.Numbers.class);
         FacebookSdk.sdkInitialize (getApplicationContext ());
         ParseUser.enableAutomaticUser ();
         ParseACL defaultAcl = new ParseACL();
         defaultAcl.setPublicReadAccess(true);
+        defaultAcl.setPublicWriteAccess (true);
         ParseACL.setDefaultACL(defaultAcl, true);
     }
 

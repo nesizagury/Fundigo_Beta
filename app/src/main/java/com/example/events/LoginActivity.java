@@ -15,7 +15,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,18 +97,15 @@ public class LoginActivity extends Activity {
     private String readFromFile() {
         String phone_number = "";
         try {
-            File f = new File ("verify.txt");
-            if (f.exists () && !f.isDirectory ()) {
-                InputStream inputStream = openFileInput ("verify.txt");
-                if (inputStream != null) {
-                    InputStreamReader inputStreamReader = new InputStreamReader (inputStream);
-                    BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
-                    String receiveString = "";
-                    while ((receiveString = bufferedReader.readLine ()) != null) {
-                        phone_number = receiveString;
-                    }
-                    inputStream.close ();
+            InputStream inputStream = openFileInput ("verify.txt");
+            if (inputStream != null) {
+                InputStreamReader inputStreamReader = new InputStreamReader (inputStream);
+                BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
+                String receiveString = "";
+                while ((receiveString = bufferedReader.readLine ()) != null) {
+                    phone_number = receiveString;
                 }
+                inputStream.close ();
             }
         } catch (FileNotFoundException e) {
             Log.e ("login activity", "File not found: " + e.toString ());
@@ -118,5 +114,4 @@ public class LoginActivity extends Activity {
         }
         return phone_number;
     }
-
 }

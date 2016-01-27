@@ -136,13 +136,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
         try {
             number.save ();
             Toast.makeText (getApplicationContext (), "Successfully Signed up", Toast.LENGTH_SHORT).show ();
-            Bundle b = new Bundle ();
-            Intent ticketsPageIntent = new Intent (SmsSignUpActivity.this, TicketsPage.class);
-            Intent intentHere = getIntent ();
-            ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
-            ticketsPageIntent.putExtras (b);
             saveToFile (phone_number);
-            startActivity (ticketsPageIntent);
             finish ();
         } catch (ParseException e) {
             Toast.makeText (getApplicationContext (), " Error ): ", Toast.LENGTH_SHORT).show ();

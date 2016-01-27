@@ -130,6 +130,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void uploadUserData() {
+        events_data.clear ();
+        filtered_events_data.clear ();
         Resources res = this.getResources ();
         String[] eventDate_list;
         String[] eventName_list;
@@ -307,7 +309,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (appName.equals ("com.facebook.katana/com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias")) {
                 ShareDialog shareDialog;
                 shareDialog = new ShareDialog (this);
-
                 ShareLinkContent linkContent = new ShareLinkContent.Builder ()
                                                        .setContentTitle ("I`m going to " + name)
                                                        .setImageUrl (Uri.parse ("https://lh3.googleusercontent.com/-V5wz7jKaQW8/VpvKq0rwEOI/AAAAAAAAB6Y/cZoicmGpQpc/s279-Ic42/pic0.jpg"))

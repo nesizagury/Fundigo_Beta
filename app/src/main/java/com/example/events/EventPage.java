@@ -28,15 +28,12 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EventPage extends Activity implements View.OnClickListener {
     ImageView save;
-    static boolean found = false;
     String producer_id;
     String customer_id;
     private ImageView iv_share;
@@ -55,8 +52,6 @@ public class EventPage extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_event_page);
-
-        found = !readFromFile ().equals ("");
 
         intent = getIntent ();
         image_id = intent.getIntExtra ("eventImage", R.mipmap.pic0);
@@ -103,43 +98,13 @@ public class EventPage extends Activity implements View.OnClickListener {
     }
 
     public void openTicketsPage(View view) {
-        if (readFromFile ().equals ("")) {
-            Bundle b = new Bundle ();
-            Intent intent = new Intent (EventPage.this, SmsSignUpActivity.class);
-            Intent intentHere = getIntent ();
-            intent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
-            intent.putExtras (b);
-            startActivity (intent);
-        } else {
-            Bundle b = new Bundle ();
-            Intent ticketsPageIntent = new Intent (EventPage.this, TicketsPage.class);
-            Intent intentHere = getIntent ();
-            ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
-            ticketsPageIntent.putExtra ("eventPrice", intentHere.getStringExtra ("eventPrice"));
-            ticketsPageIntent.putExtras (b);
-            startActivity (ticketsPageIntent);
-        }
-    }
-
-    private String readFromFile() {
-        String phone_number = "";
-        try {
-            InputStream inputStream = openFileInput ("verify.txt");
-            if (inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader (inputStream);
-                BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
-                String receiveString = "";
-                while ((receiveString = bufferedReader.readLine ()) != null) {
-                    phone_number = receiveString;
-                }
-                inputStream.close ();
-            }
-        } catch (FileNotFoundException e) {
-            Log.e ("login activity", "File not found: " + e.toString ());
-        } catch (IOException e) {
-            Log.e ("login activity", "Can not read file: " + e.toString ());
-        }
-        return phone_number;
+        Bundle b = new Bundle ();
+        Intent ticketsPageIntent = new Intent (EventPage.this, TicketsPage.class);
+        Intent intentHere = getIntent ();
+        ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
+        ticketsPageIntent.putExtra ("eventPrice", intentHere.getStringExtra ("eventPrice"));
+        ticketsPageIntent.putExtras (b);
+        startActivity (ticketsPageIntent);
     }
 
     public void openChat(View view) {
