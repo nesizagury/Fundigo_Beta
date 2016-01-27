@@ -14,7 +14,6 @@ import com.parse.ParseQuery;
 
 import java.util.List;
 
-
 /**
  * Created by nesi on 31/12/2015.
  */
@@ -22,7 +21,6 @@ public class VerifyCard extends AppCompatActivity {
 
     TextView event_name;
     TextView price;
-    private CreditCardForm form;
     String eventName;
 
     @Override
@@ -42,7 +40,6 @@ public class VerifyCard extends AppCompatActivity {
         final CreditCardForm noZipForm = (CreditCardForm) findViewById (R.id.form_no_zip);
         noZipForm.setOnCardValidCallback (cardValidCallback);
     }
-
 
     CardValidCallback cardValidCallback = new CardValidCallback () {
         @Override

@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static List<EventInfo> events_data = new ArrayList<EventInfo> ();
     public static List<EventInfo> filtered_events_data = new ArrayList<EventInfo> ();
     EventsListAdapter eventsListAdapter;
-    private Button event, savedEvent, realTime, currentCityChosen;
+    Button event, savedEvent, realTime, currentCityChosen;
 
     boolean didInit = false;
     static boolean isCustomer = false;
@@ -57,13 +57,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static boolean gps_enabled = false;
     public static boolean network_enabled = false;
     public static LocationManager LocationServices;
+    private static LocationManager locationManager;
     PopupMenu popup;
     String[] namesCity;
-    int indexCityGPS = 0;
+    static int indexCityGPS = 0;
     HashMap<Integer, Integer> popUpIDToCityIndex = new HashMap<Integer, Integer> ();
     LocationListener locationListener;
-    boolean userChoosedCityManually = false;
-    boolean cityFoundGPS = false;
+    static boolean userChoosedCityManually = false;
+    static boolean cityFoundGPS = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,7 +177,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void inflateCityMenu() {
         popup.getMenuInflater ().inflate (R.menu.popup_city, popup.getMenu ());
         loadCityNamesToPopUp ();
-        filterByCity (namesCity[indexCityGPS]);
+        if(userChoosedCityManually){
+            filterByCity (namesCity[0]);
+        } else {
+            filterByCity (namesCity[indexCityGPS]);
+        }
         currentCityChosen.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View v) {
@@ -219,8 +224,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 popUpIDToCityIndex.put (popup.getMenu ().getItem (i).getItemId (), i);
             }
-            if (!cityFoundGPS) {
+            if(userChoosedCityManually){
                 currentCityChosen.setText (popup.getMenu ().getItem (0).getTitle ());
+            } else {
+                currentCityChosen.setText (popup.getMenu ().getItem (indexCityGPS).getTitle ());
             }
         } catch (Exception e) {
             throw e;
@@ -242,14 +249,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void updateDeviceLocationGPS() {
-        LocationManager locationManager = (LocationManager) this.getSystemService (Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) this.getSystemService (Context.LOCATION_SERVICE);
         locationListener = new MyLocationListener ();
         if (ActivityCompat.checkSelfPermission (this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationManager.requestLocationUpdates (LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        locationManager.requestLocationUpdates (LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-        locationManager.requestLocationUpdates (LocationManager.PASSIVE_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates (LocationManager.GPS_PROVIDER, 10000, 0, locationListener);
+        locationManager.requestLocationUpdates (LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
+        locationManager.requestLocationUpdates (LocationManager.PASSIVE_PROVIDER, 10000, 0, locationListener);
     }
 
     @Override
@@ -278,17 +285,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Bundle b = new Bundle ();
         Intent intent = new Intent (this, EventPage.class);
-        intent.putExtra ("eventImage", events_data.get (i).getImageId ());
-        intent.putExtra ("eventDate", events_data.get (i).getDate ());
-        intent.putExtra ("eventName", events_data.get (i).getName ());
-        intent.putExtra ("eventTags", events_data.get (i).getTags ());
-        intent.putExtra ("eventPrice", events_data.get (i).getPrice ());
-        intent.putExtra ("eventInfo", events_data.get (i).getInfo ());
-        intent.putExtra ("eventPlace", events_data.get (i).getPlace ());
-        intent.putExtra ("toilet", events_data.get (i).getToilet ());
-        intent.putExtra ("parking", events_data.get (i).getParking ());
-        intent.putExtra ("capacity", events_data.get (i).getCapacity ());
-        intent.putExtra ("atm", events_data.get (i).getAtm ());
+        intent.putExtra ("eventImage", filtered_events_data.get (i).getImageId ());
+        intent.putExtra ("eventDate", filtered_events_data.get (i).getDate ());
+        intent.putExtra ("eventName", filtered_events_data.get (i).getName ());
+        intent.putExtra ("eventTags", filtered_events_data.get (i).getTags ());
+        intent.putExtra ("eventPrice", filtered_events_data.get (i).getPrice ());
+        intent.putExtra ("eventInfo", filtered_events_data.get (i).getInfo ());
+        intent.putExtra ("eventPlace", filtered_events_data.get (i).getPlace ());
+        intent.putExtra ("toilet", filtered_events_data.get (i).getToilet ());
+        intent.putExtra ("parking", filtered_events_data.get (i).getParking ());
+        intent.putExtra ("capacity", filtered_events_data.get (i).getCapacity ());
+        intent.putExtra ("atm", filtered_events_data.get (i).getAtm ());
+        intent.putExtra ("index", i);
 
         b.putString ("customer_id", customer_id);
         b.putString ("producer_id", Integer.toString (i + 1));
@@ -389,5 +397,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
         return -1;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause ();
+        if (locationManager != null) {
+            if (ActivityCompat.checkSelfPermission (this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            locationManager.removeUpdates (locationListener);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume ();
+        updateDeviceLocationGPS ();
+        eventsListAdapter.notifyDataSetChanged ();
     }
 }

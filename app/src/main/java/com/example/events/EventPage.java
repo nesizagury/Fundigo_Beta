@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
@@ -46,7 +46,6 @@ public class EventPage extends Activity implements View.OnClickListener {
     private String eventName;
     private String eventPlace;
     private Uri uri;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +171,7 @@ public class EventPage extends Activity implements View.OnClickListener {
                 startActivityForResult (intentPick, REQUEST_CODE_MY_PICK);
                 break;
             case R.id.imageEvenetPageView3:
-                handleSaveEventClicked (this.intent.getIntExtra ("press", 0),
+                handleSaveEventClicked (this.intent.getIntExtra ("index", 0),
                                                eventName,
                                                save);
                 break;
@@ -203,15 +202,19 @@ public class EventPage extends Activity implements View.OnClickListener {
     }
 
     public void checkIfChangeColorToSaveButtton() {
-        int index = intent.getIntExtra ("press", 0);
-        if (MainActivity.events_data.get (index).getPress ()) save.setBackgroundColor (Color.RED);
-        else save.setBackgroundColor (Color.GRAY);
+        int index = intent.getIntExtra ("index", 0);
+        if (MainActivity.filtered_events_data.get (index).getPress ())
+            save.setImageResource (R.mipmap.whsavedd);
+        else {
+            save.setImageResource (R.mipmap.wh);
+        }
     }
 
     public void handleSaveEventClicked(int index, String eventName, ImageView saveButton) {
-        if (MainActivity.events_data.get (index).getPress ()) {
-            MainActivity.events_data.get (index).setPress (false);
-            save.setBackgroundColor (Color.GRAY);
+        if (MainActivity.filtered_events_data.get (index).getPress ()) {
+            MainActivity.filtered_events_data.get (index).setPress (false);
+            save.setImageResource (R.mipmap.wh);
+            Toast.makeText (this,"You unSaved this event",Toast.LENGTH_SHORT).show ();
             try {
                 File inputFile = new File ("saves");
                 File tempFile = new File ("myTempFile");
@@ -232,8 +235,9 @@ public class EventPage extends Activity implements View.OnClickListener {
             } catch (IOException e) {
             }
         } else {
-            MainActivity.events_data.get (index).setPress (true);
-            saveButton.setBackgroundColor (Color.RED);
+            MainActivity.filtered_events_data.get (index).setPress (true);
+            save.setImageResource (R.mipmap.whsavedd);
+            Toast.makeText (this, "You Saved this event", Toast.LENGTH_SHORT).show ();
             String filename = "saves";
             FileOutputStream outputStream;
             try {

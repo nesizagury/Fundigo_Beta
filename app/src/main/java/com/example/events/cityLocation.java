@@ -9,18 +9,15 @@ import java.util.List;
  * Created by mirit-binbin on 17/01/2016.
  */
 public class cityLocation {
-
-
-
     List<Address> locations;
-    Location location=new Location("");
+    Location location = new Location ("");
     String nameCity;
-    cityLocation(String name,List<Address> list)
-    {
-        nameCity=name;
-        locations=list;
-        location.setLatitude(list.get(0).getLatitude());
-        location.setLongitude(list.get(0).getLongitude());
+
+    cityLocation(String name, List<Address> list) {
+        nameCity = name;
+        locations = list;
+        location.setLatitude (list.get (0).getLatitude ());
+        location.setLongitude (list.get (0).getLongitude ());
     }
 
     public String getNameCity() {

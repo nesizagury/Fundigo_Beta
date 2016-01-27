@@ -16,14 +16,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class EventsListAdapter extends BaseAdapter {
 
@@ -125,7 +130,7 @@ public class EventsListAdapter extends BaseAdapter {
             eventListHolder = (EventListHolder) row.getTag ();
         }
 
-        EventInfo event = eventList.get (i);
+        final EventInfo event = eventList.get (i);
         eventListHolder.image.setImageResource (event.imageId);
 
         eventListHolder.date.setText (event.getDate ());
@@ -133,6 +138,49 @@ public class EventsListAdapter extends BaseAdapter {
         eventListHolder.tags.setText (event.getTags ());
         eventListHolder.price.setText (event.getPrice ());
         eventListHolder.place.setText (event.getPlace ());
+        checkIfChangeColorToSaveButtton (event, eventListHolder.saveEvent);
+        eventListHolder.saveEvent.setOnClickListener (new View.OnClickListener () {
+            @Override
+            public void onClick(View v) {
+                if (event.getPress ()) {
+                    event.setPress (false);
+                    eventListHolder.saveEvent.setImageResource (R.mipmap.whh);
+                    Toast.makeText (context, "You unSaved this event", Toast.LENGTH_SHORT).show ();
+                    try {
+                        File inputFile = new File ("saves");
+                        File tempFile = new File ("myTempFile");
+                        BufferedReader reader = new BufferedReader (new FileReader (inputFile));
+                        BufferedWriter writer = new BufferedWriter (new FileWriter (tempFile));
+                        String lineToRemove = event.name;
+                        String currentLine;
+                        while ((currentLine = reader.readLine ()) != null) {
+                            // trim newline when comparing with lineToRemove
+                            String trimmedLine = currentLine.trim ();
+                            if (trimmedLine.equals (lineToRemove)) continue;
+                            writer.write (currentLine);
+                        }
+                        writer.close ();
+                        reader.close ();
+                        tempFile.renameTo (inputFile);
+                    } catch (FileNotFoundException e) {
+                    } catch (IOException e) {
+                    }
+                } else {
+                    event.setPress (true);
+                    eventListHolder.saveEvent.setImageResource (R.mipmap.whhsaved);
+                    Toast.makeText (context, "You Saved this event", Toast.LENGTH_SHORT).show ();
+                    String filename = "saves";
+                    FileOutputStream outputStream;
+                    try {
+                        outputStream = context.openFileOutput (filename, Context.MODE_PRIVATE);
+                        outputStream.write (event.name.getBytes ());
+                        outputStream.close ();
+                    } catch (Exception e) {
+                        e.printStackTrace ();
+                    }
+                }
+            }
+        });
 
         iv_share = (ImageView) row.findViewById (R.id.imageView2);
         iv_share.setOnClickListener (new View.OnClickListener () {
@@ -152,7 +200,6 @@ public class EventsListAdapter extends BaseAdapter {
                             fo.write (bytes.toByteArray ());
                             fo.close ();
                         } catch (IOException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace ();
                         }
                         Intent intent = new Intent (Intent.ACTION_SEND);
@@ -181,7 +228,6 @@ public class EventsListAdapter extends BaseAdapter {
                         break;
                 }
             }
-
 
         });
         return row;
@@ -213,6 +259,14 @@ public class EventsListAdapter extends BaseAdapter {
                 if (arrayList.get (i).getName ().equals (name) && !eventList.contains (arrayList.get (i)))
                     eventList.add (arrayList.get (i));
             }
+        }
+    }
+
+    private void checkIfChangeColorToSaveButtton(EventInfo event, ImageView saveEvent) {
+        if (event.getPress ()) {
+            saveEvent.setImageResource (R.mipmap.whhsaved);
+        } else {
+            saveEvent.setImageResource (R.mipmap.whh);
         }
     }
 }

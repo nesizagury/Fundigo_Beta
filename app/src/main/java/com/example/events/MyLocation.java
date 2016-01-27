@@ -41,9 +41,6 @@ public class MyLocation {
         } catch (Exception ex) {
         }
 
-        //don't start listeners if no provider is enabled
-//        if (!gps_enabled && !network_enabled)
-//            return false;
         if (gps_enabled)
             if (ActivityCompat.checkSelfPermission (context, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (context, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             } else {
@@ -59,7 +56,7 @@ public class MyLocation {
     LocationListener locationListenerGps = new LocationListener () {
         public void onLocationChanged(Location location) {
             timer1.cancel ();
-            if(location != null) {
+            if (location != null) {
                 locationResult.gotLocation (location);
             }
             if (ActivityCompat.checkSelfPermission (context, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (context, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -82,7 +79,7 @@ public class MyLocation {
     LocationListener locationListenerNetwork = new LocationListener () {
         public void onLocationChanged(Location location) {
             timer1.cancel ();
-            if(location != null) {
+            if (location != null) {
                 locationResult.gotLocation (location);
             }
             if (ActivityCompat.checkSelfPermission (context, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (context, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -111,34 +108,10 @@ public class MyLocation {
             lm.removeUpdates (locationListenerGps);
             lm.removeUpdates (locationListenerNetwork);
 
-//            Location net_loc = null, gps_loc = null;
-//            if (gps_enabled)
-//                gps_loc = lm.getLastKnownLocation (LocationManager.GPS_PROVIDER);
-//            if (network_enabled)
-//                net_loc = lm.getLastKnownLocation (LocationManager.NETWORK_PROVIDER);
-//
-//            //if there are both values use the latest one
-//            if (gps_loc != null && net_loc != null) {
-//                if (gps_loc.getTime () > net_loc.getTime ())
-//                    locationResult.gotLocation (gps_loc);
-//                else
-//                    locationResult.gotLocation (net_loc);
-//                return;
-//            }
-//
-//            if (gps_loc != null) {
-//                locationResult.gotLocation (gps_loc);
-//                return;
-//            }
-//            if (net_loc != null) {
-//                locationResult.gotLocation (net_loc);
-//                return;
-//            }
-//            locationResult.gotLocation (null);
-            Criteria criteria = new Criteria();
-            String bestProvider = lm.getBestProvider(criteria, false);
-            Location location = lm.getLastKnownLocation(bestProvider);
-            if(location != null){
+            Criteria criteria = new Criteria ();
+            String bestProvider = lm.getBestProvider (criteria, false);
+            Location location = lm.getLastKnownLocation (bestProvider);
+            if (location != null) {
                 locationResult.gotLocation (location);
             }
         }

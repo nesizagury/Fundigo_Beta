@@ -20,7 +20,7 @@
             android:layout_width="fill_parent"
             android:layout_height="0dip"
             android:layout_weight="135"
-            android:background="@mipmap/pic0"
+            android:background="@drawable/pic0"
             android:scaleType="fitXY"/>
 
         <LinearLayout
@@ -113,7 +113,8 @@
                 android:layout_weight="45"
                 android:background="@drawable/row_order1"
                 android:padding="3dp"
-                android:src="@mipmap/whh"/>
+                android:src="@mipmap/whh"
+                />
         </TableRow>
     </LinearLayout>
 
