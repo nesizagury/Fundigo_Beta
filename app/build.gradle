@@ -4,10 +4,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
 
-    repositories {
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-    }
+    repositories { mavenCentral() }
 
     defaultConfig {
         applicationId "com.example.events"
@@ -32,6 +29,5 @@ dependencies {
     compile 'com.parse.bolts:bolts-android:1.+'
     compile 'com.parse:parse-android:1.+'
     compile 'com.android.support:design:23.1.1'
-    compile 'com.github.dbachelder:CreditCardEntry:1.4.7'
     compile files('libs/sinch-android-verification-1.1.2.jar')
 }
