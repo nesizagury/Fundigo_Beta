@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -47,6 +48,7 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
         RealTime.setOnClickListener (this);
 
         RealTime.setTextColor (Color.WHITE);
+        if (MainActivity.loc == null) turnOnGps ();
 
         if (MainActivity.loc != null) {
             loc.setLatitude (MainActivity.loc.getLatitude ());
@@ -55,7 +57,7 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
             loc.setLatitude (y);
             loc.setLongitude (x);
         }
-        Toast.makeText (this, "" + loc.getLongitude () + "  " + loc.getLatitude (), Toast.LENGTH_SHORT).show ();
+        //Toast.makeText (this, "" + loc.getLongitude () + "  " + loc.getLatitude (), Toast.LENGTH_SHORT).show ();
         ArrayList<Event> arrayList = new ArrayList<> ();
         try {
             arrayList = sortList ();
@@ -64,8 +66,8 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
 
 
         gridView = (GridView) findViewById (R.id.gridview);
-        Adapters adapters = new Adapters (this, arrayList);
-        gridView.setAdapter (adapters);
+        EventsListAdapter eventsListAdapter = new EventsListAdapter (this, arrayList);
+        gridView.setAdapter (eventsListAdapter);
         gridView.setSelector (new ColorDrawable (Color.TRANSPARENT));
         gridView.setOnItemClickListener (this);
 
@@ -81,7 +83,7 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
             newIntent = new Intent (this, com.example.events.SavedEvent.class);
         }
         if (vId != RealTime.getId ())
-            startActivity (newIntent.setFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            startActivity (newIntent);
 
 
     }
@@ -128,8 +130,8 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Bundle b = new Bundle ();
         Intent intent = new Intent (this, EventPage.class);
-        Holder holder = (Holder) view.getTag ();
-        EventInfo event = (EventInfo) holder.image.getTag ();
+        EventListHolder eventListHolder = (EventListHolder) view.getTag ();
+        EventInfo event = (EventInfo) eventListHolder.image.getTag ();
         intent.putExtra ("eventImage", MainActivity.events_data.get (i).getImageId ());
         intent.putExtra ("eventDate", MainActivity.events_data.get (i).getDate ());
         intent.putExtra ("eventName", MainActivity.events_data.get (i).getName ());
@@ -140,6 +142,41 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
         b.putInt ("userIndex", i);
         intent.putExtras (b);
         startActivity (intent);
+    }
+
+    private void turnOnGps() {
+        MainActivity.turnGps = false;
+        try {
+            MainActivity.gps_enabled = MainActivity.LocationServices.isProviderEnabled (LocationManager.GPS_PROVIDER);
+            MainActivity.network_enabled = MainActivity.LocationServices.isProviderEnabled (LocationManager.NETWORK_PROVIDER);
+        } catch (Exception x) {
+
+        }
+        if (!MainActivity.gps_enabled && !MainActivity.network_enabled) {
+//            alertDialog = new AlertDialog.Builder (this);
+//            alertDialog.setMessage ("turn on your GPS").setPositiveButton ("OK", new DialogInterface.OnClickListener () {
+//
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    Intent intent = new Intent (Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                    startActivity (intent);
+//                    dialog.dismiss ();
+//                }
+//            }).setNegativeButton ("Cancel", new DialogInterface.OnClickListener () {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    dialog.dismiss ();
+//                }
+//            });
+//            alertDialog.create ();
+//            alertDialog.show ();
+            Toast.makeText (getApplicationContext (), "GPS off, turn on to see real-time events", Toast.LENGTH_LONG).show ();
+        }
+    }
+
+    public void openMenuPage(View v) {
+        Intent menuPageIntent = new Intent (this, com.example.events.Menu.class);
+        startActivity (menuPageIntent);
     }
 
 }

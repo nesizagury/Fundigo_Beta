@@ -3,9 +3,9 @@ package com.example.events;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -20,43 +20,75 @@ public class TicketsPage extends AppCompatActivity {
 
     List<Event> eventsList = new ArrayList<Event> ();
     ListView list_view;
+    static Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-        setContentView (R.layout.events_list);
+        setContentView (R.layout.tickets_page);
 
-        Intent intent = getIntent ();
+        intent = getIntent ();
         final String eventName = intent.getStringExtra ("eventName");
 
-        ParseQuery<Event> query = new ParseQuery<> ("Event");
+        eventsList.clear ();
+        final List<Event> eventsList1 = new ArrayList<Event> ();
+        ParseQuery<Event> query = new ParseQuery<Event> ("Event");
+        List<Event> list = null;
         try {
-            List<Event> list = query.find ();
+            list = query.find ();
             for (Event event : list) {
                 if (eventName.equals (event.getName ())) {
                     Event newEvent = new Event ();
                     newEvent.setName ("Event Name is : " + event.getName ());
                     newEvent.setPrice ("Event Price is : " + event.getPrice ());
-                    newEvent.setNumOfTicketsLeft ("Tickets left after you bought your ticket : " + event.getNumOfTicketsLeft ());
-                    eventsList.add (newEvent);
-                    int tickets = Integer.parseInt (event.getNumOfTicketsLeft ());
-                    int t = tickets - 1;
-                    String left = Integer.toString (t);
-                    Toast.makeText (TicketsPage.this, "Enjoy Yout Ticket!", Toast.LENGTH_SHORT).show ();
-                    event.put ("NumOfTicketsLeft", left);
-                    try {
-                        event.save ();
-                    } catch (Exception e1) {
-                        e1.printStackTrace ();
-                    }
+                    newEvent.setNumOfTicketsLeft ("Num of Tickets available : " + event.getNumOfTicketsLeft ());
+                    eventsList1.add (newEvent);
+                    break;
                 }
             }
-            ArrayAdapter<Event> adapter = new ArrayAdapter<Event> (TicketsPage.this, android.R.layout.simple_list_item_1, eventsList);
+            ArrayAdapter<Event> adapter = new ArrayAdapter<Event> (TicketsPage.this, android.R.layout.simple_list_item_1, eventsList1);
             list_view = (ListView) findViewById (R.id.list_tickets);
             list_view.setAdapter (adapter);
         } catch (ParseException e) {
             e.printStackTrace ();
         }
+    }
 
+    public void buyTicket(View view) {
+        Bundle b = new Bundle ();
+        Intent intent = new Intent (TicketsPage.this, VerifyCard.class);
+        Intent intentHere = getIntent ();
+        intent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
+        intent.putExtra ("eventPrice", intentHere.getStringExtra ("eventPrice"));
+        intent.putExtras (b);
+        startActivity (intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume ();
+        final String eventName = intent.getStringExtra ("eventName");
+
+        final List<Event> eventsList1 = new ArrayList<Event> ();
+        ParseQuery<Event> query = new ParseQuery<Event> ("Event");
+        List<Event> list = null;
+        try {
+            list = query.find ();
+            for (Event event : list) {
+                if (eventName.equals (event.getName ())) {
+                    Event newEvent = new Event ();
+                    newEvent.setName ("Event Name is : " + event.getName ());
+                    newEvent.setPrice ("Event Price is : " + event.getPrice ());
+                    newEvent.setNumOfTicketsLeft ("Num of Tickets available : " + event.getNumOfTicketsLeft ());
+                    eventsList1.add (newEvent);
+                    break;
+                }
+            }
+            ArrayAdapter<Event> adapter = new ArrayAdapter<Event> (TicketsPage.this, android.R.layout.simple_list_item_1, eventsList1);
+            list_view = (ListView) findViewById (R.id.list_tickets);
+            list_view.setAdapter (adapter);
+        } catch (ParseException e) {
+            e.printStackTrace ();
+        }
     }
 }

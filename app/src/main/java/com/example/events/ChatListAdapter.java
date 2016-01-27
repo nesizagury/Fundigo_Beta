@@ -1,7 +1,6 @@
 package com.example.events;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import java.security.MessageDigest;
 import java.util.List;
 
 public class ChatListAdapter extends ArrayAdapter <Message> {
-    private static final String TAG = "ChatListAdapter";
     private String mUserId;
 
     public ChatListAdapter(Context context, List<Message> messages,String userId) {
@@ -33,15 +31,11 @@ public class ChatListAdapter extends ArrayAdapter <Message> {
             holder.imageLeft = (ImageView)convertView.findViewById(R.id.ivProfileLeft);
             holder.imageRight = (ImageView)convertView.findViewById(R.id.ivProfileRight);
             holder.body = (TextView)convertView.findViewById(R.id.tvBody);
-            holder.userId = (TextView) convertView.findViewById(R.id.user_id);
             convertView.setTag(holder);
         }
         boolean isMe = false;
         final Message message = (Message) getItem(position);
-        Log.e(TAG, "position"+ position);
         final ViewHolder holder = (ViewHolder)convertView.getTag();
-        Log.e(TAG, "message.getUserId()"+ message.getUserId());
-        holder.userId.setVisibility(View.GONE);
         if(mUserId.equals(message.getUserId()))
           isMe = true;
         // Show-hide image based on the logged-in user.
@@ -79,7 +73,6 @@ public class ChatListAdapter extends ArrayAdapter <Message> {
         public ImageView imageLeft;
         public ImageView imageRight;
         public TextView body;
-        public TextView userId;
     }
 
 }

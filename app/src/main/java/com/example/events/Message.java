@@ -1,5 +1,4 @@
 package com.example.events;
-
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
@@ -26,7 +25,7 @@ public class Message extends ParseObject {
         put("producer", producer);
     }
 
-    public String getProducer() {
+    public String getProducer(){
         return getString("producer");
     }
 
@@ -34,15 +33,7 @@ public class Message extends ParseObject {
         put("customer", customer);
     }
 
-    public String getCustomer() {
+    public String getCustomer(){
         return getString("customer");
-    }
-
-    public String getEventName() {
-        return getString("eventName");
-    }
-
-    public void setEventName(String eventName) {
-        put("eventName", eventName);
     }
 }
