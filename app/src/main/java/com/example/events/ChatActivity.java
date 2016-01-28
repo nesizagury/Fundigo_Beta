@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -151,6 +152,7 @@ public class ChatActivity extends Activity {
     public void deleteMessageRoomItem() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery ("Room");
         query.whereEqualTo ("ConversationId", customer_id + " - " + producer_id);
+        query.orderByDescending ("createdAt");
         query.getFirstInBackground (new GetCallback<ParseObject> () {
             public void done(ParseObject object, ParseException e) {
                 if (e == null) {
@@ -168,6 +170,10 @@ public class ChatActivity extends Activity {
 
     private void saveToMessagesRoom() {
         Room room = new Room ();
+        ParseACL parseAcl = new ParseACL();
+        parseAcl.setPublicReadAccess(true);
+        parseAcl.setPublicWriteAccess(true);
+        room.setACL(parseAcl);
         room.setCustomer_id (customer_id);
         room.setProducer_id (producer_id);
         room.setConversationId (customer_id + " - " + producer_id);

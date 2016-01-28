@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
@@ -26,11 +28,16 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.example.events.MyLocation.LocationResult;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseQuery;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,15 +72,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     LocationListener locationListener;
     static boolean userChoosedCityManually = false;
     static boolean cityFoundGPS = false;
+    Button create_button;
+    boolean isProducer = false;
+    static String producerId;
+    int toSkip = 0;
+    int limit = 0;
+    boolean nothingToLoad = false;
+    Event lastEvent;
+    private ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_main);//
-        if (!didInit) {
-            uploadUserData ();
-            didInit = true;
-        }
         list_view = (ListView) findViewById (R.id.listView);
         event = (Button) findViewById (R.id.BarEvent_button);
         savedEvent = (Button) findViewById (R.id.BarSavedEvent_button);
@@ -86,6 +97,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         realTime.setOnClickListener (this);
         event.setOnClickListener (this);
         savedEvent.setOnClickListener (this);
+
+        if (!didInit) {
+//            lastEvent = getLastEvent ();
+            uploadUserData ();
+            didInit = true;
+        }
 
         list_view.setAdapter (eventsListAdapter);
         list_view.setSelector (new ColorDrawable (Color.TRANSPARENT));
@@ -128,56 +145,87 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         MyLocation myLocation = new MyLocation (this.getApplicationContext ());
         myLocation.getLocation (this, locationResult);
         updateDeviceLocationGPS ();
+        if (intent.getStringExtra ("is_producer") != null) {
+            isProducer = true;
+            producerId = intent.getStringExtra ("producerId");
+            create_button = (Button) findViewById (R.id.create_button);
+            create_button.setVisibility (View.VISIBLE);
+        }
+//        list_view.setOnScrollListener (new AbsListView.OnScrollListener () {
+//            @Override
+//            public void onScrollStateChanged(AbsListView view, int scrollState) {
+//
+//            }
+//
+//            @Override
+//            public void onScroll(AbsListView view, int firstVisibleItem,
+//                                 int visibleItemCount, int totalItemCount) {
+//
+//                if (list_view.getLastVisiblePosition () == list_view.getAdapter ().getCount () - 1
+//                            && list_view.getChildAt (list_view.getChildCount () - 1).getBottom () <= list_view.getHeight () && !nothingToLoad) {
+//
+//                    uploadUserData ();
+//                    eventsListAdapter.notifyDataSetChanged ();
+//
+//
+//                }
+//            }
+//        });
     }
 
     private void uploadUserData() {
         events_data.clear ();
         filtered_events_data.clear ();
-        Resources res = this.getResources ();
-        String[] eventDate_list;
-        String[] eventName_list;
-        String[] eventTag_list;
-        String[] eventPrice_list;
-        String[] eventInfo_list;
-        String[] eventPlace_list;
-        String[] eventCity_list;
 
-        eventName_list = res.getStringArray (R.array.eventNames);
-        eventDate_list = res.getStringArray (R.array.eventDates);
-        eventTag_list = res.getStringArray (R.array.eventTags);
-        eventPrice_list = res.getStringArray (R.array.eventPrice);
-        eventPlace_list = res.getStringArray (R.array.eventPlace);
-        eventInfo_list = res.getStringArray (R.array.eventInfo);
-        eventCity_list = res.getStringArray (R.array.eventCity);
+        ParseQuery<Event> query = new ParseQuery ("Event");
+        query.orderByDescending ("createdAt");
+//        query.setSkip (toSkip);
+//        query.setLimit (7);
+//        toSkip += 7;
+        List<Event> events = null;
 
-        String arrToilet[] = getResources ().getStringArray (R.array.eventToiletService);
-        String arrParking[] = getResources ().getStringArray (R.array.eventParkingService);
-        String arrCapacity[] = getResources ().getStringArray (R.array.eventCapacityService);
-        String arrATM[] = getResources ().getStringArray (R.array.eventATMService);
+        try {
 
-        for (int i = 0; i < 15; i++) {
-            events_data.add (new EventInfo (
-                                                   R.mipmap.pic0 + i,
-                                                   eventDate_list[i],
-                                                   eventName_list[i],
-                                                   eventTag_list[i],
-                                                   eventPrice_list[i],
-                                                   eventInfo_list[i],
-                                                   eventPlace_list[i],
-                                                   arrToilet[i],
-                                                   arrParking[i],
-                                                   arrCapacity[i],
-                                                   arrATM[i],
-                                                   eventCity_list[i])
-            );
+            events = query.find ();
+            ParseFile imageFile;
+            byte[] data;
+            Bitmap bmp;
+
+            for (int i = 0; i < events.size (); i++) {
+
+                imageFile = (ParseFile) events.get (i).get ("ImageFile");
+                if (imageFile != null) {
+                    data = imageFile.getData ();
+                    bmp = BitmapFactory.decodeByteArray (data, 0, data.length);
+                } else
+                    bmp = null;
+
+                events_data.add (new EventInfo (
+                                                       bmp,
+                                                       events.get (i).getDate (),
+                                                       events.get (i).getName (),
+                                                       events.get (i).getTags (),
+                                                       events.get (i).getPrice (),
+                                                       events.get (i).getDescription (),
+                                                       events.get (i).getAddress (), null, null, null, null, "Tiberias"));
+                events_data.get (i).setProducerId (events.get (i).getProducerId ());
+
+//                if (lastEvent.equals (events.get (i))) {
+//                    nothingToLoad = true;
+//                }
+
+            }
+            filtered_events_data.addAll (events_data);
+
+        } catch (ParseException e) {
+            e.printStackTrace ();
         }
-        filtered_events_data.addAll (events_data);
     }
 
     private void inflateCityMenu() {
         popup.getMenuInflater ().inflate (R.menu.popup_city, popup.getMenu ());
         loadCityNamesToPopUp ();
-        if(userChoosedCityManually){
+        if (userChoosedCityManually) {
             filterByCity (namesCity[0]);
         } else {
             filterByCity (namesCity[indexCityGPS]);
@@ -224,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 popUpIDToCityIndex.put (popup.getMenu ().getItem (i).getItemId (), i);
             }
-            if(userChoosedCityManually){
+            if (userChoosedCityManually) {
                 currentCityChosen.setText (popup.getMenu ().getItem (0).getTitle ());
             } else {
                 currentCityChosen.setText (popup.getMenu ().getItem (indexCityGPS).getTitle ());
@@ -249,14 +297,38 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void updateDeviceLocationGPS() {
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        boolean passive_enabled = false;
+
         locationManager = (LocationManager) this.getSystemService (Context.LOCATION_SERVICE);
         locationListener = new MyLocationListener ();
-        if (ActivityCompat.checkSelfPermission (this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        try {
+            gps_enabled = locationManager.isProviderEnabled (LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
         }
-        locationManager.requestLocationUpdates (LocationManager.GPS_PROVIDER, 10000, 0, locationListener);
-        locationManager.requestLocationUpdates (LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
-        locationManager.requestLocationUpdates (LocationManager.PASSIVE_PROVIDER, 10000, 0, locationListener);
+        try {
+            network_enabled = locationManager.isProviderEnabled (LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+        try {
+            passive_enabled = locationManager.isProviderEnabled (LocationManager.PASSIVE_PROVIDER);
+        } catch (Exception ex) {
+        }
+        if (gps_enabled) {
+            if (ActivityCompat.checkSelfPermission (this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                //do none
+            } else {
+                locationManager.requestLocationUpdates (LocationManager.GPS_PROVIDER, 10000, 0, locationListener);
+
+            }
+        }
+        if (network_enabled) {
+            locationManager.requestLocationUpdates (LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
+        }
+        if (passive_enabled) {
+            locationManager.requestLocationUpdates (LocationManager.PASSIVE_PROVIDER, 10000, 0, locationListener);
+        }
     }
 
     @Override
@@ -285,7 +357,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Bundle b = new Bundle ();
         Intent intent = new Intent (this, EventPage.class);
-        intent.putExtra ("eventImage", filtered_events_data.get (i).getImageId ());
+        if (events_data.get (i).getImageId () != null) {
+            Bitmap bmp = events_data.get (i).getImageId ();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream ();
+            bmp.compress (Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] byteArray = stream.toByteArray ();
+            intent.putExtra ("eventImage", byteArray);
+        } else
+            intent.putExtra ("eventImage", "");
         intent.putExtra ("eventDate", filtered_events_data.get (i).getDate ());
         intent.putExtra ("eventName", filtered_events_data.get (i).getName ());
         intent.putExtra ("eventTags", filtered_events_data.get (i).getTags ());
@@ -299,7 +378,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         intent.putExtra ("index", i);
 
         b.putString ("customer_id", customer_id);
-        b.putString ("producer_id", Integer.toString (i + 1));
+        if (producerId != null)
+            b.putInt ("producer_id", Integer.parseInt (producerId));
+        else
+            b.putInt ("producer_id", Integer.parseInt (events_data.get (i).getProducerId ()));
         intent.putExtras (b);
         startActivity (intent);
     }
@@ -416,4 +498,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         updateDeviceLocationGPS ();
         eventsListAdapter.notifyDataSetChanged ();
     }
+
+    public void createEvent(View view) {
+
+        Intent intent = new Intent (MainActivity.this, CreateEventActivity.class);
+        startActivity (intent);
+
+    }
+
+
+//    public Event getLastEvent() {
+//
+//        ParseQuery<Event> getSizeQuery = new ParseQuery ("Event");
+//        getSizeQuery.orderByAscending ("createdAt");
+//        lastEvent = null;
+//        try {
+//            lastEvent = getSizeQuery.getFirst ();
+//        } catch (ParseException e) {
+//            e.printStackTrace ();
+//        }
+//
+//        return lastEvent;
+//
+//    }
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -48,46 +47,8 @@ public class EventsListAdapter extends BaseAdapter {
     public EventsListAdapter(Context c, ArrayList<Event> arrayList) {
 
         this.context = c;
-
-        Resources res = context.getResources ();
-        String[] eventDate_list;
-        String[] eventName_list;
-        String[] eventTag_list;
-        String[] eventPrice_list;
-        String[] eventInfo_list;
-        String[] eventPlace_list;
-        String[] eventCity_list;
-        eventName_list = res.getStringArray (R.array.eventNames);
-        eventDate_list = res.getStringArray (R.array.eventDates);
-        eventTag_list = res.getStringArray (R.array.eventTags);
-        eventPrice_list = res.getStringArray (R.array.eventPrice);
-        eventInfo_list = res.getStringArray (R.array.eventInfo);
-        eventPlace_list = res.getStringArray (R.array.eventPlace);
-        eventCity_list = res.getStringArray (R.array.eventCity);
-
-        String arrToilet[] = res.getStringArray (R.array.eventToiletService);
-        String arrParking[] = res.getStringArray (R.array.eventParkingService);
-        String arrCapacity[] = res.getStringArray (R.array.eventCapacityService);
-        String arrATM[] = res.getStringArray (R.array.eventATMService);
-
         List<EventInfo> ans = new ArrayList<EventInfo> ();
 
-        for (int j = 0; j < 1; j++) {
-            for (int i = 0; i < 15; i++)
-                ans.add (new EventInfo (
-                                               R.mipmap.pic0 + i,
-                                               eventDate_list[i],
-                                               eventName_list[i],
-                                               eventTag_list[i],
-                                               eventPrice_list[i],
-                                               eventInfo_list[i],
-                                               eventPlace_list[i],
-                                               arrToilet[i],
-                                               arrParking[i],
-                                               arrCapacity[i],
-                                               arrATM[i],
-                                               eventCity_list[i]));
-        }
         boolean flag = true;
         for (int i = 0; i < arrayList.size (); i++) {
             for (int j = 0; j < ans.size () && flag; j++) {
@@ -131,7 +92,7 @@ public class EventsListAdapter extends BaseAdapter {
         }
 
         final EventInfo event = eventList.get (i);
-        eventListHolder.image.setImageResource (event.imageId);
+        eventListHolder.image.setImageBitmap (event.imageId);
 
         eventListHolder.date.setText (event.getDate ());
         eventListHolder.name.setText (event.getName ());

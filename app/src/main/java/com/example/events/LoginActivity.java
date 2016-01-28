@@ -31,6 +31,7 @@ public class LoginActivity extends Activity {
     Button customer_loginButton;
     String isGuest = "";
     String customer_id;
+    String isProducer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,10 @@ public class LoginActivity extends Activity {
             try {
                 ParseUser.logIn (producer_username, producer_password);
                 Toast.makeText (getApplicationContext (), "Successfully Loged in", Toast.LENGTH_SHORT).show ();
+                isProducer = "true";
                 Intent intent = new Intent (this, MainActivity.class);
+                intent.putExtra("is_producer",isProducer);
+                intent.putExtra("producerId",producer_username);
                 startActivity (intent);
                 finish ();
             } catch (ParseException e1) {

@@ -38,7 +38,6 @@ public class EventPage extends Activity implements View.OnClickListener {
     String customer_id;
     private ImageView iv_share;
     private final static String TAG = "EventPage";
-    private int image_id;
     static final int REQUEST_CODE_MY_PICK = 1;
     Intent intent;
 
@@ -53,9 +52,12 @@ public class EventPage extends Activity implements View.OnClickListener {
         setContentView (R.layout.activity_event_page);
 
         intent = getIntent ();
-        image_id = intent.getIntExtra ("eventImage", R.mipmap.pic0);
-        ImageView event_image = (ImageView) findViewById (R.id.eventPage_image);
-        event_image.setImageResource (image_id);
+        if (getIntent ().getByteArrayExtra ("eventImage") != null) {
+            byte[] byteArray = getIntent ().getByteArrayExtra ("eventImage");
+            Bitmap bitmap = BitmapFactory.decodeByteArray (byteArray, 0, byteArray.length);
+            ImageView event_image = (ImageView) findViewById (R.id.eventPage_image);
+            event_image.setImageBitmap (bitmap);
+        }
         date = intent.getStringExtra ("eventDate");
         TextView event_date = (TextView) findViewById (R.id.eventPage_date);
         event_date.setText (date);
@@ -140,7 +142,7 @@ public class EventPage extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId ()) {
             case R.id.imageEvenetPageView2:
-                Log.e (TAG, "" + image_id);
+                Log.e (TAG, "");
                 try {
                     Bitmap largeIcon = BitmapFactory.decodeResource (getResources (), R.mipmap.pic0);
                     ByteArrayOutputStream bytes = new ByteArrayOutputStream ();
@@ -214,7 +216,7 @@ public class EventPage extends Activity implements View.OnClickListener {
         if (MainActivity.filtered_events_data.get (index).getPress ()) {
             MainActivity.filtered_events_data.get (index).setPress (false);
             save.setImageResource (R.mipmap.wh);
-            Toast.makeText (this,"You unSaved this event",Toast.LENGTH_SHORT).show ();
+            Toast.makeText (this, "You unSaved this event", Toast.LENGTH_SHORT).show ();
             try {
                 File inputFile = new File ("saves");
                 File tempFile = new File ("myTempFile");

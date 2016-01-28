@@ -21,8 +21,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
+import com.parse.GetDataCallback;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.sinch.verification.CodeInterceptionException;
 import com.sinch.verification.Config;
 import com.sinch.verification.IncorrectCodeException;
@@ -82,6 +87,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
         usernameTE = (EditText) findViewById (R.id.usernameTE);
         phoneET = (EditText) findViewById (R.id.phoneET);
         phoneTV = (TextView) findViewById (R.id.phoneTV);
+        imageV = (ImageView) findViewById (R.id.imageV);
 
         phoneET.setOnEditorActionListener (new TextView.OnEditorActionListener () {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -100,7 +106,6 @@ public class SmsSignUpActivity extends AppCompatActivity {
                 if ((event != null && (event.getKeyCode () == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     usernameTE.setVisibility (View.INVISIBLE);
                     usernameTV.setVisibility (View.INVISIBLE);
-                    optionalTV = (TextView) findViewById (R.id.optionalTV);
                     imageV = (ImageView) findViewById (R.id.imageV);
                     imageV.setVisibility (View.VISIBLE);
                     upload_button = (Button) findViewById (R.id.upload_button);
@@ -120,7 +125,9 @@ public class SmsSignUpActivity extends AppCompatActivity {
         number.setName (username);
 
         if (image_selected) {
-            Bitmap bitmap = BitmapFactory.decodeFile (picturePath);
+            //Bitmap bitmap = BitmapFactory.decodeFile (picturePath);
+            imageV.buildDrawingCache ();
+            Bitmap bitmap = imageV.getDrawingCache ();
             ByteArrayOutputStream stream = new ByteArrayOutputStream ();
             bitmap.compress (CompressFormat.JPEG, 100, stream);
             byte[] image = stream.toByteArray ();
@@ -130,13 +137,17 @@ public class SmsSignUpActivity extends AppCompatActivity {
             } catch (ParseException e) {
                 e.printStackTrace ();
             }
+            ParseACL parseAcl = new ParseACL ();
+            parseAcl.setPublicReadAccess (true);
+            parseAcl.setPublicWriteAccess (true);
+            number.setACL (parseAcl);
             number.put ("ImageFile", file);
         }
         number.setNumber (phone_number);
         try {
             number.save ();
             Toast.makeText (getApplicationContext (), "Successfully Signed up", Toast.LENGTH_SHORT).show ();
-            saveToFile (phone_number);
+            saveToFile (area + phoneET.getText ().toString ());
             finish ();
         } catch (ParseException e) {
             Toast.makeText (getApplicationContext (), " Error ): ", Toast.LENGTH_SHORT).show ();
@@ -216,6 +227,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
 
         @Override
         public void onVerified() {
+            checkUser();
             usernameTV.setVisibility (View.VISIBLE);
             usernameTE.setVisibility (View.VISIBLE);
             phoneET.setVisibility (View.INVISIBLE);
@@ -256,4 +268,42 @@ public class SmsSignUpActivity extends AppCompatActivity {
         }
     }
 
+    private void checkUser() {
+        String user_number = phone_number;
+        String username = "";
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery ("Numbers");
+        query.whereEqualTo("number", user_number);
+        query.getFirstInBackground (new GetCallback<ParseObject> () {
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+                    try {
+                        usernameTE.setText (object.get ("name") + "");
+                        ParseFile imageFile = (ParseFile) object.get ("ImageFile");
+                        imageFile.getDataInBackground (new GetDataCallback () {
+                            public void done(byte[] data, ParseException e) {
+                                if (e == null) {
+                                    image_selected = true;
+                                    Bitmap bmp = BitmapFactory
+                                                         .decodeByteArray (
+                                                                                  data, 0,
+                                                                                  data.length);
+
+                                    imageV.setImageBitmap (bmp);
+                                    Toast.makeText (getApplicationContext (), "downloaded", Toast.LENGTH_SHORT).show ();
+                                } else {
+
+                                }
+                            }
+                        });
+
+                        object.delete ();
+                    } catch (ParseException e1) {
+                        e1.printStackTrace ();
+                    }
+                    object.saveInBackground ();
+                }
+            }
+        });
+    }
 }

@@ -11,58 +11,58 @@
         android:id="@+id/toolbar_up"
         android:layout_width="fill_parent"
         android:layout_height="30dp"
+        android:background="#71B7E6"
         android:orientation="horizontal"
         android:weightSum="700.0"
-        android:background="#71B7E6"
 
         >
 
         <ImageView
             android:id="@+id/settings_item"
-            android:layout_height="fill_parent"
             android:layout_width="0dip"
+            android:layout_height="fill_parent"
             android:layout_weight="100"
-            android:src="@drawable/menu4"
+            android:onClick="openMenuPage"
             android:padding="2dp"
-            android:onClick="openMenuPage"/>
+            android:src="@drawable/menu4"/>
 
         <ImageView
             android:id="@+id/notification_item"
-            android:layout_height="match_parent"
             android:layout_width="0dip"
+            android:layout_height="match_parent"
             android:layout_weight="100"
-            android:src="@drawable/notification_icon"
             android:background="#71B7E6"
-            android:padding="2dp"/>
+            android:padding="2dp"
+            android:src="@drawable/notification_icon"/>
 
         <Button
             android:id="@+id/city_item"
-            android:layout_height="match_parent"
             android:layout_width="0dip"
+            android:layout_height="match_parent"
             android:layout_weight="300"
             android:background="#71B7E6"
-            android:textColor="#ffffff"
-            android:onClick=""/>
+            android:onClick=""
+            android:textColor="#ffffff"/>
 
         <ImageView
+            android:id="@+id/search"
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="100"
-            android:id="@+id/search"
             android:actionViewClass="android.widget.SearchView"
-            android:src="@drawable/search_icon"
             android:background="#71B7E6"
-            android:padding="4dp"/>
+            android:padding="4dp"
+            android:src="@drawable/search_icon"/>
 
         <ImageView
             android:id="@+id/Filter"
-            android:layout_height="match_parent"
             android:layout_width="0dip"
+            android:layout_height="match_parent"
             android:layout_weight="100"
-            android:src="@drawable/filer_icon"
-            android:onClick="openFilterPage"
             android:background="#71B7E6"
-            android:padding="5dp"/>
+            android:onClick="openFilterPage"
+            android:padding="5dp"
+            android:src="@drawable/filer_icon"/>
 
     </LinearLayout>
 
@@ -146,5 +146,12 @@
         android:dividerHeight="0dp"
         android:drawSelectorOnTop="false"/>
 
+    <Button
+        android:id="@+id/create_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="createEvent"
+        android:text="Create Event"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

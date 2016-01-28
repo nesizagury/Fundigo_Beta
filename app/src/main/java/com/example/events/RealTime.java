@@ -1,6 +1,8 @@
 package com.example.events;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
@@ -15,6 +17,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -57,7 +60,6 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
             loc.setLatitude (y);
             loc.setLongitude (x);
         }
-        //Toast.makeText (this, "" + loc.getLongitude () + "  " + loc.getLatitude (), Toast.LENGTH_SHORT).show ();
         ArrayList<Event> arrayList = new ArrayList<> ();
         try {
             arrayList = sortList ();
@@ -98,18 +100,25 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
 
     public ArrayList<Event> sortList() throws ParseException {
         double x, y;
+        ParseFile imageFile;
+        byte[] data;
+        Bitmap bmp;
         ArrayList<Event> arr = new ArrayList<> ();
         ParseQuery<ParseObject> query = ParseQuery.getQuery ("Event");
         List<ParseObject> listObject = query.find ();
         int index = 0;
         for (int i = 0; i < listObject.size (); i++) {
             ParseObject tempObject = listObject.get (i);
+            imageFile = (ParseFile) tempObject.get("ImageFile");
+            data = imageFile.getData();
+            bmp = BitmapFactory.decodeByteArray (data, 0, data.length);
             if (!arr.contains (tempObject)) {
                 x = tempObject.getDouble ("X");
                 y = tempObject.getDouble ("Y");
                 Event tempEvent = new Event ();
                 tempEvent.setLocation (x, y);
                 tempEvent.setName (tempObject.getString ("Name"));
+                tempEvent.setBitmap(bmp);
                 arr.add (index++, tempEvent);
             }
         }
@@ -153,23 +162,6 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
 
         }
         if (!MainActivity.gps_enabled && !MainActivity.network_enabled) {
-//            alertDialog = new AlertDialog.Builder (this);
-//            alertDialog.setMessage ("turn on your GPS").setPositiveButton ("OK", new DialogInterface.OnClickListener () {
-//
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    Intent intent = new Intent (Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                    startActivity (intent);
-//                    dialog.dismiss ();
-//                }
-//            }).setNegativeButton ("Cancel", new DialogInterface.OnClickListener () {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    dialog.dismiss ();
-//                }
-//            });
-//            alertDialog.create ();
-//            alertDialog.show ();
             Toast.makeText (getApplicationContext (), "GPS off, turn on to see real-time events", Toast.LENGTH_LONG).show ();
         }
     }

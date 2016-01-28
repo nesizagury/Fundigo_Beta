@@ -134,7 +134,8 @@
             android:background="#3293CD"
             android:onClick="openTicketsPage"
             android:text="GET TICKETS"
-            android:textColor="#ffffff"/>
+            android:textColor="#ffffff"
+            android:textSize="14sp"/>
     </LinearLayout>
 
     <ScrollView
