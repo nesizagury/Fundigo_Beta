@@ -28,13 +28,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.example.events.MyLocation.LocationResult;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
@@ -75,11 +75,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button create_button;
     boolean isProducer = false;
     static String producerId;
-    int toSkip = 0;
-    int limit = 0;
-    boolean nothingToLoad = false;
-    Event lastEvent;
-    private ProgressBar spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         savedEvent.setOnClickListener (this);
 
         if (!didInit) {
-//            lastEvent = getLastEvent ();
             uploadUserData ();
             didInit = true;
         }
@@ -151,48 +145,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             create_button = (Button) findViewById (R.id.create_button);
             create_button.setVisibility (View.VISIBLE);
         }
-//        list_view.setOnScrollListener (new AbsListView.OnScrollListener () {
-//            @Override
-//            public void onScrollStateChanged(AbsListView view, int scrollState) {
-//
-//            }
-//
-//            @Override
-//            public void onScroll(AbsListView view, int firstVisibleItem,
-//                                 int visibleItemCount, int totalItemCount) {
-//
-//                if (list_view.getLastVisiblePosition () == list_view.getAdapter ().getCount () - 1
-//                            && list_view.getChildAt (list_view.getChildCount () - 1).getBottom () <= list_view.getHeight () && !nothingToLoad) {
-//
-//                    uploadUserData ();
-//                    eventsListAdapter.notifyDataSetChanged ();
-//
-//
-//                }
-//            }
-//        });
+        SharedPreferences ratePrefs = getSharedPreferences ("First Update", 0);
+        if (!ratePrefs.getBoolean ("FrstTime", false)) {
+            ParsePush.subscribeInBackground ("All_Users");
+            SharedPreferences.Editor edit = ratePrefs.edit ();
+            edit.putBoolean ("FrstTime", true);
+            edit.commit ();
+        }
     }
 
     private void uploadUserData() {
         events_data.clear ();
         filtered_events_data.clear ();
-
         ParseQuery<Event> query = new ParseQuery ("Event");
         query.orderByDescending ("createdAt");
-//        query.setSkip (toSkip);
-//        query.setLimit (7);
-//        toSkip += 7;
         List<Event> events = null;
 
         try {
-
             events = query.find ();
             ParseFile imageFile;
             byte[] data;
             Bitmap bmp;
-
             for (int i = 0; i < events.size (); i++) {
-
                 imageFile = (ParseFile) events.get (i).get ("ImageFile");
                 if (imageFile != null) {
                     data = imageFile.getData ();
@@ -207,16 +181,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                                        events.get (i).getTags (),
                                                        events.get (i).getPrice (),
                                                        events.get (i).getDescription (),
-                                                       events.get (i).getAddress (), null, null, null, null, "Tiberias"));
+                                                       events.get (i).getAddress (),
+                                                       null,
+                                                       null,
+                                                       null,
+                                                       null,
+                                                       "Tiberias"));
                 events_data.get (i).setProducerId (events.get (i).getProducerId ());
-
-//                if (lastEvent.equals (events.get (i))) {
-//                    nothingToLoad = true;
-//                }
-
             }
             filtered_events_data.addAll (events_data);
-
         } catch (ParseException e) {
             e.printStackTrace ();
         }
@@ -505,20 +478,4 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivity (intent);
 
     }
-
-
-//    public Event getLastEvent() {
-//
-//        ParseQuery<Event> getSizeQuery = new ParseQuery ("Event");
-//        getSizeQuery.orderByAscending ("createdAt");
-//        lastEvent = null;
-//        try {
-//            lastEvent = getSizeQuery.getFirst ();
-//        } catch (ParseException e) {
-//            e.printStackTrace ();
-//        }
-//
-//        return lastEvent;
-//
-//    }
 }

@@ -27,6 +27,7 @@ import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.sinch.verification.CodeInterceptionException;
 import com.sinch.verification.Config;
@@ -96,6 +97,12 @@ public class SmsSignUpActivity extends AppCompatActivity {
                     username = usernameTE.getText ().toString ();
                     phone_number = getNumber (phoneET.getText ().toString (), area);
                     smsVerify (phone_number);
+                    ParsePush push = new ParsePush();
+                    push.unsubscribeInBackground("All_Users");
+                    push.setChannel("All_Users");
+                    push.setMessage("Hey Come To See Events Near You");
+                    push.subscribeInBackground("All_Users");
+                    push.sendInBackground ();
                 }
                 return false;
             }

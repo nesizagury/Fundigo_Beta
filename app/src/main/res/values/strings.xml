@@ -71,6 +71,8 @@
 
     </string-array>
     <string-array name="eventServiceTitles">
+        <item>Driving</item>
+        <item>Walking</item>
         <item>Toilet</item>
         <item>Parking</item>
         <item>Capacity</item>
