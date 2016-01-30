@@ -60,7 +60,7 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
             loc.setLatitude (y);
             loc.setLongitude (x);
         }
-        ArrayList<Event> arrayList = new ArrayList<> ();
+        ArrayList<com.example.events.Event> arrayList = new ArrayList<> ();
         try {
             arrayList = sortList ();
         } catch (ParseException e) {
@@ -98,12 +98,12 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
         startActivity (filterPageIntent);
     }
 
-    public ArrayList<Event> sortList() throws ParseException {
+    public ArrayList<com.example.events.Event> sortList() throws ParseException {
         double x, y;
         ParseFile imageFile;
         byte[] data;
         Bitmap bmp;
-        ArrayList<Event> arr = new ArrayList<> ();
+        ArrayList<com.example.events.Event> arr = new ArrayList<> ();
         ParseQuery<ParseObject> query = ParseQuery.getQuery ("Event");
         List<ParseObject> listObject = query.find ();
         int index = 0;
@@ -115,17 +115,17 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
             if (!arr.contains (tempObject)) {
                 x = tempObject.getDouble ("X");
                 y = tempObject.getDouble ("Y");
-                Event tempEvent = new Event ();
-                tempEvent.setLocation (x, y);
-                tempEvent.setName (tempObject.getString ("Name"));
-                tempEvent.setBitmap(bmp);
-                arr.add (index++, tempEvent);
+                com.example.events.Event tempEventParse = new Event ();
+                tempEventParse.setLocation (x, y);
+                tempEventParse.setName (tempObject.getString ("Name"));
+                tempEventParse.setBitmap(bmp);
+                arr.add (index++, tempEventParse);
             }
         }
 
-        Collections.sort (arr, new Comparator<Event> () {
+        Collections.sort (arr, new Comparator<com.example.events.Event> () {
             @Override
-            public int compare(Event a, Event b) {
+            public int compare(com.example.events.Event a, com.example.events.Event b) {
                 if (a.getdis () < b.getdis ()) return -1;
                 if (a.getdis () >= b.getdis ()) return 1;
                 return 0;

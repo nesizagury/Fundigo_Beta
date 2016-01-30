@@ -72,6 +72,7 @@ public class LoginActivity extends Activity {
                 ParseUser.logIn (producer_username, producer_password);
                 Toast.makeText (getApplicationContext (), "Successfully Loged in", Toast.LENGTH_SHORT).show ();
                 isProducer = "true";
+                Constants.IS_PRODUCER = true;
                 Intent intent = new Intent (this, MainActivity.class);
                 intent.putExtra("is_producer",isProducer);
                 intent.putExtra("producerId",producer_username);

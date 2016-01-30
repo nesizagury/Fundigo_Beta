@@ -49,15 +49,15 @@ public class VerifyCard extends AppCompatActivity {
             List<Event> list = null;
             try {
                 list = query.find ();
-                for (Event event : list) {
-                    if (eventName.equals (event.getName ())) {
-                        int tickets = Integer.parseInt (event.getNumOfTicketsLeft ());
+                for (Event eventParse : list) {
+                    if (eventName.equals (eventParse.getName ())) {
+                        int tickets = Integer.parseInt (eventParse.getNumOfTicketsLeft ());
                         int t = tickets - 1;
                         String left = Integer.toString (t);
                         Toast.makeText (VerifyCard.this, "Enjoy Yout Ticket!", Toast.LENGTH_LONG).show ();
-                        event.put ("NumOfTicketsLeft", left);
+                        eventParse.put ("NumOfTicketsLeft", left);
                         try {
-                            event.save ();
+                            eventParse.save ();
                         } catch (Exception e1) {
                             e1.printStackTrace ();
                         }

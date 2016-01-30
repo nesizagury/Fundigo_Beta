@@ -36,4 +36,12 @@ public class Message extends ParseObject {
     public String getCustomer(){
         return getString("customer");
     }
+
+    public String getEventName() {
+        return getString("eventName");
+    }
+
+    public void setEventName(String eventName) {
+        put("eventName", eventName);
+    }
 }

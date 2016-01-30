@@ -153,7 +153,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="ALUMINIUM CHINA is Asia‘s top trading, sourcing, networking and branding platform for the complete aluminum industry chain, bringing together leading industry figures, cutting edge technologies and advanced applications. Annually held in Shanghai, the event engages the global Aluminium community with new customized matchmaking programs linking application buyers with emerging and established demands and buyers of equipment and accessories with leading suppliers."
+            android:text="ALUMINIUM CHINA is Asia‘s top trading, sourcing, networking and branding platform for the complete aluminum industry chain, bringing together leading industry figures, cutting edge technologies and advanced applications. Annually held in Shanghai, the eventParse engages the global Aluminium community with new customized matchmaking programs linking application buyers with emerging and established demands and buyers of equipment and accessories with leading suppliers."
             android:textColor="#3c3c3c"
             android:textIsSelectable="false"
             android:textSize="17sp"/>

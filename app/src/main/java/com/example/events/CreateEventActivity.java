@@ -126,21 +126,21 @@ public class CreateEventActivity extends Activity{
     public void saveEvent(View view){
 
 
-     Event event = new Event ();
+     Event eventParse = new Event ();
 
         if(tagsET.getText().length() != 0) {
 
-            event.setName(nameET.getText().toString());
-            event.setDescription(descriptionET.getText().toString());
-            event.setPrice(priceET.getText().toString());
-            event.setNumOfTicketsLeft(quantityET.getText().toString());
-            event.setAddress(addressET.getText().toString());
-            event.setX(Double.parseDouble(xET.getText().toString()));
-            event.setY(Double.parseDouble(yET.getText().toString()));
-            event.setTags(tagsET.getText().toString());
-            event.setProducerId(MainActivity.producerId);
-            event.setDate(dateET.getText().toString());
-            event.setPlace(placeET.getText().toString());
+            eventParse.setName(nameET.getText().toString());
+            eventParse.setDescription(descriptionET.getText().toString());
+            eventParse.setPrice(priceET.getText().toString());
+            eventParse.setNumOfTicketsLeft(quantityET.getText().toString());
+            eventParse.setAddress(addressET.getText().toString());
+            eventParse.setX(Double.parseDouble(xET.getText().toString()));
+            eventParse.setY(Double.parseDouble(yET.getText().toString()));
+            eventParse.setTags(tagsET.getText().toString());
+            eventParse.setProducerId(MainActivity.producerId);
+            eventParse.setDate(dateET.getText().toString());
+            eventParse.setPlace(placeET.getText().toString());
 
             if (pictureSelected) {
                 imageV.buildDrawingCache();
@@ -156,11 +156,11 @@ public class CreateEventActivity extends Activity{
                 }
 
 
-                event.put("ImageFile", file);
+                eventParse.put("ImageFile", file);
             }
 
             try {
-                event.save();
+                eventParse.save();
             } catch (ParseException e) {
                 e.printStackTrace();
             }

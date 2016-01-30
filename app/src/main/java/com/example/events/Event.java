@@ -6,8 +6,6 @@ import android.location.Location;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
-import java.io.File;
-
 /**
  * Created by rufflez on 8/31/14.
  */
@@ -39,6 +37,14 @@ public class Event extends ParseObject {
         put ("Name", name);
     }
 
+    public String getCity() {
+        return getString ("city");
+    }
+
+    public void setCity(String city) {
+        put ("city", city);
+    }
+
     public String getNumOfTicketsLeft() {
         return getString ("NumOfTicketsLeft");
     }
@@ -55,14 +61,6 @@ public class Event extends ParseObject {
         put ("Price", price);
     }
 
-    public String getAccountBalance() {
-        return getString ("AccountBalance");
-    }
-
-    public void setAccountBalance(String AccountBalance) {
-        put ("AccountBalance", AccountBalance);
-    }
-
     public double getX() {
         return getDouble ("X");
     }
@@ -71,44 +69,8 @@ public class Event extends ParseObject {
         put ("X", x);
     }
 
-    public double getY() {
-        return getDouble ("Y");
-    }
-
     public void setY(double y) {
         put ("Y", y);
-    }
-
-    public String getToilet() {
-        return getString ("toilet");
-    }
-
-    public void setToilet(String toilet) {
-        put ("toilet", toilet);
-    }
-
-    public String getParking() {
-        return getString ("parking");
-    }
-
-    public void setParking(String parking) {
-        put ("parking", parking);
-    }
-
-    public String getCapacity() {
-        return getString ("capacity");
-    }
-
-    public void setCapacity(String capacity) {
-        put ("capacity", capacity);
-    }
-
-    public String getAtm() {
-        return getString ("atm");
-    }
-
-    public void setAtm(String atm) {
-        put ("atm", atm);
     }
 
     public String getTags() {
@@ -135,11 +97,6 @@ public class Event extends ParseObject {
         put ("address", address);
     }
 
-    public void setPhoto(File image) {
-        put ("image", image);
-    }
-
-
     public String getProducerId() {
         return getString ("producerId");
     }
@@ -156,25 +113,45 @@ public class Event extends ParseObject {
         put ("date", date);
     }
 
-    public String getPlace() {
-        return getString ("place");
-    }
-
     public void setPlace(String place) {
         put ("place", place);
     }
 
     public void setBitmap(Bitmap b) {
-
         this.b = b;
-
     }
 
-    public Bitmap getBitmap() {
-
-        return this.b;
+    public String getEventToiletService() {
+        return getString ("eventToiletService");
     }
 
+    public void setEventToiletService(String eventToiletService) {
+        put ("eventToiletService", eventToiletService);
+    }
+
+    public String getEventParkingService() {
+        return getString ("eventParkingService");
+    }
+
+    public void setEventParkingService(String eventParkingService) {
+        put ("eventParkingService", eventParkingService);
+    }
+
+    public String getEventCapacityService() {
+        return getString ("eventCapacityService");
+    }
+
+    public void setEventCapacityService(String eventCapacityService) {
+        put ("eventCapacityService", eventCapacityService);
+    }
+
+    public String getEventATMService() {
+        return getString ("eventATMService");
+    }
+
+    public void setEventATMService(String eventATMService) {
+        put ("eventATMService", eventATMService);
+    }
     @Override
     public String toString() {
         return getString ("Name") + "\n" +

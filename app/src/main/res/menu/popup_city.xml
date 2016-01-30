@@ -53,7 +53,4 @@
         android:id="@+id/thirteen"
         android:title=""
         />
-    <item
-        android:id="@+id/fourtheen"
-        android:title=""/>
 </menu>

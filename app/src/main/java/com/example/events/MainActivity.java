@@ -103,9 +103,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         list_view.setOnItemClickListener (this);
 
         Intent intent = getIntent ();
+        Log.e (TAG, "chat_id " + intent.getStringExtra ("chat_id"));
+        Log.e (TAG, "is_guest " + intent.getStringExtra ("is_guest"));
         if (intent.getStringExtra ("chat_id") != null) {
+            Log.e(TAG, "customer_id "+customer_id);
             customer_id = intent.getStringExtra ("chat_id");
             isCustomer = true;
+            Log.e(TAG, "customer_id "+customer_id);
         }
         if (intent.getStringExtra ("is_guest") != null) {
             isGuest = true;
@@ -159,15 +163,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         filtered_events_data.clear ();
         ParseQuery<Event> query = new ParseQuery ("Event");
         query.orderByDescending ("createdAt");
-        List<Event> events = null;
+        List<Event> eventParses = null;
 
         try {
-            events = query.find ();
+            eventParses = query.find ();
             ParseFile imageFile;
             byte[] data;
             Bitmap bmp;
-            for (int i = 0; i < events.size (); i++) {
-                imageFile = (ParseFile) events.get (i).get ("ImageFile");
+            for (int i = 0; i < eventParses.size (); i++) {
+                imageFile = (ParseFile) eventParses.get (i).get ("ImageFile");
                 if (imageFile != null) {
                     data = imageFile.getData ();
                     bmp = BitmapFactory.decodeByteArray (data, 0, data.length);
@@ -176,18 +180,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 events_data.add (new EventInfo (
                                                        bmp,
-                                                       events.get (i).getDate (),
-                                                       events.get (i).getName (),
-                                                       events.get (i).getTags (),
-                                                       events.get (i).getPrice (),
-                                                       events.get (i).getDescription (),
-                                                       events.get (i).getAddress (),
-                                                       null,
-                                                       null,
-                                                       null,
-                                                       null,
-                                                       "Tiberias"));
-                events_data.get (i).setProducerId (events.get (i).getProducerId ());
+                                                       eventParses.get (i).getDate (),
+                                                       eventParses.get (i).getName (),
+                                                       eventParses.get (i).getTags (),
+                                                       eventParses.get (i).getPrice (),
+                                                       eventParses.get (i).getDescription (),
+                                                       eventParses.get (i).getAddress (),
+                                                       eventParses.get (i).getEventToiletService (),
+                                                       eventParses.get (i).getEventParkingService (),
+                                                       eventParses.get (i).getEventCapacityService (),
+                                                       eventParses.get (i).getEventATMService (),
+                                                       eventParses.get (i).getCity ()));
+                events_data.get (i).setProducerId (eventParses.get (i).getProducerId ());
             }
             filtered_events_data.addAll (events_data);
         } catch (ParseException e) {

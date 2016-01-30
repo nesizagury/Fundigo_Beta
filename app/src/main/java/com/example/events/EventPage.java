@@ -2,6 +2,7 @@ package com.example.events;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,7 +14,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +26,7 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,6 +53,7 @@ public class EventPage extends Activity implements View.OnClickListener {
     String producer_id;
     String customer_id;
     private ImageView iv_share;
+    private ImageView iv_chat;
     private final static String TAG = "EventPage";
     static final int REQUEST_CODE_MY_PICK = 1;
     Intent intent;
@@ -62,6 +67,7 @@ public class EventPage extends Activity implements View.OnClickListener {
     private boolean walkNdrive = false;
     private int walkValue;
     private ImageView imageEvenetPageView4;
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +77,7 @@ public class EventPage extends Activity implements View.OnClickListener {
         intent = getIntent ();
         if (getIntent ().getByteArrayExtra ("eventImage") != null) {
             byte[] byteArray = getIntent ().getByteArrayExtra ("eventImage");
-            Bitmap bitmap = BitmapFactory.decodeByteArray (byteArray, 0, byteArray.length);
+            bitmap = BitmapFactory.decodeByteArray (byteArray, 0, byteArray.length);
             ImageView event_image = (ImageView) findViewById (R.id.eventPage_image);
             event_image.setImageBitmap (bitmap);
         }
@@ -98,6 +104,8 @@ public class EventPage extends Activity implements View.OnClickListener {
         customer_id = b.getString ("customer_id");
         iv_share = (ImageView) findViewById (R.id.imageEvenetPageView2);
         iv_share.setOnClickListener (this);
+        iv_chat = (ImageView) findViewById (R.id.imageEvenetPageView5);
+        iv_chat.setOnClickListener (this);
 
         ImageView imageEvenetPageView4 = (ImageView) findViewById (R.id.imageEvenetPageView4);
         imageEvenetPageView4.setOnClickListener (new View.OnClickListener () {
@@ -138,7 +146,13 @@ public class EventPage extends Activity implements View.OnClickListener {
     }
 
     public void openChat(View view) {
+        Log.e (TAG, "openChat clicked");
+        Log.e (TAG, "MainActivity.isCustomer " + MainActivity.isCustomer);
+        Log.e (TAG, "MainActivity.isGuest " + MainActivity.isGuest);
         if (MainActivity.isCustomer) {
+            Log.e (TAG, "before ChatActivity.class");
+            Log.e (TAG, "producer_id " + producer_id);
+            Log.e (TAG, "customer_id " + customer_id);
             Intent intent = new Intent (EventPage.this, ChatActivity.class);
             intent.putExtra ("producer_id", producer_id);
             intent.putExtra ("customer_id", customer_id);
@@ -161,6 +175,7 @@ public class EventPage extends Activity implements View.OnClickListener {
         for (int i = 0; i < rList.size (); i++) {
             mrbList.add (new MessageRoomBean (0, null, "", rList.get (i).getCustomer_id (), producer_id));
         }
+        Log.e(TAG, "before MessagesRoom.class");
         Intent intent = new Intent (this, MessagesRoom.class);
         intent.putExtra ("array", (Serializable) mrbList);
         intent.putExtra ("producer_id", producer_id);
@@ -206,8 +221,53 @@ public class EventPage extends Activity implements View.OnClickListener {
                                                eventName,
                                                save);
                 break;
+            case R.id.imageEvenetPageView5:
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("You can get more info\nabout the event!");
+                builder.setMessage("How do you want to do it?");
+                builder.setPositiveButton("Send message to producer", listener);
+                builder.setNegativeButton("Real Time Chat", listener);
+                builder.setNeutralButton("Cancel...", listener);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                TextView messageText = (TextView) dialog.findViewById(android.R.id.message);
+                messageText.setGravity(Gravity.CENTER);
+                break;
         }
     }
+
+    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+        @Override
+
+        public void onClick(DialogInterface dialog, int which) {
+            Intent intent;
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    Log.e(TAG, "ParseUser.getCurrentUser() " + ParseUser.getCurrentUser ());
+                    Log.e(TAG, "customer_id " + customer_id);
+                    intent = new Intent(EventPage.this, ChatActivity.class);
+                    intent.putExtra("producer_id", producer_id);
+                    intent.putExtra("customer_id", customer_id);
+                    startActivity(intent);
+
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //   if (customer_id != 0) {
+                    intent = new Intent(EventPage.this, RealTimeChatActivity.class);
+                    intent.putExtra("customer_id", customer_id);
+                    intent.putExtra("producer_id", producer_id);
+                    intent.putExtra("eventName", eventName);
+                    Log.e(TAG, "producer_id "+ producer_id+"customer_id "+ customer_id+ "eventName "+eventName );
+                    startActivity(intent);
+                    // }
+                    break;
+                case DialogInterface.BUTTON_NEUTRAL:
+                    dialog.dismiss();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -315,12 +375,9 @@ public class EventPage extends Activity implements View.OnClickListener {
             return duritation;
         }
 
-
         @Override
         protected String doInBackground(String... params) {
             Log.d ("mmm", "begen_doInBackground");
-
-
             try {
                 URL url = new URL (params[0]);
                 Log.d ("mmm", "url=" + url.toString ());
@@ -339,27 +396,21 @@ public class EventPage extends Activity implements View.OnClickListener {
                 } else {
                     Log.d ("mmm", "HttpURLConnection.NOT_OK");
                 }
-
-
             } catch (MalformedURLException e) {
                 e.printStackTrace ();
             } catch (IOException e) {
                 e.printStackTrace ();
             }
-
-
             Log.d ("mmm", "end_doInBackground");
             return null;
         }
 
         @Override
         protected void onPreExecute() {
-
         }
 
         @Override
         protected void onPostExecute(String re) {
-
             if (!walkNdrive) {
                 driving = duritation;
                 walkNdrive = true;
@@ -370,7 +421,6 @@ public class EventPage extends Activity implements View.OnClickListener {
                     toLongToWalk = false;
                 }
             }
-
         }
 
 
@@ -389,9 +439,6 @@ public class EventPage extends Activity implements View.OnClickListener {
 
             Log.d ("mmm", "duration= " + duritation);
             Log.d ("mmm", "end_parseJSON");
-
-
         }
-
     }
 }

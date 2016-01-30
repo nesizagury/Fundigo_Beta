@@ -36,13 +36,13 @@ public class TicketsPage extends AppCompatActivity {
         List<Event> list = null;
         try {
             list = query.find ();
-            for (Event event : list) {
-                if (eventName.equals (event.getName ())) {
-                    Event newEvent = new Event ();
-                    newEvent.setName ("Event Name is : " + event.getName ());
-                    newEvent.setPrice ("Event Price is : " + event.getPrice ());
-                    newEvent.setNumOfTicketsLeft ("Num of Tickets available : " + event.getNumOfTicketsLeft ());
-                    eventsList1.add (newEvent);
+            for (Event eventParse : list) {
+                if (eventName.equals (eventParse.getName ())) {
+                    Event newEventParse = new Event ();
+                    newEventParse.setName ("Event Name is : " + eventParse.getName ());
+                    newEventParse.setPrice ("Event Price is : " + eventParse.getPrice ());
+                    newEventParse.setNumOfTicketsLeft ("Num of Tickets available : " + eventParse.getNumOfTicketsLeft ());
+                    eventsList1.add (newEventParse);
                     break;
                 }
             }
@@ -74,13 +74,13 @@ public class TicketsPage extends AppCompatActivity {
         List<Event> list = null;
         try {
             list = query.find ();
-            for (Event event : list) {
-                if (eventName.equals (event.getName ())) {
-                    Event newEvent = new Event ();
-                    newEvent.setName ("Event Name is : " + event.getName ());
-                    newEvent.setPrice ("Event Price is : " + event.getPrice ());
-                    newEvent.setNumOfTicketsLeft ("Num of Tickets available : " + event.getNumOfTicketsLeft ());
-                    eventsList1.add (newEvent);
+            for (Event eventParse : list) {
+                if (eventName.equals (eventParse.getName ())) {
+                    Event newEventParse = new Event ();
+                    newEventParse.setName ("Event Name is : " + eventParse.getName ());
+                    newEventParse.setPrice ("Event Price is : " + eventParse.getPrice ());
+                    newEventParse.setNumOfTicketsLeft ("Num of Tickets available : " + eventParse.getNumOfTicketsLeft ());
+                    eventsList1.add (newEventParse);
                     break;
                 }
             }
