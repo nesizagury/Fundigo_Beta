@@ -33,7 +33,6 @@ public class MessagesRoom extends Activity implements AdapterView.OnItemClickLis
         list_view.setOnItemClickListener (this);
     }
 
-
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Intent intent = new Intent (this, ChatActivity.class);
@@ -41,9 +40,6 @@ public class MessagesRoom extends Activity implements AdapterView.OnItemClickLis
         MessageRoomBean mrb = (MessageRoomBean) holder.customer.getTag ();
         intent.putExtra ("producer_id", producer_id);
         intent.putExtra ("customer_id", mrb.customer_id);
-
         startActivity (intent);
     }
-
-
 }

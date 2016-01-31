@@ -152,6 +152,8 @@
         android:layout_height="wrap_content"
         android:onClick="createEvent"
         android:text="Create Event"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

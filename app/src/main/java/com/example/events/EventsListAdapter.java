@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,10 +33,8 @@ public class EventsListAdapter extends BaseAdapter {
     List<EventInfo> eventList = new ArrayList<EventInfo> ();
     Context context;
     private ImageView iv_share;
-    private final static String TAG = "EventsListAdapter";
     static final int REQUEST_CODE_MY_PICK = 1;
     Uri uri;
-
 
     public EventsListAdapter(Context c, List<EventInfo> eventList) {
         this.context = c;
@@ -149,7 +146,6 @@ public class EventsListAdapter extends BaseAdapter {
             public void onClick(View v) {
                 switch (v.getId ()) {
                     case R.id.imageView2:
-                        Log.e (TAG, "iv_share in adapter");
                         try {
 
                             Bitmap largeIcon = BitmapFactory.decodeResource (context.getResources (), R.mipmap.pic0);
@@ -184,7 +180,6 @@ public class EventsListAdapter extends BaseAdapter {
                         editor.putString ("date", eventListHolder.date.getText ().toString ());
                         editor.putString ("place", eventListHolder.place.getText ().toString ());
                         editor.apply ();
-                        Log.e (TAG, "" + eventListHolder.name.getText ().toString () + " " + eventListHolder.date.getText ().toString () + " " + eventListHolder.place.getText ().toString ());
                         ((Activity) context).startActivityForResult (intentPick, REQUEST_CODE_MY_PICK);
                         break;
                 }

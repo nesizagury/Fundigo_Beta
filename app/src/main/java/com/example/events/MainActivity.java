@@ -22,7 +22,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -103,13 +102,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         list_view.setOnItemClickListener (this);
 
         Intent intent = getIntent ();
-        Log.e (TAG, "chat_id " + intent.getStringExtra ("chat_id"));
-        Log.e (TAG, "is_guest " + intent.getStringExtra ("is_guest"));
         if (intent.getStringExtra ("chat_id") != null) {
-            Log.e(TAG, "customer_id "+customer_id);
             customer_id = intent.getStringExtra ("chat_id");
             isCustomer = true;
-            Log.e(TAG, "customer_id "+customer_id);
         }
         if (intent.getStringExtra ("is_guest") != null) {
             isGuest = true;
@@ -266,7 +261,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return;
         } else {
             for (int i = 0; i < events_data.size (); i++) {
-                if (events_data.get (i).getCity ().equals (cityName)) {
+                String cityEvent = events_data.get (i).getCity ();
+                if (cityEvent != null && cityEvent.equals (cityName)) {
                     filtered_events_data.add (events_data.get (i));
                 }
             }
@@ -334,8 +330,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Bundle b = new Bundle ();
         Intent intent = new Intent (this, EventPage.class);
-        if (events_data.get (i).getImageId () != null) {
-            Bitmap bmp = events_data.get (i).getImageId ();
+        if (filtered_events_data.get (i).getImageId () != null) {
+            Bitmap bmp = filtered_events_data.get (i).getImageId ();
             ByteArrayOutputStream stream = new ByteArrayOutputStream ();
             bmp.compress (Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray ();
@@ -356,9 +352,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         b.putString ("customer_id", customer_id);
         if (producerId != null)
-            b.putInt ("producer_id", Integer.parseInt (producerId));
+            b.putString ("producer_id", producerId);
         else
-            b.putInt ("producer_id", Integer.parseInt (events_data.get (i).getProducerId ()));
+            b.putString ("producer_id", filtered_events_data.get (i).getProducerId ());
         intent.putExtras (b);
         startActivity (intent);
     }
@@ -371,8 +367,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             String name = sp.getString ("name", null);
             String date = sp.getString ("date", null);
             String place = sp.getString ("place", null);
-            Log.e (TAG, "" + name + " " + date + " " + place);
-            Log.e (TAG, "" + appName);
             if (appName.equals ("com.facebook.katana/com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias")) {
                 ShareDialog shareDialog;
                 shareDialog = new ShareDialog (this);

@@ -48,7 +48,6 @@ public class MessageRoomAdapter extends BaseAdapter {
         } else {
             holder = (MessageItemHolder) row.getTag ();
         }
-
         MessageRoomBean message_bean = list.get (i);
 
         holder.image.setImageResource (message_bean.imageId);
@@ -61,5 +60,4 @@ public class MessageRoomAdapter extends BaseAdapter {
 
         return row;
     }
-
 }

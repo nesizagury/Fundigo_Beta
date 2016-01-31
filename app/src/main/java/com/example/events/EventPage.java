@@ -26,7 +26,6 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +53,6 @@ public class EventPage extends Activity implements View.OnClickListener {
     String customer_id;
     private ImageView iv_share;
     private ImageView iv_chat;
-    private final static String TAG = "EventPage";
     static final int REQUEST_CODE_MY_PICK = 1;
     Intent intent;
 
@@ -66,7 +64,6 @@ public class EventPage extends Activity implements View.OnClickListener {
     private String walking;
     private boolean walkNdrive = false;
     private int walkValue;
-    private ImageView imageEvenetPageView4;
     Bitmap bitmap;
 
     @Override
@@ -132,7 +129,6 @@ public class EventPage extends Activity implements View.OnClickListener {
                                                           "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + getLocation2 ().getLatitude () + "," + getLocation2 ().getLongitude () + "&destinations=" + even_addr + "+Israel&mode=driving&language=en-EN&key=AIzaSyAuwajpG7_lKGFWModvUIoMqn3vvr9CMyc");
         new GetEventDis2 (EventPage.this).execute (
                                                           "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + getLocation2 ().getLatitude () + "," + getLocation2 ().getLongitude () + "&destinations=" + even_addr + "+Israel&mode=walking&language=en-EN&key=AIzaSyAuwajpG7_lKGFWModvUIoMqn3vvr9CMyc");
-        imageEvenetPageView4 = (ImageView) findViewById (R.id.imageEvenetPageView4);
     }
 
     public void openTicketsPage(View view) {
@@ -145,27 +141,11 @@ public class EventPage extends Activity implements View.OnClickListener {
         startActivity (ticketsPageIntent);
     }
 
-    public void openChat(View view) {
-        Log.e (TAG, "openChat clicked");
-        Log.e (TAG, "MainActivity.isCustomer " + MainActivity.isCustomer);
-        Log.e (TAG, "MainActivity.isGuest " + MainActivity.isGuest);
-        if (MainActivity.isCustomer) {
-            Log.e (TAG, "before ChatActivity.class");
-            Log.e (TAG, "producer_id " + producer_id);
-            Log.e (TAG, "customer_id " + customer_id);
-            Intent intent = new Intent (EventPage.this, ChatActivity.class);
-            intent.putExtra ("producer_id", producer_id);
-            intent.putExtra ("customer_id", customer_id);
-            startActivity (intent);
-        } else if (!MainActivity.isGuest)
-            loadMessagesPage ();
-    }
-
     private void loadMessagesPage() {
         List<Room> rList = new ArrayList<Room> ();
         List<MessageRoomBean> mrbList = new ArrayList<MessageRoomBean> ();
         ParseQuery<Room> query = ParseQuery.getQuery (Room.class);
-        query.whereEqualTo ("producer_id", customer_id);
+        query.whereEqualTo ("producer_id", producer_id);
         query.orderByDescending ("createdAt");
         try {
             rList = query.find ();
@@ -175,7 +155,6 @@ public class EventPage extends Activity implements View.OnClickListener {
         for (int i = 0; i < rList.size (); i++) {
             mrbList.add (new MessageRoomBean (0, null, "", rList.get (i).getCustomer_id (), producer_id));
         }
-        Log.e(TAG, "before MessagesRoom.class");
         Intent intent = new Intent (this, MessagesRoom.class);
         intent.putExtra ("array", (Serializable) mrbList);
         intent.putExtra ("producer_id", producer_id);
@@ -186,7 +165,6 @@ public class EventPage extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId ()) {
             case R.id.imageEvenetPageView2:
-                Log.e (TAG, "");
                 try {
                     Bitmap largeIcon = BitmapFactory.decodeResource (getResources (), R.mipmap.pic0);
                     ByteArrayOutputStream bytes = new ByteArrayOutputStream ();
@@ -222,48 +200,45 @@ public class EventPage extends Activity implements View.OnClickListener {
                                                save);
                 break;
             case R.id.imageEvenetPageView5:
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("You can get more info\nabout the event!");
-                builder.setMessage("How do you want to do it?");
-                builder.setPositiveButton("Send message to producer", listener);
-                builder.setNegativeButton("Real Time Chat", listener);
-                builder.setNeutralButton("Cancel...", listener);
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                TextView messageText = (TextView) dialog.findViewById(android.R.id.message);
-                messageText.setGravity(Gravity.CENTER);
+                AlertDialog.Builder builder = new AlertDialog.Builder (this);
+                builder.setTitle ("You can get more info\nabout the event!");
+                builder.setMessage ("How do you want to do it?");
+                builder.setPositiveButton ("Send message to producer", listener);
+                builder.setNegativeButton ("Real Time Chat", listener);
+                builder.setNeutralButton ("Cancel...", listener);
+                AlertDialog dialog = builder.create ();
+                dialog.show ();
+                TextView messageText = (TextView) dialog.findViewById (android.R.id.message);
+                messageText.setGravity (Gravity.CENTER);
                 break;
         }
     }
 
-    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener () {
         @Override
 
         public void onClick(DialogInterface dialog, int which) {
             Intent intent;
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    Log.e(TAG, "ParseUser.getCurrentUser() " + ParseUser.getCurrentUser ());
-                    Log.e(TAG, "customer_id " + customer_id);
-                    intent = new Intent(EventPage.this, ChatActivity.class);
-                    intent.putExtra("producer_id", producer_id);
-                    intent.putExtra("customer_id", customer_id);
-                    startActivity(intent);
-
+                    if (MainActivity.isCustomer) {
+                        intent = new Intent (EventPage.this, ChatActivity.class);
+                        intent.putExtra ("producer_id", producer_id);
+                        intent.putExtra ("customer_id", customer_id);
+                        startActivity (intent);
+                    } else if (!MainActivity.isGuest) {
+                        loadMessagesPage ();
+                    }
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
-                    //   if (customer_id != 0) {
-                    intent = new Intent(EventPage.this, RealTimeChatActivity.class);
-                    intent.putExtra("customer_id", customer_id);
-                    intent.putExtra("producer_id", producer_id);
-                    intent.putExtra("eventName", eventName);
-                    Log.e(TAG, "producer_id "+ producer_id+"customer_id "+ customer_id+ "eventName "+eventName );
-                    startActivity(intent);
-                    // }
+                    intent = new Intent (EventPage.this, RealTimeChatActivity.class);
+                    intent.putExtra ("customer_id", customer_id);
+                    intent.putExtra ("producer_id", producer_id);
+                    intent.putExtra ("eventName", eventName);
+                    startActivity (intent);
                     break;
                 case DialogInterface.BUTTON_NEUTRAL:
-                    dialog.dismiss();
+                    dialog.dismiss ();
                     break;
             }
         }
@@ -273,7 +248,6 @@ public class EventPage extends Activity implements View.OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data != null && requestCode == REQUEST_CODE_MY_PICK) {
             String appName = data.getComponent ().flattenToShortString ();
-            Log.e (TAG, "" + appName);
             if (appName.equals ("com.facebook.katana/com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias")) {
                 ShareDialog shareDialog;
                 shareDialog = new ShareDialog (this);
@@ -365,14 +339,7 @@ public class EventPage extends Activity implements View.OnClickListener {
         String duritation;
         boolean toLongToWalk = false;
 
-
         public GetEventDis2(EventPage eventPage) {
-
-        }
-
-
-        String getDuritation() {
-            return duritation;
         }
 
         @Override

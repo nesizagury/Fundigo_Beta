@@ -1,7 +1,6 @@
 package com.example.events;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,9 +37,7 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
         }
         boolean isMe = false;
         final Message message = (Message) getItem (position);
-        Log.e (TAG, "position" + position);
         final ViewHolder holder = (ViewHolder) convertView.getTag ();
-        Log.e(TAG, "message.getUserId()"+ message.getUserId());
         holder.userId.setVisibility (View.GONE);
         if (mUserId.equals (message.getUserId ()))
             isMe = true;

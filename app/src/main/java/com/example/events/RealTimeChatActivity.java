@@ -29,102 +29,94 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
     private ArrayList<Message> mMessages;
     private RTCAdapter mAdapter;
     private boolean mFirstLoad;
-    private Handler handler = new Handler();
+    private Handler handler = new Handler ();
     private String eventName;
-    boolean isSaved = false;
-    String body;
     String producer_id;
     String customer_id;
-    private final static String TAG = "ChatActivity";
-    private boolean rtc = false;
     private Button btnSend;
     private String user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_real_time_chat);
-        Intent intent = getIntent();
+        super.onCreate (savedInstanceState);
+        setContentView (R.layout.activity_real_time_chat);
+        Intent intent = getIntent ();
 
-        producer_id = intent.getStringExtra("producer_id");
-        customer_id = intent.getStringExtra("customer_id");
-        eventName = intent.getStringExtra("eventName");
+        producer_id = intent.getStringExtra ("producer_id");
+        customer_id = intent.getStringExtra ("customer_id");
+        eventName = intent.getStringExtra ("eventName");
 
-        Log.e(TAG, "producer_id "+"customer_id "+ customer_id+ "eventName "+eventName );
-
-        etMessage = (EditText) findViewById(R.id.et_Message);
-        lvChat = (ListView) findViewById(R.id.lv_Chat);
-        btnSend = (Button) findViewById(R.id.btn_Send);
-        setupMessagePosting();
-        Log.e(TAG, "MainActivity.isCustomer " + MainActivity.isCustomer);
-        handler.postDelayed(runnable, 500);
+        etMessage = (EditText) findViewById (R.id.et_Message);
+        lvChat = (ListView) findViewById (R.id.lv_Chat);
+        btnSend = (Button) findViewById (R.id.btn_Send);
+        setupMessagePosting ();
+        handler.postDelayed (runnable, 500);
     }
 
-    private Runnable runnable = new Runnable() {
+    private Runnable runnable = new Runnable () {
         @Override
         public void run() {
-            refreshMessages();
-            handler.postDelayed(this, 500);
+            refreshMessages ();
+            handler.postDelayed (this, 500);
         }
     };
 
     private void refreshMessages() {
-        receiveMessage();
+        receiveMessage ();
     }
 
-
     private void setupMessagePosting() {
-        mMessages = new ArrayList<>();
-        lvChat.setTranscriptMode(1);
+        mMessages = new ArrayList<> ();
+        lvChat.setTranscriptMode (1);
         mFirstLoad = true;
-        mAdapter = new RTCAdapter(this, customer_id, producer_id, mMessages);
-        lvChat.setAdapter(mAdapter);
-        btnSend.setOnClickListener(new View.OnClickListener() {
+        mAdapter = new RTCAdapter (this, customer_id, producer_id, mMessages);
+        lvChat.setAdapter (mAdapter);
+        btnSend.setOnClickListener (new View.OnClickListener () {
 
             @Override
             public void onClick(View v) {
-                String body = etMessage.getText().toString();
+                String body = etMessage.getText ().toString ();
                 Message message = new Message ();
                 if (Constants.IS_PRODUCER) {
-                    message.setUserId(producer_id);
-                    message.setCustomer(producer_id);
+                    message.setUserId (producer_id);
+                    message.setCustomer (producer_id);
                 } else {
-                    message.setUserId(customer_id);
-                    message.setCustomer(customer_id);
+                    message.setUserId (customer_id);
+                    message.setCustomer (customer_id);
                 }
-                message.setBody(body);
-                message.setEventName(eventName);
-                message.setProducer(producer_id);
+                message.setBody (body);
+                message.setEventName (eventName);
+                message.setProducer (producer_id);
 
-                message.saveInBackground(new SaveCallback() {
+                message.saveInBackground (new SaveCallback () {
                     @Override
                     public void done(ParseException e) {
-                        receiveMessage();
+                        receiveMessage ();
                     }
                 });
-                etMessage.setText("");
+                etMessage.setText ("");
             }
         });
-        lvChat.setOnItemClickListener(this);
+        lvChat.setOnItemClickListener (this);
     }
 
     private void receiveMessage() {
-        ParseQuery<Message> query = ParseQuery.getQuery(Message.class);
-        query.setLimit(50);
-        query.whereEqualTo("eventName", eventName);
-        query.orderByAscending("createdAt");
-        query.findInBackground(new FindCallback<Message>() {
+        ParseQuery<Message> query = ParseQuery.getQuery (Message.class);
+        query.setLimit (50);
+        query.whereEqualTo ("eventName", eventName);
+        query.orderByAscending ("createdAt");
+        query.findInBackground (new FindCallback<Message> () {
             public void done(List<Message> messages, ParseException e) {
                 if (e == null) {
-                    mMessages.clear();
-                    mMessages.addAll(messages);
-                    mAdapter.notifyDataSetChanged();
+                    mMessages.clear ();
+                    mMessages.addAll (messages);
+                    mAdapter.notifyDataSetChanged ();
                     if (mFirstLoad) {
-                        lvChat.setSelection(mAdapter.getCount() - 1);
+                        lvChat.setSelection (mAdapter.getCount () - 1);
                         mFirstLoad = false;
                     }
                 } else {
-                    Log.d("message", "Error: " + e.getMessage());
+                    Log.d ("message", "Error: " + e.getMessage ());
                 }
             }
         });
@@ -132,40 +124,38 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
 
     @Override
     public void onPause() {
-        super.onPause();
-        handler.removeCallbacks(runnable);
+        super.onPause ();
+        handler.removeCallbacks (runnable);
     }
 
     @Override
     public void onResume() {
         super.onResume ();
-        handler.postDelayed(runnable, 500);
+        handler.postDelayed (runnable, 500);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        user = mMessages.get(position).getUserId();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Visit user facebook page");
-       // builder.setMessage("How do you want to do it?");
-        builder.setIcon(R.mipmap.ic_mor_information);
-        builder.setPositiveButton("Go!", listener);
-        builder.setNegativeButton("Cancel...", listener);
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        user = mMessages.get (position).getUserId ();
+        AlertDialog.Builder builder = new AlertDialog.Builder (this);
+        builder.setTitle ("Visit user facebook page");
+        builder.setIcon (R.mipmap.ic_mor_information);
+        builder.setPositiveButton ("Go!", listener);
+        builder.setNegativeButton ("Cancel...", listener);
+        AlertDialog dialog = builder.create ();
+        dialog.show ();
     }
-    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-        @Override
 
+    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener () {
+        @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    Toast.makeText(RealTimeChatActivity.this, "This user was chosen "+ user, Toast.LENGTH_SHORT).show();
+                    Toast.makeText (RealTimeChatActivity.this, "This user was chosen " + user, Toast.LENGTH_SHORT).show ();
 
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
-                    dialog.dismiss();
+                    dialog.dismiss ();
 
                     break;
 

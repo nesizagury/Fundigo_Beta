@@ -59,7 +59,7 @@
             android:layout_marginTop="2dp"
             android:layout_weight="1"
             android:src="@mipmap/ic_mor_information"
-            android:onClick="openChat"/>
+            android:nestedScrollingEnabled="false"/>
 
         <TextView
             android:id="@+id/eventPage_name"

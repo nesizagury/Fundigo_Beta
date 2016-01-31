@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
@@ -33,7 +32,6 @@ public class ChatActivity extends Activity {
     String body;
     String producer_id;
     String customer_id;
-    private final static String TAG = "ChatActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +49,6 @@ public class ChatActivity extends Activity {
         // Automatically scroll to the bottom when a data set change notification is received and only if the last item is already visible on screen. Don't scroll to the bottom otherwise.
         lvChat.setTranscriptMode (1);
         mFirstLoad = true;
-        Log.e (TAG, "MainActivity.isCustomer " + MainActivity.isCustomer);
-        Log.e(TAG, "mMessages "+mMessages.size() +" "+ mMessages );
-
 
         if (MainActivity.isCustomer) {
             mAdapter = new ChatListAdapter (ChatActivity.this, mMessages, customer_id);
@@ -66,7 +61,6 @@ public class ChatActivity extends Activity {
 
     public void sendMessage(View view) {
         body = etMessage.getText ().toString ();
-        Log.e(TAG, "body "+ body);
         Message message = new Message ();
         message.setBody (body);
         if (MainActivity.isCustomer)
@@ -176,10 +170,10 @@ public class ChatActivity extends Activity {
 
     private void saveToMessagesRoom() {
         Room room = new Room ();
-        ParseACL parseAcl = new ParseACL();
-        parseAcl.setPublicReadAccess(true);
-        parseAcl.setPublicWriteAccess(true);
-        room.setACL(parseAcl);
+        ParseACL parseAcl = new ParseACL ();
+        parseAcl.setPublicReadAccess (true);
+        parseAcl.setPublicWriteAccess (true);
+        room.setACL (parseAcl);
         room.setCustomer_id (customer_id);
         room.setProducer_id (producer_id);
         room.setConversationId (customer_id + " - " + producer_id);

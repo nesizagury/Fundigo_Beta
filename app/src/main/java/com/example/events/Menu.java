@@ -3,7 +3,6 @@ package com.example.events;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -61,7 +60,6 @@ public class Menu extends AppCompatActivity {
             @Override
             public void onError(FacebookException exception) {
                 Toast.makeText (getApplicationContext (), "error", Toast.LENGTH_SHORT).show ();
-                Log.e (TAG, "" + exception.toString ());
             }
         });
     }
@@ -80,9 +78,7 @@ public class Menu extends AppCompatActivity {
                 inputStream.close ();
             }
         } catch (FileNotFoundException e) {
-            Log.e ("login activity", "File not found: " + e.toString ());
         } catch (IOException e) {
-            Log.e ("login activity", "Can not read file: " + e.toString ());
         }
         return phone_number;
     }
