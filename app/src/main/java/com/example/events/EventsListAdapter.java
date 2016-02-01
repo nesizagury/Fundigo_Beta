@@ -22,9 +22,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,13 +38,12 @@ public class EventsListAdapter extends BaseAdapter {
     static final int REQUEST_CODE_MY_PICK = 1;
     Uri uri;
 
-    public EventsListAdapter(Context c, List<EventInfo> eventList) {
+    public EventsListAdapter(Context c, List<EventInfo> eventList, boolean isSavedActivity) {
         this.context = c;
         this.eventList = eventList;
     }
 
     public EventsListAdapter(Context c, ArrayList<Event> arrayList) {
-
         this.context = c;
         List<EventInfo> ans = new ArrayList<EventInfo> ();
 
@@ -100,40 +101,56 @@ public class EventsListAdapter extends BaseAdapter {
         eventListHolder.saveEvent.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View v) {
-                if (event.getPress ()) {
-                    event.setPress (false);
+                if (event.getIsSaved ()) {
+                    event.setIsSaved (false);
                     eventListHolder.saveEvent.setImageResource (R.mipmap.whh);
                     Toast.makeText (context, "You unSaved this event", Toast.LENGTH_SHORT).show ();
                     try {
-                        File inputFile = new File ("saves");
-                        File tempFile = new File ("myTempFile");
-                        BufferedReader reader = new BufferedReader (new FileReader (inputFile));
-                        BufferedWriter writer = new BufferedWriter (new FileWriter (tempFile));
+                        InputStream inputStream = context.getApplicationContext ().openFileInput ("saves");
+                        context.getApplicationContext ().deleteFile ("temp");
+                        OutputStream outputStreamTemp = context.getApplicationContext ().openFileOutput ("temp", Context.MODE_PRIVATE);
+                        BufferedReader bufferedReader = new BufferedReader (new InputStreamReader (inputStream));
+                        BufferedWriter bufferedWriter = new BufferedWriter (new OutputStreamWriter (outputStreamTemp));
                         String lineToRemove = event.name;
                         String currentLine;
-                        while ((currentLine = reader.readLine ()) != null) {
+                        while ((currentLine = bufferedReader.readLine ()) != null) {
                             // trim newline when comparing with lineToRemove
                             String trimmedLine = currentLine.trim ();
                             if (trimmedLine.equals (lineToRemove)) continue;
-                            writer.write (currentLine);
+                            else {
+                                bufferedWriter.write (currentLine);
+                                bufferedWriter.write (System.getProperty ("line.separator"));
+                            }
                         }
-                        writer.close ();
-                        reader.close ();
-                        tempFile.renameTo (inputFile);
+                        bufferedReader.close ();
+                        bufferedWriter.close ();
+                        inputStream = context.getApplicationContext ().openFileInput ("temp");
+                        context.getApplicationContext ().deleteFile ("saves");
+                        outputStreamTemp = context.getApplicationContext ().openFileOutput ("saves", Context.MODE_PRIVATE);
+                        bufferedReader = new BufferedReader (new InputStreamReader (inputStream));
+                        bufferedWriter = new BufferedWriter (new OutputStreamWriter (outputStreamTemp));
+                        while ((currentLine = bufferedReader.readLine ()) != null) {
+                            bufferedWriter.write (currentLine);
+                            bufferedWriter.write (System.getProperty ("line.separator"));
+                        }
+                        bufferedReader.close ();
+                        bufferedWriter.close ();
+
                     } catch (FileNotFoundException e) {
+                        e.printStackTrace ();
                     } catch (IOException e) {
+                        e.printStackTrace ();
                     }
                 } else {
-                    event.setPress (true);
+                    event.setIsSaved (true);
                     eventListHolder.saveEvent.setImageResource (R.mipmap.whhsaved);
                     Toast.makeText (context, "You Saved this event", Toast.LENGTH_SHORT).show ();
-                    String filename = "saves";
-                    FileOutputStream outputStream;
                     try {
-                        outputStream = context.openFileOutput (filename, Context.MODE_PRIVATE);
-                        outputStream.write (event.name.getBytes ());
+                        OutputStream outputStream = context.getApplicationContext ().openFileOutput ("saves", Context.MODE_APPEND + Context.MODE_PRIVATE);
+                        outputStream.write (event.getName ().getBytes ());
+                        outputStream.write (System.getProperty ("line.separator").getBytes ());
                         outputStream.close ();
-                    } catch (Exception e) {
+                    } catch (IOException e) {
                         e.printStackTrace ();
                     }
                 }
@@ -189,37 +206,8 @@ public class EventsListAdapter extends BaseAdapter {
         return row;
     }
 
-    public EventsListAdapter(Context c, String name, int from, ArrayList<EventInfo> arrayList) {
-        this.context = c;
-        if (from == 1) {
-            for (int i = 0; i < MainActivity.events_data.size (); i++) {
-                if (MainActivity.events_data.get (i).getPlace ().contains (name) && !eventList.contains (MainActivity.events_data.get (i))) {
-                    eventList.add (MainActivity.events_data.get (i));
-                }
-            }
-        } else {
-            for (int i = 0; i < arrayList.size (); i++) {
-                if (arrayList.get (i).getPlace ().contains (name) && !eventList.contains (arrayList.get (i))) {
-                    eventList.add (arrayList.get (i));
-                }
-            }
-        }
-    }
-
-    public EventsListAdapter(Context c, String name, ArrayList<EventInfo> arrayList) {
-        this.context = c;
-        if (name.equals ("filter")) {
-            eventList = arrayList;
-        } else {
-            for (int i = 0; i < arrayList.size (); i++) {
-                if (arrayList.get (i).getName ().equals (name) && !eventList.contains (arrayList.get (i)))
-                    eventList.add (arrayList.get (i));
-            }
-        }
-    }
-
     private void checkIfChangeColorToSaveButtton(EventInfo event, ImageView saveEvent) {
-        if (event.getPress ()) {
+        if (event.getIsSaved ()) {
             saveEvent.setImageResource (R.mipmap.whhsaved);
         } else {
             saveEvent.setImageResource (R.mipmap.whh);

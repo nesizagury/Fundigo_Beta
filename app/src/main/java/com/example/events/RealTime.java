@@ -82,7 +82,7 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
         if (vId == Event.getId ()) {
             newIntent = new Intent (this, MainActivity.class);
         } else if (vId == SavedEvent.getId ()) {
-            newIntent = new Intent (this, com.example.events.SavedEvent.class);
+            newIntent = new Intent (this, SavedEventActivity.class);
         }
         if (vId != RealTime.getId ())
             startActivity (newIntent);
@@ -141,13 +141,13 @@ public class RealTime extends AppCompatActivity implements View.OnClickListener,
         Intent intent = new Intent (this, EventPage.class);
         EventListHolder eventListHolder = (EventListHolder) view.getTag ();
         EventInfo event = (EventInfo) eventListHolder.image.getTag ();
-        intent.putExtra ("eventImage", MainActivity.events_data.get (i).getImageId ());
-        intent.putExtra ("eventDate", MainActivity.events_data.get (i).getDate ());
-        intent.putExtra ("eventName", MainActivity.events_data.get (i).getName ());
-        intent.putExtra ("eventTags", MainActivity.events_data.get (i).getTags ());
-        intent.putExtra ("eventPrice", MainActivity.events_data.get (i).getPrice ());
-        intent.putExtra ("eventInfo", MainActivity.events_data.get (i).getInfo ());
-        intent.putExtra ("eventPlace", MainActivity.events_data.get (i).getPlace ());
+        intent.putExtra ("eventImage", MainActivity.all_events_data.get (i).getImageId ());
+        intent.putExtra ("eventDate", MainActivity.all_events_data.get (i).getDate ());
+        intent.putExtra ("eventName", MainActivity.all_events_data.get (i).getName ());
+        intent.putExtra ("eventTags", MainActivity.all_events_data.get (i).getTags ());
+        intent.putExtra ("eventPrice", MainActivity.all_events_data.get (i).getPrice ());
+        intent.putExtra ("eventInfo", MainActivity.all_events_data.get (i).getInfo ());
+        intent.putExtra ("eventPlace", MainActivity.all_events_data.get (i).getPlace ());
         b.putInt ("userIndex", i);
         intent.putExtras (b);
         startActivity (intent);

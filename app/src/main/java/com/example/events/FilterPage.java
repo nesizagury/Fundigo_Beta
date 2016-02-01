@@ -93,9 +93,9 @@ public class FilterPage extends AppCompatActivity implements   AdapterView.OnIte
         {
             for (int i = 0; i < 15; i++)
             {
-                if (ans.equals(MainActivity.events_data.get(i).getFilterName()) && !arr.contains(MainActivity.events_data.get(i)))
+                if (ans.equals(MainActivity.all_events_data.get(i).getFilterName()) && !arr.contains(MainActivity.all_events_data.get(i)))
                 {
-                    arr.add(MainActivity.events_data.get(i));
+                    arr.add(MainActivity.all_events_data.get(i));
                 }
             }
             Intent newIntent = new Intent(this, MainActivity.class);

@@ -36,10 +36,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -195,9 +196,7 @@ public class EventPage extends Activity implements View.OnClickListener {
                 startActivityForResult (intentPick, REQUEST_CODE_MY_PICK);
                 break;
             case R.id.imageEvenetPageView3:
-                handleSaveEventClicked (this.intent.getIntExtra ("index", 0),
-                                               eventName,
-                                               save);
+                handleSaveEventClicked (this.intent.getIntExtra ("index", 0));
                 break;
             case R.id.imageEvenetPageView5:
                 AlertDialog.Builder builder = new AlertDialog.Builder (this);
@@ -268,48 +267,65 @@ public class EventPage extends Activity implements View.OnClickListener {
 
     public void checkIfChangeColorToSaveButtton() {
         int index = intent.getIntExtra ("index", 0);
-        if (MainActivity.filtered_events_data.get (index).getPress ())
+        if (MainActivity.all_events_data.get (index).getIsSaved ())
             save.setImageResource (R.mipmap.whsavedd);
         else {
             save.setImageResource (R.mipmap.wh);
         }
     }
 
-    public void handleSaveEventClicked(int index, String eventName, ImageView saveButton) {
-        if (MainActivity.filtered_events_data.get (index).getPress ()) {
-            MainActivity.filtered_events_data.get (index).setPress (false);
+    public void handleSaveEventClicked(int index) {
+        if (MainActivity.all_events_data.get (index).getIsSaved ()) {
+            MainActivity.all_events_data.get (index).setIsSaved (false);
             save.setImageResource (R.mipmap.wh);
             Toast.makeText (this, "You unSaved this event", Toast.LENGTH_SHORT).show ();
+            EventInfo event = MainActivity.all_events_data.get (index);
             try {
-                File inputFile = new File ("saves");
-                File tempFile = new File ("myTempFile");
-                BufferedReader reader = new BufferedReader (new FileReader (inputFile));
-                BufferedWriter writer = new BufferedWriter (new FileWriter (tempFile));
-                String lineToRemove = eventName;
+                getApplicationContext ().deleteFile ("temp");
+                InputStream inputStream = getApplicationContext ().openFileInput ("saves");
+                OutputStream outputStreamTemp = getApplicationContext ().openFileOutput ("temp", Context.MODE_PRIVATE);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter (outputStreamTemp));
+                String lineToRemove = event.name;
                 String currentLine;
-                while ((currentLine = reader.readLine ()) != null) {
+                while ((currentLine = bufferedReader.readLine ()) != null) {
                     // trim newline when comparing with lineToRemove
                     String trimmedLine = currentLine.trim ();
                     if (trimmedLine.equals (lineToRemove)) continue;
-                    writer.write (currentLine);
+                    else{
+                        bufferedWriter.write (currentLine);
+                        bufferedWriter.write (System.getProperty ("line.separator"));
+                    }
                 }
-                writer.close ();
-                reader.close ();
-                tempFile.renameTo (inputFile);
+                bufferedReader.close ();
+                bufferedWriter.close ();
+                getApplicationContext ().deleteFile ("saves");
+                inputStream = getApplicationContext ().openFileInput ("temp");
+                outputStreamTemp = getApplicationContext ().openFileOutput ("saves", Context.MODE_PRIVATE);
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStreamTemp));
+                while ((currentLine = bufferedReader.readLine ()) != null) {
+                    bufferedWriter.write (currentLine);
+                    bufferedWriter.write (System.getProperty ("line.separator"));
+                }
+                bufferedReader.close ();
+                bufferedWriter.close ();
+
             } catch (FileNotFoundException e) {
+                e.printStackTrace ();
             } catch (IOException e) {
+                e.printStackTrace ();
             }
         } else {
-            MainActivity.filtered_events_data.get (index).setPress (true);
+            MainActivity.all_events_data.get (index).setIsSaved (true);
             save.setImageResource (R.mipmap.whsavedd);
             Toast.makeText (this, "You Saved this event", Toast.LENGTH_SHORT).show ();
-            String filename = "saves";
-            FileOutputStream outputStream;
             try {
-                outputStream = openFileOutput (filename, Context.MODE_PRIVATE);
-                outputStream.write (eventName.getBytes ());
+                OutputStream outputStream = getApplicationContext ().openFileOutput ("saves", Context.MODE_APPEND + Context.MODE_PRIVATE);
+                outputStream.write (MainActivity.all_events_data.get (index).getName ().getBytes ());
+                outputStream.write (System.getProperty ("line.separator").getBytes ());
                 outputStream.close ();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace ();
             }
         }

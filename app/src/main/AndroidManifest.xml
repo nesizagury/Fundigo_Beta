@@ -55,7 +55,7 @@
         </activity>
         <activity android:name=".Menu">
         </activity>
-        <activity android:name=".SavedEvent">
+        <activity android:name=".SavedEventActivity">
         </activity>
         <activity
             android:name=".EventService"

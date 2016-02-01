@@ -17,8 +17,9 @@ public class EventInfo {
     String capacity;
     String atm;
     String filterName;
-    boolean press;
+    boolean isSaved;
     String producerId;
+    int indexInFullList;
 
     public EventInfo(Bitmap imageId,
                      String date,
@@ -31,7 +32,8 @@ public class EventInfo {
                      String parking,
                      String capacity,
                      String atm,
-                     String city) {
+                     String city,
+                     int indexInFullList) {
         this.imageId = imageId;
         this.date = date;
         this.name = name;
@@ -44,6 +46,7 @@ public class EventInfo {
         this.capacity = capacity;
         this.atm = atm;
         this.city = city;
+        this.indexInFullList = indexInFullList;
     }
 
     public Bitmap getImageId() {
@@ -142,12 +145,12 @@ public class EventInfo {
         this.filterName = filterName;
     }
 
-    public void setPress(boolean t) {
-        press = t;
+    public void setIsSaved(boolean t) {
+        isSaved = t;
     }
 
-    public boolean getPress() {
-        return press;
+    public boolean getIsSaved() {
+        return isSaved;
     }
 
     public String getCity() {
@@ -160,5 +163,9 @@ public class EventInfo {
 
     public void setProducerId(String producerId) {
         this.producerId = producerId;
+    }
+
+    public int getIndexInFullList() {
+        return indexInFullList;
     }
 }

@@ -9,13 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.util.List;
 
 public class ChatListAdapter extends ArrayAdapter<Message> {
     private String mUserId;
-    private static final String TAG = "ChatListAdapter";
 
     public ChatListAdapter(Context context, List<Message> messages, String userId) {
         super (context, 0, messages);
@@ -24,7 +21,6 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         if (convertView == null) {
             convertView = LayoutInflater.from (getContext ()).
                                                                      inflate (R.layout.chat_item, parent, false);
@@ -54,20 +50,6 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
         }
         holder.body.setText (message.getBody ());
         return convertView;
-    }
-
-    // Create a gravatar image based on the hash value obtained from userId
-    private static String getProfileUrl(final String userId) {
-        String hex = "";
-        try {
-            final MessageDigest digest = MessageDigest.getInstance ("MD5");
-            final byte[] hash = digest.digest (userId.getBytes ());
-            final BigInteger bigInt = new BigInteger (hash);
-            hex = bigInt.abs ().toString (16);
-        } catch (Exception e) {
-            e.printStackTrace ();
-        }
-        return "http://www.gravatar.com/avatar/" + hex + "?d=identicon";
     }
 
     final class ViewHolder {
