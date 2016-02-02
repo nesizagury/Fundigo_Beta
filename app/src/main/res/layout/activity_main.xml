@@ -144,7 +144,9 @@
         android:background="#F1F1F1"
         android:divider="#F1F1F1"
         android:dividerHeight="0dp"
-        android:drawSelectorOnTop="false"/>
+        android:drawSelectorOnTop="false"
+        android:scrollingCache="false"
+        android:animationCache="false"/>
 
     <Button
         android:id="@+id/create_button"

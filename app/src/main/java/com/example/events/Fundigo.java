@@ -1,11 +1,13 @@
 package com.example.events;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 
 import com.facebook.FacebookSdk;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
 
 import org.acra.ACRA;
@@ -29,6 +31,13 @@ public class Fundigo extends Application {
         defaultAcl.setPublicReadAccess(true);
         defaultAcl.setPublicWriteAccess (true);
         ParseACL.setDefaultACL(defaultAcl, true);
+        SharedPreferences ratePrefs = getSharedPreferences ("First Update", 0);
+        if (!ratePrefs.getBoolean ("FrstTime", false)) {
+            ParsePush.subscribeInBackground ("All_Users");
+            SharedPreferences.Editor edit = ratePrefs.edit ();
+            edit.putBoolean ("FrstTime", true);
+            edit.commit ();
+        }
     }
 
 }

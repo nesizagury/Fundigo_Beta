@@ -26,43 +26,38 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.example.events.MyLocation.LocationResult;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
-import com.parse.ParsePush;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 public class SavedEventActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
-    ArrayList<EventInfo> savedEventsList = new ArrayList<> ();
-    ArrayList<EventInfo> filteredSavedEventsList = new ArrayList<> ();
+    static ArrayList<EventInfo> savedEventsList = new ArrayList<> ();
+    static ArrayList<EventInfo> filteredSavedEventsList = new ArrayList<> ();
     static final int REQUEST_CODE_MY_PICK = 1;
 
     ListView list_view;
-    EventsListAdapter eventsListAdapter;
-    Button eventTab, savedEvent, realTimeTab, currentCityButton;
+    static EventsListAdapter eventsListAdapter;
+    Button eventTab;
+    Button savedEvent;
+    Button realTimeTab;
+    static Button currentCityButton;
 
-    private static LocationManager locationManager;
-    PopupMenu popup;
-    String[] namesCity;
-    static int indexCityGPS = 0;
-    HashMap<Integer, Integer> popUpIDToCityIndex = new HashMap<Integer, Integer> ();
+    LocationManager locationManager;
+    static PopupMenu popup;
     LocationListener locationListener;
-    static boolean cityFoundGPS = false;
+
+    static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_saved_event);//
+        context = SavedEventActivity.this;
         list_view = (ListView) findViewById (R.id.listView);
         eventTab = (Button) findViewById (R.id.BarEvent_button);
         savedEvent = (Button) findViewById (R.id.BarSavedEvent_button);
@@ -70,63 +65,30 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
 
         popup = new PopupMenu (SavedEventActivity.this, currentCityButton);
         currentCityButton = (Button) findViewById (R.id.city_item);
-        inflateCityMenu ();
+
         eventsListAdapter = new EventsListAdapter (this, filteredSavedEventsList, true);
         realTimeTab.setOnClickListener (this);
         eventTab.setOnClickListener (this);
         savedEvent.setOnClickListener (this);
 
-        getSavedEventsAndUpdateList ();
-
         list_view.setAdapter (eventsListAdapter);
         list_view.setSelector (new ColorDrawable (Color.TRANSPARENT));
         list_view.setOnItemClickListener (this);
 
-        LocationResult locationResult = new LocationResult () {
-            @Override
-            public void gotLocation(Location location) {
-                if (location != null) {
-                    final String cityGPS = findCurrentCityGPS (location);
-                    if (!cityGPS.isEmpty ()) {
-                        cityFoundGPS = true;
-                        popup.getMenu ().getItem (indexCityGPS).setTitle (namesCity[indexCityGPS]);
-                        indexCityGPS = getCityIndexFromName (cityGPS);
-                        popup.getMenu ().getItem (indexCityGPS).setTitle (cityGPS + "(GPS)");
-                        if (!MainActivity.userChoosedCityManually) {
-                            filterByCity (cityGPS);
-                            runOnUiThread (new Runnable () {
-                                @Override
-                                public void run() {
-                                    currentCityButton.setText (cityGPS + "(GPS)");
-                                    eventsListAdapter.notifyDataSetChanged ();
-                                }
-                            });
-
-                        }
-
-                    }
-                }
-            }
-        };
-        MyLocation myLocation = new MyLocation (this.getApplicationContext ());
-        myLocation.getLocation (this, locationResult);
-        updateDeviceLocationGPS ();
-        SharedPreferences ratePrefs = getSharedPreferences ("First Update", 0);
-        if (!ratePrefs.getBoolean ("FrstTime", false)) {
-            ParsePush.subscribeInBackground ("All_Users");
-            SharedPreferences.Editor edit = ratePrefs.edit ();
-            edit.putBoolean ("FrstTime", true);
-            edit.commit ();
+        getSavedEventsFromJavaList ();
+        inflateCityMenu ();
+        if (!MainActivity.cityFoundGPS) {
+            updateDeviceLocationGPS ();
         }
+        MainActivity.savedAcctivityRunnig = true;
     }
 
     private void inflateCityMenu() {
         popup.getMenuInflater ().inflate (R.menu.popup_city, popup.getMenu ());
-        loadCityNamesToPopUp ();
-        if (MainActivity.userChoosedCityManually) {
-            filterByCity (namesCity[0]);
+        if (MainActivity.namesCity.length == 0) {
+            loadCityNamesToPopUp (true);
         } else {
-            filterByCity (namesCity[indexCityGPS]);
+            loadCityNamesToPopUp (false);
         }
         currentCityButton.setOnClickListener (new View.OnClickListener () {
             @Override
@@ -135,19 +97,20 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
                 popup = new PopupMenu (SavedEventActivity.this, currentCityButton);
                 //Inflating the Popup using xml file
                 popup.getMenuInflater ().inflate (R.menu.popup_city, popup.getMenu ());
-                for (int i = 0; i < namesCity.length; i++) {
-                    if (i == indexCityGPS && cityFoundGPS) {
-                        popup.getMenu ().getItem (i).setTitle (namesCity[i] + "(GPS)");
+                for (int i = 0; i < MainActivity.namesCity.length; i++) {
+                    if (i == MainActivity.indexCityGPS && MainActivity.cityFoundGPS) {
+                        popup.getMenu ().getItem (i).setTitle (MainActivity.namesCity[i] + "(GPS)");
                     } else {
-                        popup.getMenu ().getItem (i).setTitle (namesCity[i]);
+                        popup.getMenu ().getItem (i).setTitle (MainActivity.namesCity[i]);
                     }
                 }
                 //registering popup with OnMenuItemClickListener
                 popup.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener () {
                     public boolean onMenuItemClick(MenuItem item) {
-                        int i = popUpIDToCityIndex.get (item.getItemId ());
+                        MainActivity.indexCityChossen = MainActivity.popUpIDToCityIndex.get (item.getItemId ());
                         currentCityButton.setText (item.getTitle ());
-                        filterByCity (namesCity[i]);
+                        MainActivity.filterByCity (MainActivity.namesCity[MainActivity.indexCityChossen]);
+                        filterByCity (MainActivity.namesCity[MainActivity.indexCityChossen]);
                         eventsListAdapter.notifyDataSetChanged ();
                         MainActivity.userChoosedCityManually = true;
                         return true;
@@ -158,41 +121,44 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
         });
     }
 
-    private void loadCityNamesToPopUp() {
-        Resources rsc = getResources ();
-        namesCity = rsc.getStringArray (R.array.popUp);
+    private void loadCityNamesToPopUp(boolean loadCityList) {
+        if (loadCityList) {
+            Resources rsc = getResources ();
+            MainActivity.namesCity = rsc.getStringArray (R.array.popUp);
+        }
         try {
-            for (int i = 0; i < namesCity.length; i++) {
-                if (i == indexCityGPS && cityFoundGPS) {
-                    popup.getMenu ().getItem (i).setTitle (namesCity[i] + "(GPS)");
+            for (int i = 0; i < MainActivity.namesCity.length; i++) {
+                if (i == MainActivity.indexCityGPS && MainActivity.cityFoundGPS) {
+                    popup.getMenu ().getItem (i).setTitle (MainActivity.namesCity[i] + "(GPS)");
                 } else {
-                    popup.getMenu ().getItem (i).setTitle (namesCity[i]);
+                    popup.getMenu ().getItem (i).setTitle (MainActivity.namesCity[i]);
                 }
-                popUpIDToCityIndex.put (popup.getMenu ().getItem (i).getItemId (), i);
+                MainActivity.popUpIDToCityIndex.put (popup.getMenu ().getItem (i).getItemId (), i);
             }
             if (MainActivity.userChoosedCityManually) {
-                currentCityButton.setText (popup.getMenu ().getItem (0).getTitle ());
+                currentCityButton.setText (popup.getMenu ().getItem (MainActivity.indexCityChossen).getTitle ());
             } else {
-                currentCityButton.setText (popup.getMenu ().getItem (indexCityGPS).getTitle ());
+                currentCityButton.setText (popup.getMenu ().getItem (MainActivity.indexCityGPS).getTitle ());
             }
         } catch (Exception e) {
             throw e;
         }
     }
 
-    private void filterByCity(String cityName) {
+    public static void filterByCity(String cityName) {
         filteredSavedEventsList.clear ();
         if (cityName.equals ("All Cities")) {
             filteredSavedEventsList.addAll (savedEventsList);
             return;
         } else {
-            for (int i = 0; i < filteredSavedEventsList.size (); i++) {
-                String cityEvent = filteredSavedEventsList.get (i).getCity ();
+            for (int i = 0; i < savedEventsList.size (); i++) {
+                String cityEvent = savedEventsList.get (i).getCity ();
                 if (cityEvent != null && cityEvent.equals (cityName)) {
-                    filteredSavedEventsList.add (filteredSavedEventsList.get (i));
+                    filteredSavedEventsList.add (savedEventsList.get (i));
                 }
             }
         }
+        eventsListAdapter.notifyDataSetChanged ();
     }
 
     public void updateDeviceLocationGPS() {
@@ -273,7 +239,7 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
         intent.putExtra ("parking", filteredSavedEventsList.get (i).getParking ());
         intent.putExtra ("capacity", filteredSavedEventsList.get (i).getCapacity ());
         intent.putExtra ("atm", filteredSavedEventsList.get (i).getAtm ());
-        intent.putExtra ("index", filteredSavedEventsList.get(i).getIndexInFullList ());
+        intent.putExtra ("index", filteredSavedEventsList.get (i).getIndexInFullList ());
 
         b.putString ("customer_id", MainActivity.customer_id);
         if (MainActivity.producerId != null) {
@@ -316,14 +282,14 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
             if (location != null) {
                 String cityGPS = findCurrentCityGPS (location);
                 if (!cityGPS.isEmpty ()) {
-                    cityFoundGPS = true;
-                    popup.getMenu ().getItem (indexCityGPS).setTitle (namesCity[indexCityGPS]);
-                    indexCityGPS = getCityIndexFromName (cityGPS);
-                    popup.getMenu ().getItem (indexCityGPS).setTitle (cityGPS + "(GPS)");
+                    MainActivity.cityGPS = cityGPS;
+                    MainActivity.cityFoundGPS = true;
+                    popup.getMenu ().getItem (MainActivity.indexCityGPS).setTitle (MainActivity.namesCity[MainActivity.indexCityGPS]);
+                    MainActivity.indexCityGPS = getCityIndexFromName (MainActivity.cityGPS);
+                    popup.getMenu ().getItem (MainActivity.indexCityGPS).setTitle (MainActivity.cityGPS + "(GPS)");
                     if (!MainActivity.userChoosedCityManually) {
-                        filterByCity (cityGPS);
-                        currentCityButton.setText (cityGPS + "(GPS)");
-                        eventsListAdapter.notifyDataSetChanged ();
+                        filterByCity (MainActivity.cityGPS);
+                        currentCityButton.setText (MainActivity.cityGPS + "(GPS)");
                     }
                 }
             }
@@ -364,9 +330,9 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
         return "";
     }
 
-    private int getCityIndexFromName(String name) {
-        for (int i = 0; i < namesCity.length; i++) {
-            String city = namesCity[i];
+    private static int getCityIndexFromName(String name) {
+        for (int i = 0; i < MainActivity.namesCity.length; i++) {
+            String city = MainActivity.namesCity[i];
             if (city.equals (name)) {
                 return i;
             }
@@ -374,52 +340,27 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
         return -1;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause ();
-        if (locationManager != null) {
-            if (ActivityCompat.checkSelfPermission (this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            locationManager.removeUpdates (locationListener);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume ();
-        updateDeviceLocationGPS();
-        getSavedEventsAndUpdateList ();
-        eventsListAdapter.notifyDataSetChanged ();
-    }
-
     public void createEvent(View view) {
         Intent intent = new Intent (SavedEventActivity.this, CreateEventActivity.class);
         startActivity (intent);
     }
 
-    private void getSavedEventsAndUpdateList() {
+    public static void getSavedEventsFromJavaList() {
         filteredSavedEventsList.clear ();
         savedEventsList.clear ();
-        try {
-            InputStream inputStream = getApplicationContext ().openFileInput ("saves");
-            if (inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader (inputStream);
-                BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
-                String receiveString = "";
-                while ((receiveString = bufferedReader.readLine ()) != null) {
-                    for (int i = 0; i < MainActivity.all_events_data.size (); i++) {
-                        if (MainActivity.all_events_data.get (i).getName ().equals (receiveString))
-                            savedEventsList.add (MainActivity.all_events_data.get (i));
-                    }
-                }
-                inputStream.close ();
-                filteredSavedEventsList.addAll (savedEventsList);
+        for (int i = 0; i < MainActivity.all_events_data.size (); i++) {
+            if (MainActivity.all_events_data.get (i).isSaved) {
+                savedEventsList.add (MainActivity.all_events_data.get (i));
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace ();
-        } catch (IOException e) {
-            e.printStackTrace ();
+        }
+        filteredSavedEventsList.addAll (savedEventsList);
+
+        if (MainActivity.userChoosedCityManually) {
+            filterByCity (MainActivity.namesCity[MainActivity.indexCityChossen]);
+            currentCityButton.setText (MainActivity.namesCity[MainActivity.indexCityChossen]);
+        } else if (!MainActivity.cityGPS.isEmpty ()) {
+            filterByCity (MainActivity.cityGPS);
+            currentCityButton.setText (MainActivity.cityGPS + "(GPS)");
         }
     }
 }

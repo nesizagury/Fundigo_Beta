@@ -21,19 +21,17 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.example.events.MyLocation.LocationResult;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
 import java.io.BufferedReader;
@@ -53,35 +51,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     ListView list_view;
     public static List<EventInfo> all_events_data = new ArrayList<EventInfo> ();
-    public static List<EventInfo> filtered_events_data = new ArrayList<EventInfo> ();
-    EventsListAdapter eventsListAdapter;
-    Button event, savedEvent, realTime, currentCityButton;
+    private static List<EventInfo> filtered_events_data = new ArrayList<EventInfo> ();
+    public static EventsListAdapter eventsListAdapter;
+    Button event, savedEvent, realTime;
+    static Button currentCityButton;
 
-    static boolean didInit = false;
     static boolean isCustomer = false;
     static boolean isGuest = false;
     public static String customer_id;
-    static Location loc;
+    static String producerId;
+
     public static boolean turnGps = true;
     public static boolean gps_enabled = false;
     public static boolean network_enabled = false;
     public static LocationManager LocationServices;
     private static LocationManager locationManager;
-    PopupMenu popup;
-    String[] namesCity;
-    static int indexCityGPS = 0;
-    HashMap<Integer, Integer> popUpIDToCityIndex = new HashMap<Integer, Integer> ();
+    static PopupMenu popup;
+    public static String[] namesCity;
+    static Location loc;
+    public static String cityGPS = "";
+    public static int indexCityGPS = 0;
+    public static HashMap<Integer, Integer> popUpIDToCityIndex = new HashMap<Integer, Integer> ();
     LocationListener locationListener;
     public static boolean userChoosedCityManually = false;
+    public static int indexCityChossen = 0;
     static boolean cityFoundGPS = false;
+
     Button create_button;
-    boolean isProducer = false;
-    static String producerId;
+
+    static boolean savedAcctivityRunnig = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-        setContentView (R.layout.activity_main);//
+        setContentView (R.layout.activity_main);
         list_view = (ListView) findViewById (R.id.listView);
         event = (Button) findViewById (R.id.BarEvent_button);
         savedEvent = (Button) findViewById (R.id.BarSavedEvent_button);
@@ -89,20 +92,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         popup = new PopupMenu (MainActivity.this, currentCityButton);
         currentCityButton = (Button) findViewById (R.id.city_item);
-        inflateCityMenu ();
         eventsListAdapter = new EventsListAdapter (this, filtered_events_data, false);
         realTime.setOnClickListener (this);
         event.setOnClickListener (this);
         savedEvent.setOnClickListener (this);
 
-        if (!didInit) {
-            uploadUserData ();
-            didInit = true;
-        }
-
         list_view.setAdapter (eventsListAdapter);
         list_view.setSelector (new ColorDrawable (Color.TRANSPARENT));
         list_view.setOnItemClickListener (this);
+
+        uploadUserData ();
+        inflateCityMenu ();
 
         Intent intent = getIntent ();
         if (intent.getStringExtra ("chat_id") != null) {
@@ -112,47 +112,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (intent.getStringExtra ("is_guest") != null) {
             isGuest = true;
         }
-        LocationResult locationResult = new LocationResult () {
-            @Override
-            public void gotLocation(Location location) {
-                if (location != null) {
-                    final String cityGPS = findCurrentCityGPS (location);
-                    if (!cityGPS.isEmpty ()) {
-                        cityFoundGPS = true;
-                        popup.getMenu ().getItem (indexCityGPS).setTitle (namesCity[indexCityGPS]);
-                        indexCityGPS = getCityIndexFromName (cityGPS);
-                        popup.getMenu ().getItem (indexCityGPS).setTitle (cityGPS + "(GPS)");
-                        if (!userChoosedCityManually) {
-                            filterByCity (cityGPS);
-                            runOnUiThread (new Runnable () {
-                                @Override
-                                public void run() {
-                                    currentCityButton.setText (cityGPS + "(GPS)");
-                                    eventsListAdapter.notifyDataSetChanged ();
-                                }
-                            });
-
-                        }
-
-                    }
-                }
-            }
-        };
-        MyLocation myLocation = new MyLocation (this.getApplicationContext ());
-        myLocation.getLocation (this, locationResult);
-        updateDeviceLocationGPS ();
         if (intent.getStringExtra ("is_producer") != null) {
-            isProducer = true;
             producerId = intent.getStringExtra ("producerId");
             create_button = (Button) findViewById (R.id.create_button);
             create_button.setVisibility (View.VISIBLE);
         }
-        SharedPreferences ratePrefs = getSharedPreferences ("First Update", 0);
-        if (!ratePrefs.getBoolean ("FrstTime", false)) {
-            ParsePush.subscribeInBackground ("All_Users");
-            SharedPreferences.Editor edit = ratePrefs.edit ();
-            edit.putBoolean ("FrstTime", true);
-            edit.commit ();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume ();
+        if (userChoosedCityManually) {
+            filterByCity (namesCity[indexCityChossen]);
+        } else if (!cityGPS.isEmpty ()) {
+            filterByCity (cityGPS);
         }
     }
 
@@ -161,52 +134,60 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         filtered_events_data.clear ();
         ParseQuery<Event> query = new ParseQuery ("Event");
         query.orderByDescending ("createdAt");
-        List<Event> eventParses = null;
-
-        try {
-            eventParses = query.find ();
-            ParseFile imageFile;
-            byte[] data;
-            Bitmap bmp;
-            for (int i = 0; i < eventParses.size (); i++) {
-                imageFile = (ParseFile) eventParses.get (i).get ("ImageFile");
-                if (imageFile != null) {
-                    data = imageFile.getData ();
-                    bmp = BitmapFactory.decodeByteArray (data, 0, data.length);
-                } else
-                    bmp = null;
-
-                all_events_data.add (new EventInfo (
-                                                       bmp,
-                                                       eventParses.get (i).getDate (),
-                                                       eventParses.get (i).getName (),
-                                                       eventParses.get (i).getTags (),
-                                                       eventParses.get (i).getPrice (),
-                                                       eventParses.get (i).getDescription (),
-                                                       eventParses.get (i).getAddress (),
-                                                       eventParses.get (i).getEventToiletService (),
-                                                       eventParses.get (i).getEventParkingService (),
-                                                       eventParses.get (i).getEventCapacityService (),
-                                                       eventParses.get (i).getEventATMService (),
-                                                       eventParses.get (i).getCity (),
-                                                       i));
-                all_events_data.get (i).setProducerId (eventParses.get (i).getProducerId ());
+        query.findInBackground (new FindCallback<Event> () {
+            public void done(List<Event> eventParses, ParseException e) {
+                if (e == null) {
+                    ParseFile imageFile;
+                    byte[] data = null;
+                    Bitmap bmp;
+                    for (int i = 0; i < eventParses.size (); i++) {
+                        imageFile = (ParseFile) eventParses.get (i).get ("ImageFile");
+                        if (imageFile != null) {
+                            try {
+                                data = imageFile.getData ();
+                            } catch (ParseException e1) {
+                                e1.printStackTrace ();
+                            }
+                            bmp = BitmapFactory.decodeByteArray (data, 0, data.length);
+                        } else {
+                            bmp = null;
+                        }
+                        all_events_data.add (new EventInfo (
+                                                                   bmp,
+                                                                   eventParses.get (i).getDate (),
+                                                                   eventParses.get (i).getName (),
+                                                                   eventParses.get (i).getTags (),
+                                                                   eventParses.get (i).getPrice (),
+                                                                   eventParses.get (i).getDescription (),
+                                                                   eventParses.get (i).getAddress (),
+                                                                   eventParses.get (i).getEventToiletService (),
+                                                                   eventParses.get (i).getEventParkingService (),
+                                                                   eventParses.get (i).getEventCapacityService (),
+                                                                   eventParses.get (i).getEventATMService (),
+                                                                   eventParses.get (i).getCity (),
+                                                                   i));
+                        all_events_data.get (i).setProducerId (eventParses.get (i).getProducerId ());
+                    }
+                    updateSavedEvents (all_events_data);
+                    filtered_events_data.addAll (all_events_data);
+                    eventsListAdapter.notifyDataSetChanged ();
+                    updateDeviceLocationGPS ();
+                    if (userChoosedCityManually) {
+                        filterByCity (namesCity[indexCityChossen]);
+                    } else if (!cityGPS.isEmpty ()) {
+                        filterByCity (cityGPS);
+                    }
+                } else {
+                    e.printStackTrace ();
+                    return;
+                }
             }
-            updateSavedEvents(all_events_data);
-            filtered_events_data.addAll (all_events_data);
-        } catch (ParseException e) {
-            e.printStackTrace ();
-        }
+        });
     }
 
     private void inflateCityMenu() {
         popup.getMenuInflater ().inflate (R.menu.popup_city, popup.getMenu ());
         loadCityNamesToPopUp ();
-        if (userChoosedCityManually) {
-            filterByCity (namesCity[0]);
-        } else {
-            filterByCity (namesCity[indexCityGPS]);
-        }
         currentCityButton.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View v) {
@@ -224,9 +205,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 //registering popup with OnMenuItemClickListener
                 popup.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener () {
                     public boolean onMenuItemClick(MenuItem item) {
-                        int i = popUpIDToCityIndex.get (item.getItemId ());
+                        indexCityChossen = popUpIDToCityIndex.get (item.getItemId ());
                         currentCityButton.setText (item.getTitle ());
-                        filterByCity (namesCity[i]);
+                        filterByCity (namesCity[indexCityChossen]);
                         eventsListAdapter.notifyDataSetChanged ();
                         userChoosedCityManually = true;
                         return true;
@@ -250,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 popUpIDToCityIndex.put (popup.getMenu ().getItem (i).getItemId (), i);
             }
             if (userChoosedCityManually) {
-                currentCityButton.setText (popup.getMenu ().getItem (0).getTitle ());
+                currentCityButton.setText (popup.getMenu ().getItem (indexCityChossen).getTitle ());
             } else {
                 currentCityButton.setText (popup.getMenu ().getItem (indexCityGPS).getTitle ());
             }
@@ -259,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    private void filterByCity(String cityName) {
+    public static void filterByCity(String cityName) {
         filtered_events_data.clear ();
         if (cityName.equals ("All Cities")) {
             filtered_events_data.addAll (all_events_data);
@@ -272,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
         }
+        eventsListAdapter.notifyDataSetChanged ();
     }
 
     public void updateDeviceLocationGPS() {
@@ -395,6 +377,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (location != null) {
                 String cityGPS = findCurrentCityGPS (location);
                 if (!cityGPS.isEmpty ()) {
+                    MainActivity.cityGPS = cityGPS;
                     cityFoundGPS = true;
                     popup.getMenu ().getItem (indexCityGPS).setTitle (namesCity[indexCityGPS]);
                     indexCityGPS = getCityIndexFromName (cityGPS);
@@ -402,26 +385,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     if (!userChoosedCityManually) {
                         filterByCity (cityGPS);
                         currentCityButton.setText (cityGPS + "(GPS)");
-                        eventsListAdapter.notifyDataSetChanged ();
                     }
-
                 }
             }
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-
         }
     }
 
@@ -457,24 +435,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return -1;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause ();
-        if (locationManager != null) {
-            if (ActivityCompat.checkSelfPermission (this, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (this, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            locationManager.removeUpdates (locationListener);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume ();
-        updateDeviceLocationGPS ();
-        eventsListAdapter.notifyDataSetChanged ();
-    }
-
     public void createEvent(View view) {
         Intent intent = new Intent (MainActivity.this, CreateEventActivity.class);
         startActivity (intent);
@@ -488,10 +448,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
                 String receiveString = "";
                 while ((receiveString = bufferedReader.readLine ()) != null) {
-                    Log.e (receiveString,"TAG");
                     for (int i = 0; i < eventsList.size (); i++) {
                         if (eventsList.get (i).getName ().equals (receiveString)) {
-                            eventsList.get (i).setIsSaved(true);
+                            eventsList.get (i).setIsSaved (true);
                         }
                     }
                 }

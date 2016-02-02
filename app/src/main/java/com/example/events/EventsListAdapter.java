@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -37,10 +38,12 @@ public class EventsListAdapter extends BaseAdapter {
     private ImageView iv_share;
     static final int REQUEST_CODE_MY_PICK = 1;
     Uri uri;
+    boolean isSavedActivity;
 
     public EventsListAdapter(Context c, List<EventInfo> eventList, boolean isSavedActivity) {
         this.context = c;
         this.eventList = eventList;
+        this.isSavedActivity = isSavedActivity;
     }
 
     public EventsListAdapter(Context c, ArrayList<Event> arrayList) {
@@ -88,10 +91,12 @@ public class EventsListAdapter extends BaseAdapter {
         } else {
             eventListHolder = (EventListHolder) row.getTag ();
         }
-
         final EventInfo event = eventList.get (i);
-        eventListHolder.image.setImageBitmap (event.imageId);
 
+        if(isSavedActivity && !event.getIsSaved ()){
+            row.setVisibility(View.INVISIBLE);
+        }
+        eventListHolder.image.setImageBitmap (event.imageId);
         eventListHolder.date.setText (event.getDate ());
         eventListHolder.name.setText (event.getName ());
         eventListHolder.tags.setText (event.getTags ());
@@ -101,58 +106,72 @@ public class EventsListAdapter extends BaseAdapter {
         eventListHolder.saveEvent.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View v) {
+                final String eventName = event.name;
                 if (event.getIsSaved ()) {
                     event.setIsSaved (false);
                     eventListHolder.saveEvent.setImageResource (R.mipmap.whh);
                     Toast.makeText (context, "You unSaved this event", Toast.LENGTH_SHORT).show ();
-                    try {
-                        InputStream inputStream = context.getApplicationContext ().openFileInput ("saves");
-                        context.getApplicationContext ().deleteFile ("temp");
-                        OutputStream outputStreamTemp = context.getApplicationContext ().openFileOutput ("temp", Context.MODE_PRIVATE);
-                        BufferedReader bufferedReader = new BufferedReader (new InputStreamReader (inputStream));
-                        BufferedWriter bufferedWriter = new BufferedWriter (new OutputStreamWriter (outputStreamTemp));
-                        String lineToRemove = event.name;
-                        String currentLine;
-                        while ((currentLine = bufferedReader.readLine ()) != null) {
-                            // trim newline when comparing with lineToRemove
-                            String trimmedLine = currentLine.trim ();
-                            if (trimmedLine.equals (lineToRemove)) continue;
-                            else {
-                                bufferedWriter.write (currentLine);
-                                bufferedWriter.write (System.getProperty ("line.separator"));
+                    AsyncTask.execute (new Runnable () {
+                        @Override
+                        public void run() {
+                            try {
+                                InputStream inputStream = context.getApplicationContext ().openFileInput ("saves");
+                                context.getApplicationContext ().deleteFile ("temp");
+                                OutputStream outputStreamTemp = context.getApplicationContext ().openFileOutput ("temp", Context.MODE_PRIVATE);
+                                BufferedReader bufferedReader = new BufferedReader (new InputStreamReader (inputStream));
+                                BufferedWriter bufferedWriter = new BufferedWriter (new OutputStreamWriter (outputStreamTemp));
+                                String lineToRemove = eventName;
+                                String currentLine;
+                                while ((currentLine = bufferedReader.readLine ()) != null) {
+                                    // trim newline when comparing with lineToRemove
+                                    String trimmedLine = currentLine.trim ();
+                                    if (trimmedLine.equals (lineToRemove)) continue;
+                                    else {
+                                        bufferedWriter.write (currentLine);
+                                        bufferedWriter.write (System.getProperty ("line.separator"));
+                                    }
+                                }
+                                bufferedReader.close ();
+                                bufferedWriter.close ();
+                                inputStream = context.getApplicationContext ().openFileInput ("temp");
+                                context.getApplicationContext ().deleteFile ("saves");
+                                outputStreamTemp = context.getApplicationContext ().openFileOutput ("saves", Context.MODE_PRIVATE);
+                                bufferedReader = new BufferedReader (new InputStreamReader (inputStream));
+                                bufferedWriter = new BufferedWriter (new OutputStreamWriter (outputStreamTemp));
+                                while ((currentLine = bufferedReader.readLine ()) != null) {
+                                    bufferedWriter.write (currentLine);
+                                    bufferedWriter.write (System.getProperty ("line.separator"));
+                                }
+                                bufferedReader.close ();
+                                bufferedWriter.close ();
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace ();
+                            } catch (IOException e) {
+                                e.printStackTrace ();
                             }
                         }
-                        bufferedReader.close ();
-                        bufferedWriter.close ();
-                        inputStream = context.getApplicationContext ().openFileInput ("temp");
-                        context.getApplicationContext ().deleteFile ("saves");
-                        outputStreamTemp = context.getApplicationContext ().openFileOutput ("saves", Context.MODE_PRIVATE);
-                        bufferedReader = new BufferedReader (new InputStreamReader (inputStream));
-                        bufferedWriter = new BufferedWriter (new OutputStreamWriter (outputStreamTemp));
-                        while ((currentLine = bufferedReader.readLine ()) != null) {
-                            bufferedWriter.write (currentLine);
-                            bufferedWriter.write (System.getProperty ("line.separator"));
-                        }
-                        bufferedReader.close ();
-                        bufferedWriter.close ();
-
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace ();
-                    } catch (IOException e) {
-                        e.printStackTrace ();
-                    }
+                    });
                 } else {
                     event.setIsSaved (true);
                     eventListHolder.saveEvent.setImageResource (R.mipmap.whhsaved);
                     Toast.makeText (context, "You Saved this event", Toast.LENGTH_SHORT).show ();
-                    try {
-                        OutputStream outputStream = context.getApplicationContext ().openFileOutput ("saves", Context.MODE_APPEND + Context.MODE_PRIVATE);
-                        outputStream.write (event.getName ().getBytes ());
-                        outputStream.write (System.getProperty ("line.separator").getBytes ());
-                        outputStream.close ();
-                    } catch (IOException e) {
-                        e.printStackTrace ();
-                    }
+                    AsyncTask.execute (new Runnable () {
+                        @Override
+                        public void run() {
+                            try {
+                                OutputStream outputStream = context.getApplicationContext ().openFileOutput ("saves", Context.MODE_APPEND + Context.MODE_PRIVATE);
+                                outputStream.write (eventName.getBytes ());
+                                outputStream.write (System.getProperty ("line.separator").getBytes ());
+                                outputStream.close ();
+                            } catch (IOException e) {
+                                e.printStackTrace ();
+                            }
+                        }
+                    });
+                }
+                MainActivity.eventsListAdapter.notifyDataSetChanged ();
+                if(MainActivity.savedAcctivityRunnig) {
+                    SavedEventActivity.getSavedEventsFromJavaList ();
                 }
             }
         });
@@ -164,7 +183,6 @@ public class EventsListAdapter extends BaseAdapter {
                 switch (v.getId ()) {
                     case R.id.imageView2:
                         try {
-
                             Bitmap largeIcon = BitmapFactory.decodeResource (context.getResources (), R.mipmap.pic0);
                             ByteArrayOutputStream bytes = new ByteArrayOutputStream ();
                             largeIcon.compress (Bitmap.CompressFormat.JPEG, 40, bytes);
@@ -201,7 +219,6 @@ public class EventsListAdapter extends BaseAdapter {
                         break;
                 }
             }
-
         });
         return row;
     }

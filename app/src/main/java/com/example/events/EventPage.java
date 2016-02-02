@@ -275,59 +275,75 @@ public class EventPage extends Activity implements View.OnClickListener {
     }
 
     public void handleSaveEventClicked(int index) {
+        EventInfo event = MainActivity.all_events_data.get (index);
+        final String eventName = event.getName ();
+        final Context context = this;
         if (MainActivity.all_events_data.get (index).getIsSaved ()) {
             MainActivity.all_events_data.get (index).setIsSaved (false);
             save.setImageResource (R.mipmap.wh);
             Toast.makeText (this, "You unSaved this event", Toast.LENGTH_SHORT).show ();
-            EventInfo event = MainActivity.all_events_data.get (index);
-            try {
-                getApplicationContext ().deleteFile ("temp");
-                InputStream inputStream = getApplicationContext ().openFileInput ("saves");
-                OutputStream outputStreamTemp = getApplicationContext ().openFileOutput ("temp", Context.MODE_PRIVATE);
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter (outputStreamTemp));
-                String lineToRemove = event.name;
-                String currentLine;
-                while ((currentLine = bufferedReader.readLine ()) != null) {
-                    // trim newline when comparing with lineToRemove
-                    String trimmedLine = currentLine.trim ();
-                    if (trimmedLine.equals (lineToRemove)) continue;
-                    else{
-                        bufferedWriter.write (currentLine);
-                        bufferedWriter.write (System.getProperty ("line.separator"));
+            AsyncTask.execute(new Runnable () {
+                @Override
+                public void run() {
+                    try {
+                        getApplicationContext ().deleteFile ("temp");
+                        InputStream inputStream = getApplicationContext ().openFileInput ("saves");
+                        OutputStream outputStreamTemp = getApplicationContext ().openFileOutput ("temp", Context.MODE_PRIVATE);
+                        BufferedReader bufferedReader = new BufferedReader (new InputStreamReader (inputStream));
+                        BufferedWriter bufferedWriter = new BufferedWriter (new OutputStreamWriter (outputStreamTemp));
+                        String lineToRemove = eventName;
+                        String currentLine;
+                        while ((currentLine = bufferedReader.readLine ()) != null) {
+                            // trim newline when comparing with lineToRemove
+                            String trimmedLine = currentLine.trim ();
+                            if (trimmedLine.equals (lineToRemove)) continue;
+                            else {
+                                bufferedWriter.write (currentLine);
+                                bufferedWriter.write (System.getProperty ("line.separator"));
+                            }
+                        }
+                        bufferedReader.close ();
+                        bufferedWriter.close ();
+                        getApplicationContext ().deleteFile ("saves");
+                        inputStream = getApplicationContext ().openFileInput ("temp");
+                        outputStreamTemp = getApplicationContext ().openFileOutput ("saves", Context.MODE_PRIVATE);
+                        bufferedReader = new BufferedReader (new InputStreamReader (inputStream));
+                        bufferedWriter = new BufferedWriter (new OutputStreamWriter (outputStreamTemp));
+                        while ((currentLine = bufferedReader.readLine ()) != null) {
+                            bufferedWriter.write (currentLine);
+                            bufferedWriter.write (System.getProperty ("line.separator"));
+                        }
+                        bufferedReader.close ();
+                        bufferedWriter.close ();
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace ();
+                    } catch (IOException e) {
+                        e.printStackTrace ();
                     }
                 }
-                bufferedReader.close ();
-                bufferedWriter.close ();
-                getApplicationContext ().deleteFile ("saves");
-                inputStream = getApplicationContext ().openFileInput ("temp");
-                outputStreamTemp = getApplicationContext ().openFileOutput ("saves", Context.MODE_PRIVATE);
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStreamTemp));
-                while ((currentLine = bufferedReader.readLine ()) != null) {
-                    bufferedWriter.write (currentLine);
-                    bufferedWriter.write (System.getProperty ("line.separator"));
-                }
-                bufferedReader.close ();
-                bufferedWriter.close ();
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace ();
-            } catch (IOException e) {
-                e.printStackTrace ();
-            }
+            });
         } else {
             MainActivity.all_events_data.get (index).setIsSaved (true);
             save.setImageResource (R.mipmap.whsavedd);
             Toast.makeText (this, "You Saved this event", Toast.LENGTH_SHORT).show ();
-            try {
-                OutputStream outputStream = getApplicationContext ().openFileOutput ("saves", Context.MODE_APPEND + Context.MODE_PRIVATE);
-                outputStream.write (MainActivity.all_events_data.get (index).getName ().getBytes ());
-                outputStream.write (System.getProperty ("line.separator").getBytes ());
-                outputStream.close ();
-            } catch (IOException e) {
-                e.printStackTrace ();
-            }
+            AsyncTask.execute (new Runnable () {
+                @Override
+                public void run() {
+                    try {
+                        OutputStream outputStream = getApplicationContext ().openFileOutput ("saves", Context.MODE_APPEND + Context.MODE_PRIVATE);
+                        outputStream.write (eventName.getBytes ());
+                        outputStream.write (System.getProperty ("line.separator").getBytes ());
+                        outputStream.close ();
+                    } catch (IOException e) {
+                        e.printStackTrace ();
+                    }
+                }
+            });
+        }
+        MainActivity.eventsListAdapter.notifyDataSetChanged ();
+        if(MainActivity.savedAcctivityRunnig) {
+            SavedEventActivity.getSavedEventsFromJavaList ();
         }
     }
 
@@ -405,7 +421,6 @@ public class EventPage extends Activity implements View.OnClickListener {
                 }
             }
         }
-
 
         public void parseJSON(String jsonStr) {
             Log.d ("mmm", "begen_parseJSON");
