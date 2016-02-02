@@ -130,8 +130,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void uploadUserData() {
-        all_events_data.clear ();
-        filtered_events_data.clear ();
+        final ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
         ParseQuery<Event> query = new ParseQuery ("Event");
         query.orderByDescending ("createdAt");
         query.findInBackground (new FindCallback<Event> () {
@@ -152,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         } else {
                             bmp = null;
                         }
-                        all_events_data.add (new EventInfo (
+                        tempEventsList.add (new EventInfo (
                                                                    bmp,
                                                                    eventParses.get (i).getDate (),
                                                                    eventParses.get (i).getName (),
@@ -166,10 +165,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                                                    eventParses.get (i).getEventATMService (),
                                                                    eventParses.get (i).getCity (),
                                                                    i));
-                        all_events_data.get (i).setProducerId (eventParses.get (i).getProducerId ());
+                        tempEventsList.get (i).setProducerId (eventParses.get (i).getProducerId ());
                     }
-                    updateSavedEvents (all_events_data);
-                    filtered_events_data.addAll (all_events_data);
+                    updateSavedEvents (tempEventsList);
+                    all_events_data.clear ();
+                    all_events_data.addAll (tempEventsList);
+                    filtered_events_data.clear();
+                    filtered_events_data.addAll (tempEventsList);
                     eventsListAdapter.notifyDataSetChanged ();
                     updateDeviceLocationGPS ();
                     if (userChoosedCityManually) {
@@ -241,18 +243,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public static void filterByCity(String cityName) {
-        filtered_events_data.clear ();
+        ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
         if (cityName.equals ("All Cities")) {
-            filtered_events_data.addAll (all_events_data);
-            return;
+            tempEventsList.addAll (all_events_data);
         } else {
             for (int i = 0; i < all_events_data.size (); i++) {
                 String cityEvent = all_events_data.get (i).getCity ();
                 if (cityEvent != null && cityEvent.equals (cityName)) {
-                    filtered_events_data.add (all_events_data.get (i));
+                    tempEventsList.add (all_events_data.get (i));
                 }
             }
         }
+        filtered_events_data.clear();
+        filtered_events_data.addAll(tempEventsList);
         eventsListAdapter.notifyDataSetChanged ();
     }
 

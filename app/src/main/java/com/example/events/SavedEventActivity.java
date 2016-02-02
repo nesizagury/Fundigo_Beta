@@ -146,18 +146,22 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
     }
 
     public static void filterByCity(String cityName) {
-        filteredSavedEventsList.clear ();
+        ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
         if (cityName.equals ("All Cities")) {
+            filteredSavedEventsList.clear ();
             filteredSavedEventsList.addAll (savedEventsList);
+            eventsListAdapter.notifyDataSetChanged ();
             return;
         } else {
             for (int i = 0; i < savedEventsList.size (); i++) {
                 String cityEvent = savedEventsList.get (i).getCity ();
                 if (cityEvent != null && cityEvent.equals (cityName)) {
-                    filteredSavedEventsList.add (savedEventsList.get (i));
+                    tempEventsList.add (savedEventsList.get (i));
                 }
             }
         }
+        filteredSavedEventsList.clear ();
+        filteredSavedEventsList.addAll (tempEventsList);
         eventsListAdapter.notifyDataSetChanged ();
     }
 
@@ -346,15 +350,17 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
     }
 
     public static void getSavedEventsFromJavaList() {
-        filteredSavedEventsList.clear ();
-        savedEventsList.clear ();
+        ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
         for (int i = 0; i < MainActivity.all_events_data.size (); i++) {
             if (MainActivity.all_events_data.get (i).isSaved) {
-                savedEventsList.add (MainActivity.all_events_data.get (i));
+                tempEventsList.add (MainActivity.all_events_data.get (i));
             }
         }
-        filteredSavedEventsList.addAll (savedEventsList);
-
+        savedEventsList.clear ();
+        savedEventsList.addAll(tempEventsList);
+        filteredSavedEventsList.clear ();
+        filteredSavedEventsList.addAll (tempEventsList);
+        eventsListAdapter.notifyDataSetChanged ();
         if (MainActivity.userChoosedCityManually) {
             filterByCity (MainActivity.namesCity[MainActivity.indexCityChossen]);
             currentCityButton.setText (MainActivity.namesCity[MainActivity.indexCityChossen]);
