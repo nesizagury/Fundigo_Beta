@@ -230,4 +230,16 @@ public class EventsListAdapter extends BaseAdapter {
             saveEvent.setImageResource (R.mipmap.whh);
         }
     }
+
+    public EventsListAdapter(Context c, String name, ArrayList<EventInfo> arrayList) {
+        this.context = c;
+        if (name.equals ("filter")) {
+            eventList = arrayList;
+        } else {
+            for (int i = 0; i < arrayList.size (); i++) {
+                if (arrayList.get (i).getName ().equals (name) && !eventList.contains (arrayList.get (i)))
+                    eventList.add (arrayList.get (i));
+            }
+        }
+    }
 }

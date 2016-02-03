@@ -41,6 +41,19 @@
         <item>ATM</item>
     </string-array>
 
+    <string-array name="autoComplateStrings">
+        <item>Sport</item>
+        <item>Helth</item>
+        <item>Food</item>
+        <item>Drings</item>
+        <item>Event</item>
+        <item>StendUp</item>
+        <item>Music</item>
+        <item>Party</item>
+        <item>Schools</item>
+        <item>experience</item>
+    </string-array>
+
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_payment">PaymentActivity</string>
     <string-array name="filterTags">

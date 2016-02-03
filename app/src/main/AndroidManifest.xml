@@ -57,6 +57,8 @@
         </activity>
         <activity android:name=".SavedEventActivity">
         </activity>
+        <activity android:name=".Search">
+        </activity>
         <activity
             android:name=".EventService"
             android:theme="@style/AppTheme.PopupServiceEvent"></activity>

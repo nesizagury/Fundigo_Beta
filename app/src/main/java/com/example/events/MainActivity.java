@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.facebook.share.model.ShareLinkContent;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static EventsListAdapter eventsListAdapter;
     Button event, savedEvent, realTime;
     static Button currentCityButton;
+    ImageView search;
 
     static boolean isCustomer = false;
     static boolean isGuest = false;
@@ -79,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     Button create_button;
 
+    public static String currentFilterName = "";
+
     static boolean savedAcctivityRunnig = false;
 
     @Override
@@ -96,6 +100,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         realTime.setOnClickListener (this);
         event.setOnClickListener (this);
         savedEvent.setOnClickListener (this);
+
+        search = (ImageView) findViewById (R.id.search);
+        search.setOnClickListener (this);
 
         list_view.setAdapter (eventsListAdapter);
         list_view.setSelector (new ColorDrawable (Color.TRANSPARENT));
@@ -120,12 +127,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume ();
         if (userChoosedCityManually) {
             filterByCity (namesCity[indexCityChossen]);
         } else if (!cityGPS.isEmpty ()) {
             filterByCity (cityGPS);
+        }
+        if (!currentFilterName.isEmpty ()) {
+            filterByFilterChosen (currentFilterName);
         }
     }
 
@@ -152,25 +162,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             bmp = null;
                         }
                         tempEventsList.add (new EventInfo (
-                                                                   bmp,
-                                                                   eventParses.get (i).getDate (),
-                                                                   eventParses.get (i).getName (),
-                                                                   eventParses.get (i).getTags (),
-                                                                   eventParses.get (i).getPrice (),
-                                                                   eventParses.get (i).getDescription (),
-                                                                   eventParses.get (i).getAddress (),
-                                                                   eventParses.get (i).getEventToiletService (),
-                                                                   eventParses.get (i).getEventParkingService (),
-                                                                   eventParses.get (i).getEventCapacityService (),
-                                                                   eventParses.get (i).getEventATMService (),
-                                                                   eventParses.get (i).getCity (),
-                                                                   i));
+                                                                  bmp,
+                                                                  eventParses.get (i).getDate (),
+                                                                  eventParses.get (i).getName (),
+                                                                  eventParses.get (i).getTags (),
+                                                                  eventParses.get (i).getPrice (),
+                                                                  eventParses.get (i).getDescription (),
+                                                                  eventParses.get (i).getAddress (),
+                                                                  eventParses.get (i).getEventToiletService (),
+                                                                  eventParses.get (i).getEventParkingService (),
+                                                                  eventParses.get (i).getEventCapacityService (),
+                                                                  eventParses.get (i).getEventATMService (),
+                                                                  eventParses.get (i).getCity (),
+                                                                  i,
+                                                                  eventParses.get (i).getFilterName ()));
                         tempEventsList.get (i).setProducerId (eventParses.get (i).getProducerId ());
                     }
                     updateSavedEvents (tempEventsList);
                     all_events_data.clear ();
                     all_events_data.addAll (tempEventsList);
-                    filtered_events_data.clear();
+                    filtered_events_data.clear ();
                     filtered_events_data.addAll (tempEventsList);
                     eventsListAdapter.notifyDataSetChanged ();
                     updateDeviceLocationGPS ();
@@ -178,6 +189,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         filterByCity (namesCity[indexCityChossen]);
                     } else if (!cityGPS.isEmpty ()) {
                         filterByCity (cityGPS);
+                    }
+                    if (!currentFilterName.isEmpty ()) {
+                        filterByFilterChosen (currentFilterName);
                     }
                 } else {
                     e.printStackTrace ();
@@ -210,6 +224,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         indexCityChossen = popUpIDToCityIndex.get (item.getItemId ());
                         currentCityButton.setText (item.getTitle ());
                         filterByCity (namesCity[indexCityChossen]);
+                        if (!currentFilterName.isEmpty ()) {
+                            filterByFilterChosen (currentFilterName);
+                        }
                         eventsListAdapter.notifyDataSetChanged ();
                         userChoosedCityManually = true;
                         return true;
@@ -254,8 +271,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
         }
-        filtered_events_data.clear();
-        filtered_events_data.addAll(tempEventsList);
+        filtered_events_data.clear ();
+        filtered_events_data.addAll (tempEventsList);
+        eventsListAdapter.notifyDataSetChanged ();
+    }
+
+    public static void filterByFilterChosen(String currentFilterName) {
+        ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
+        if (currentFilterName.isEmpty ()) {
+            tempEventsList.addAll (all_events_data);
+        } else {
+            for (int i = 0; i < all_events_data.size (); i++) {
+                if (currentFilterName.equals (MainActivity.all_events_data.get (i).getFilterName ())) {
+                    tempEventsList.add (MainActivity.all_events_data.get (i));
+                }
+            }
+        }
+        filtered_events_data.clear ();
+        filtered_events_data.addAll (tempEventsList);
         eventsListAdapter.notifyDataSetChanged ();
     }
 
@@ -302,6 +335,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             startActivity (newIntent);
         } else if (v.getId () == realTime.getId ()) {
             newIntent = new Intent (this, RealTime.class);
+            startActivity (newIntent);
+        } else if (v.getId () == search.getId ()) {
+            newIntent = new Intent (this, Search.class);
             startActivity (newIntent);
         }
     }
@@ -387,6 +423,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     popup.getMenu ().getItem (indexCityGPS).setTitle (cityGPS + "(GPS)");
                     if (!userChoosedCityManually) {
                         filterByCity (cityGPS);
+                        if (!currentFilterName.isEmpty ()) {
+                            filterByFilterChosen (currentFilterName);
+                        }
                         currentCityButton.setText (cityGPS + "(GPS)");
                     }
                 }

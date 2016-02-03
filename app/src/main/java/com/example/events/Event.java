@@ -152,6 +152,14 @@ public class Event extends ParseObject {
     public void setEventATMService(String eventATMService) {
         put ("eventATMService", eventATMService);
     }
+
+    public String getFilterName() {
+        return getString ("filterName");
+    }
+
+    public void setFilterName(String filterName) {
+        put ("filterName", filterName);
+    }
     @Override
     public String toString() {
         return getString ("Name") + "\n" +
