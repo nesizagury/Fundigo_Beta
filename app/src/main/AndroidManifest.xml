@@ -66,12 +66,13 @@
             android:name="com.example.events.MessagesRoom"
             />
         <activity android:name=".RealTimeChatActivity"></activity>
+
         <meta-data
             android:name="com.parse.APPLICATION_ID"
-            android:value="7FYu4sxa7MuBIdpCmQVWwqNEqX6rxYo6Q0yNKO1v"/>
+            android:value="zHbkCgWz7FPRNK0E3mnB7HwRgEuKalaqnADvr8qK" />
         <meta-data
             android:name="com.parse.CLIENT_KEY"
-            android:value="cHnuYnSDcfIuM5goHbprCiNxjCWaSaTe22zVzXn9"/>
+            android:value="KOerUm6IRSMz4gPOqNAsNVn0QsCHVWC0SIWI3tle" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>

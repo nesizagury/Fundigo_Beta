@@ -23,7 +23,7 @@
         />
     <item
         android:id="@+id/six"
-        android:title="H"
+        android:title=""
         />
     <item
         android:id="@+id/seven"
@@ -51,6 +51,10 @@
         />
     <item
         android:id="@+id/thirteen"
+        android:title=""
+        />
+    <item
+        android:id="@+id/forthteen"
         android:title=""
         />
 </menu>

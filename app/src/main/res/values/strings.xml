@@ -30,6 +30,7 @@
         <item>Tel Aviv-Yafo</item>
         <item>Jerusalem</item>
         <item>Afula</item>
+        <item>Petah Tikva</item>
     </string-array>
 
     <string-array name="eventServiceTitles">
