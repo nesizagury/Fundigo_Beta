@@ -10,7 +10,8 @@
         android:layout_gravity="center_horizontal"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="41dp"/>
+        android:layout_marginTop="41dp"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -83,5 +84,17 @@
         android:layout_below="@id/profileTable"
         android:layout_centerHorizontal="true"
         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send PUSH"
+        android:id="@+id/button5"
+        android:layout_below="@+id/button3"
+        android:background="#00b2ff"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="20sp"
+        android:onClick="sendPush"/>
 
 </RelativeLayout>

@@ -1,6 +1,7 @@
 package com.example.events;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,14 +51,16 @@ public class ImageAdapter extends BaseAdapter
             grid = inflater.inflate(R.layout.grid_layout, null);
             TextView textView = (TextView) grid.findViewById(R.id.grid_text);
             ImageView imgView = (ImageView) grid.findViewById(R.id.grid_image);
-            textView.setText(this.mNames[position]);
+            textView.setText (this.mNames[position]);
             imgView.setImageResource(this.mImages[position]);
         }
         else
         {
             grid = (View) convertView;
         }
-
+        if (!MainActivity.currentFilterName.isEmpty () && this.mNames[position].equals (MainActivity.currentFilterName)){
+            grid.setBackgroundColor (Color.RED);
+        }
         return grid;
     }
 

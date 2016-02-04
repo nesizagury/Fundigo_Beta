@@ -6,10 +6,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,12 +24,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.GetCallback;
+import com.parse.FindCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.sinch.verification.CodeInterceptionException;
@@ -39,10 +41,12 @@ import com.sinch.verification.Verification;
 import com.sinch.verification.VerificationListener;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.List;
 
 public class SmsSignUpActivity extends AppCompatActivity {
 
@@ -52,7 +56,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
     private String array_spinner[];
     String username;
     EditText phoneET;
-    String phone_number;
+    String phone_number_to_verify;
     String area;
     TextView phoneTV;
     TextView usernameTV;
@@ -63,11 +67,12 @@ public class SmsSignUpActivity extends AppCompatActivity {
     TextView optionalTV;
     TextView expTV;
     boolean image_selected;
+    Numbers previousDataFound = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-        setContentView (R.layout.activity_login);
+        setContentView (R.layout.activity_sms_login);
 
         array_spinner = new String[6];
         array_spinner[0] = "050";
@@ -82,8 +87,6 @@ public class SmsSignUpActivity extends AppCompatActivity {
                                                         array_spinner);
         s.setAdapter (adapter);
 
-        usernameTE = (EditText) findViewById (R.id.usernameTE);
-        phoneET = (EditText) findViewById (R.id.phoneET);
         usernameTV = (TextView) findViewById (R.id.usernameTV);
         usernameTE = (EditText) findViewById (R.id.usernameTE);
         phoneET = (EditText) findViewById (R.id.phoneET);
@@ -92,17 +95,14 @@ public class SmsSignUpActivity extends AppCompatActivity {
 
         phoneET.setOnEditorActionListener (new TextView.OnEditorActionListener () {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null && (event.getKeyCode () == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                if ((event != null &&
+                             (event.getKeyCode () == KeyEvent.KEYCODE_ENTER)) ||
+                            (actionId == EditorInfo.IME_ACTION_DONE)) {
                     area = s.getSelectedItem ().toString ();
                     username = usernameTE.getText ().toString ();
-                    phone_number = getNumber (phoneET.getText ().toString (), area);
-                    smsVerify (phone_number);
-                    ParsePush push = new ParsePush();
-                    push.unsubscribeInBackground("All_Users");
-                    push.setChannel("All_Users");
-                    push.setMessage("Hey Come To See Events Near You");
-                    push.subscribeInBackground("All_Users");
-                    push.sendInBackground ();
+                    phone_number_to_verify = getNumber (phoneET.getText ().toString (), area);
+                    getUserPreviousDetails (area + phoneET.getText ().toString ());
+                    smsVerify (phone_number_to_verify);
                 }
                 return false;
             }
@@ -119,6 +119,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
                     upload_button.setVisibility (View.VISIBLE);
                     signup = (Button) findViewById (R.id.button2);
                     signup.setVisibility (View.VISIBLE);
+                    optionalTV = (TextView) findViewById (R.id.optionalTV);
                     optionalTV.setVisibility (View.VISIBLE);
                 }
                 return false;
@@ -128,11 +129,14 @@ public class SmsSignUpActivity extends AppCompatActivity {
 
     public void Signup(View view) {
         username = usernameTE.getText ().toString ();
-        Numbers number = new Numbers ();
+        Numbers number;
+        if (previousDataFound != null) {
+            number = previousDataFound;
+        } else {
+            number = new Numbers ();
+        }
         number.setName (username);
-
         if (image_selected) {
-            //Bitmap bitmap = BitmapFactory.decodeFile (picturePath);
             imageV.buildDrawingCache ();
             Bitmap bitmap = imageV.getDrawingCache ();
             ByteArrayOutputStream stream = new ByteArrayOutputStream ();
@@ -150,7 +154,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
             number.setACL (parseAcl);
             number.put ("ImageFile", file);
         }
-        number.setNumber (phone_number);
+        number.setNumber (area + phoneET.getText ().toString ());
         try {
             number.save ();
             Toast.makeText (getApplicationContext (), "Successfully Signed up", Toast.LENGTH_SHORT).show ();
@@ -158,7 +162,6 @@ public class SmsSignUpActivity extends AppCompatActivity {
             finish ();
         } catch (ParseException e) {
             Toast.makeText (getApplicationContext (), " Error ): ", Toast.LENGTH_SHORT).show ();
-
             e.printStackTrace ();
         }
     }
@@ -197,13 +200,32 @@ public class SmsSignUpActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData ();
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver ().query (selectedImage, filePathColumn, null, null, null);
-            cursor.moveToFirst ();
-            int columnIndex = cursor.getColumnIndex (filePathColumn[0]);
-            picturePath = cursor.getString (columnIndex);
-            cursor.close ();
-            imageV.setImageBitmap (BitmapFactory.decodeFile (picturePath));
+            ParcelFileDescriptor parcelFileDescriptor =
+                    null;
+            try {
+                parcelFileDescriptor = getContentResolver().openFileDescriptor(selectedImage, "r");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace ();
+            }
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+            Bitmap image = BitmapFactory.decodeFileDescriptor (fileDescriptor);
+            try {
+                parcelFileDescriptor.close();
+            } catch (IOException e) {
+                e.printStackTrace ();
+            }
+            Matrix matrix = new Matrix ();
+            int angleToRotate = getOrientation (selectedImage);
+            Log.e("nesi", Integer.toString (angleToRotate));
+            matrix.postRotate (angleToRotate);
+            Bitmap rotatedBitmap = Bitmap.createBitmap(image ,
+                                                              0,
+                                                              0,
+                                                              image.getWidth (),
+                                                              image .getHeight(),
+                                                              matrix,
+                                                              true);
+            imageV.setImageBitmap (rotatedBitmap);
             image_selected = true;
         }
     }
@@ -234,7 +256,6 @@ public class SmsSignUpActivity extends AppCompatActivity {
 
         @Override
         public void onVerified() {
-            checkUser();
             usernameTV.setVisibility (View.VISIBLE);
             usernameTE.setVisibility (View.VISIBLE);
             phoneET.setVisibility (View.INVISIBLE);
@@ -275,42 +296,62 @@ public class SmsSignUpActivity extends AppCompatActivity {
         }
     }
 
-    private void checkUser() {
-        String user_number = phone_number;
-        String username = "";
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery ("Numbers");
-        query.whereEqualTo("number", user_number);
-        query.getFirstInBackground (new GetCallback<ParseObject> () {
-            public void done(ParseObject object, ParseException e) {
+    private void getUserPreviousDetails(String user_number) {
+        ParseQuery<Numbers> query = ParseQuery.getQuery ("Numbers");
+        query.whereEqualTo ("number", user_number);
+        query.orderByDescending ("createdAt");
+        query.findInBackground (new FindCallback<Numbers> () {
+            public void done(List<Numbers> numbers, ParseException e) {
                 if (e == null) {
-                    try {
-                        usernameTE.setText (object.get ("name") + "");
-                        ParseFile imageFile = (ParseFile) object.get ("ImageFile");
-                        imageFile.getDataInBackground (new GetDataCallback () {
-                            public void done(byte[] data, ParseException e) {
-                                if (e == null) {
-                                    image_selected = true;
-                                    Bitmap bmp = BitmapFactory
-                                                         .decodeByteArray (
-                                                                                  data, 0,
-                                                                                  data.length);
-
-                                    imageV.setImageBitmap (bmp);
-                                    Toast.makeText (getApplicationContext (), "downloaded", Toast.LENGTH_SHORT).show ();
-                                } else {
-
-                                }
+                    if (numbers.size () > 0) {
+                        previousDataFound = numbers.get (0);
+                        if (usernameTE.getText ().toString ().isEmpty ()) {
+                            usernameTE.setText (numbers.get (0).get ("name") + "");
+                            usernameTE.setSelection (usernameTE.getText ().length ());
+                        }
+                        if (!image_selected) {
+                            ParseFile imageFile = (ParseFile) numbers.get (0).get ("ImageFile");
+                            if(imageFile != null) {
+                                imageFile.getDataInBackground (new GetDataCallback () {
+                                    public void done(byte[] data, ParseException e) {
+                                        if (e == null) {
+                                            image_selected = true;
+                                            Bitmap bmp = BitmapFactory
+                                                                 .decodeByteArray (
+                                                                                          data, 0,
+                                                                                          data.length);
+                                            imageV.setImageBitmap (bmp);
+                                        } else {
+                                            e.printStackTrace ();
+                                        }
+                                    }
+                                });
                             }
-                        });
-
-                        object.delete ();
-                    } catch (ParseException e1) {
-                        e1.printStackTrace ();
+                        }
+                        if (numbers.size () > 1) {
+                            for (int i = 1; i < numbers.size (); i++) {
+                                numbers.get (i).deleteInBackground ();
+                            }
+                        }
                     }
-                    object.saveInBackground ();
+                } else {
+                    e.printStackTrace ();
                 }
             }
         });
+    }
+
+    public int getOrientation(Uri selectedImage) {
+        int orientation = 0;
+        final String[] projection = new String[]{MediaStore.Images.Media.ORIENTATION};
+        final Cursor cursor = this.getContentResolver().query(selectedImage, projection, null, null, null);
+        if(cursor != null) {
+            final int orientationColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.ORIENTATION);
+            if(cursor.moveToFirst()) {
+                orientation = cursor.isNull(orientationColumnIndex) ? 0 : cursor.getInt(orientationColumnIndex);
+            }
+            cursor.close();
+        }
+        return orientation;
     }
 }

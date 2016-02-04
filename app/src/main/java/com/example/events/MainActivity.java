@@ -130,12 +130,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume ();
         if (userChoosedCityManually) {
-            filterByCity (namesCity[indexCityChossen]);
+            filterByCityAndFilterName (namesCity[indexCityChossen], currentFilterName);
         } else if (!cityGPS.isEmpty ()) {
-            filterByCity (cityGPS);
-        }
-        if (!currentFilterName.isEmpty ()) {
-            filterByFilterChosen (currentFilterName);
+            filterByCityAndFilterName (cityGPS, currentFilterName);
         }
     }
 
@@ -186,12 +183,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     eventsListAdapter.notifyDataSetChanged ();
                     updateDeviceLocationGPS ();
                     if (userChoosedCityManually) {
-                        filterByCity (namesCity[indexCityChossen]);
+                        filterByCityAndFilterName (namesCity[indexCityChossen], currentFilterName);
                     } else if (!cityGPS.isEmpty ()) {
-                        filterByCity (cityGPS);
-                    }
-                    if (!currentFilterName.isEmpty ()) {
-                        filterByFilterChosen (currentFilterName);
+                        filterByCityAndFilterName (cityGPS, currentFilterName);
                     }
                 } else {
                     e.printStackTrace ();
@@ -223,10 +217,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     public boolean onMenuItemClick(MenuItem item) {
                         indexCityChossen = popUpIDToCityIndex.get (item.getItemId ());
                         currentCityButton.setText (item.getTitle ());
-                        filterByCity (namesCity[indexCityChossen]);
-                        if (!currentFilterName.isEmpty ()) {
-                            filterByFilterChosen (currentFilterName);
-                        }
+                        filterByCityAndFilterName (namesCity[indexCityChossen], currentFilterName);
                         eventsListAdapter.notifyDataSetChanged ();
                         userChoosedCityManually = true;
                         return true;
@@ -259,31 +250,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    public static void filterByCity(String cityName) {
+    public static void filterByCityAndFilterName(String cityName, String currentFilterName) {
         ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
-        if (cityName.equals ("All Cities")) {
+        if (cityName.equals ("All Cities") && currentFilterName.isEmpty ()) {
             tempEventsList.addAll (all_events_data);
         } else {
             for (int i = 0; i < all_events_data.size (); i++) {
                 String cityEvent = all_events_data.get (i).getCity ();
-                if (cityEvent != null && cityEvent.equals (cityName)) {
-                    tempEventsList.add (all_events_data.get (i));
-                }
-            }
-        }
-        filtered_events_data.clear ();
-        filtered_events_data.addAll (tempEventsList);
-        eventsListAdapter.notifyDataSetChanged ();
-    }
-
-    public static void filterByFilterChosen(String currentFilterName) {
-        ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
-        if (currentFilterName.isEmpty ()) {
-            tempEventsList.addAll (all_events_data);
-        } else {
-            for (int i = 0; i < all_events_data.size (); i++) {
-                if (currentFilterName.equals (MainActivity.all_events_data.get (i).getFilterName ())) {
-                    tempEventsList.add (MainActivity.all_events_data.get (i));
+                if (cityName.equals ("All Cities") || (cityEvent != null && cityEvent.equals (cityName))) {
+                    if(currentFilterName.isEmpty () ||
+                               (currentFilterName.equals (MainActivity.all_events_data.get (i).getFilterName ()))) {
+                        tempEventsList.add (all_events_data.get (i));
+                    }
                 }
             }
         }
@@ -422,10 +400,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     indexCityGPS = getCityIndexFromName (cityGPS);
                     popup.getMenu ().getItem (indexCityGPS).setTitle (cityGPS + "(GPS)");
                     if (!userChoosedCityManually) {
-                        filterByCity (cityGPS);
-                        if (!currentFilterName.isEmpty ()) {
-                            filterByFilterChosen (currentFilterName);
-                        }
+                        filterByCityAndFilterName (cityGPS, currentFilterName);
                         currentCityButton.setText (cityGPS + "(GPS)");
                     }
                 }

@@ -30,7 +30,7 @@ public class FilterPage extends AppCompatActivity implements AdapterView.OnItemC
                                            "Music"
     };
 
-    private String ans;
+    private static String ans;
     GridView gridView;
 
     @Override
@@ -38,8 +38,6 @@ public class FilterPage extends AppCompatActivity implements AdapterView.OnItemC
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_filter_page);
         setTitle ("FilterPage");
-
-        MainActivity.currentFilterName = "";
 
         /** Create the Custom Grid View*/
         ImageAdapter adapter = new ImageAdapter (FilterPage.this, Names, Images);
@@ -60,6 +58,7 @@ public class FilterPage extends AppCompatActivity implements AdapterView.OnItemC
         } else {
             if (ans.equals (Names[i])) {
                 ans = null;
+                MainActivity.currentFilterName = "";
                 view.setBackgroundColor (Color.TRANSPARENT);
             } else {
                 Toast.makeText (this, "Can Choice One Category", Toast.LENGTH_SHORT).show ();
@@ -77,5 +76,4 @@ public class FilterPage extends AppCompatActivity implements AdapterView.OnItemC
         }
         return super.onKeyDown (keyCode, event);
     }
-
 }

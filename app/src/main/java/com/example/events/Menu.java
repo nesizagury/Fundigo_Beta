@@ -21,6 +21,7 @@ import com.facebook.login.widget.LoginButton;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 
 import java.io.BufferedReader;
@@ -28,6 +29,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -184,6 +187,18 @@ public class Menu extends AppCompatActivity {
             } catch (IOException e) {
                 Log.e (e.toString (), "IO Exception occured");
             }
+        }
+    }
+
+    public void sendPush(View v){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy_HH:mm:ss");
+        String currentDateandTime = sdf.format(new Date ());
+        ParsePush push = new ParsePush ();
+        push.setMessage ("Hey Come To See Events Near You (" + currentDateandTime + ")");
+        try {
+            push.send ();
+        } catch (ParseException e) {
+            e.printStackTrace ();
         }
     }
 }
