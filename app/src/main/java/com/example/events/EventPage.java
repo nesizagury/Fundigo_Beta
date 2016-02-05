@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -64,7 +63,7 @@ public class EventPage extends Activity implements View.OnClickListener {
     private String driving;
     private String walking;
     private boolean walkNdrive = false;
-    private int walkValue;
+    private int walkValue = -1;
     Bitmap bitmap;
 
     @Override
@@ -125,11 +124,12 @@ public class EventPage extends Activity implements View.OnClickListener {
         String even_addr = eventPlace;
         even_addr = even_addr.replace (",", "");
         even_addr = even_addr.replace (" ", "+");
-        new GetEventDis2 (EventPage.this).execute (
-
-                                                          "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + getLocation2 ().getLatitude () + "," + getLocation2 ().getLongitude () + "&destinations=" + even_addr + "+Israel&mode=driving&language=en-EN&key=AIzaSyAuwajpG7_lKGFWModvUIoMqn3vvr9CMyc");
-        new GetEventDis2 (EventPage.this).execute (
-                                                          "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + getLocation2 ().getLatitude () + "," + getLocation2 ().getLongitude () + "&destinations=" + even_addr + "+Israel&mode=walking&language=en-EN&key=AIzaSyAuwajpG7_lKGFWModvUIoMqn3vvr9CMyc");
+        if (MainActivity.cityFoundGPS) {
+            new GetEventDis2 (EventPage.this).execute (
+                      "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + getLocation2 ().getLatitude () + "," + getLocation2 ().getLongitude () + "&destinations=" + even_addr + "+Israel&mode=driving&language=en-EN&key=AIzaSyAuwajpG7_lKGFWModvUIoMqn3vvr9CMyc");
+            new GetEventDis2 (EventPage.this).execute (
+                      "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + getLocation2 ().getLatitude () + "," + getLocation2 ().getLongitude () + "&destinations=" + even_addr + "+Israel&mode=walking&language=en-EN&key=AIzaSyAuwajpG7_lKGFWModvUIoMqn3vvr9CMyc");
+        }
     }
 
     public void openTicketsPage(View view) {
@@ -282,7 +282,7 @@ public class EventPage extends Activity implements View.OnClickListener {
             MainActivity.all_events_data.get (index).setIsSaved (false);
             save.setImageResource (R.mipmap.wh);
             Toast.makeText (this, "You unSaved this event", Toast.LENGTH_SHORT).show ();
-            AsyncTask.execute(new Runnable () {
+            AsyncTask.execute (new Runnable () {
                 @Override
                 public void run() {
                     try {
@@ -342,7 +342,7 @@ public class EventPage extends Activity implements View.OnClickListener {
             });
         }
         MainActivity.eventsListAdapter.notifyDataSetChanged ();
-        if(MainActivity.savedAcctivityRunnig) {
+        if (MainActivity.savedAcctivityRunnig) {
             SavedEventActivity.getSavedEventsFromJavaList ();
         }
     }
@@ -376,10 +376,8 @@ public class EventPage extends Activity implements View.OnClickListener {
 
         @Override
         protected String doInBackground(String... params) {
-            Log.d ("mmm", "begen_doInBackground");
             try {
                 URL url = new URL (params[0]);
-                Log.d ("mmm", "url=" + url.toString ());
                 HttpURLConnection con = (HttpURLConnection) url.openConnection ();
                 con.setRequestMethod ("GET");
                 con.connect ();
@@ -393,14 +391,12 @@ public class EventPage extends Activity implements View.OnClickListener {
                     jsonStr = sr.toString ();
                     parseJSON (jsonStr);
                 } else {
-                    Log.d ("mmm", "HttpURLConnection.NOT_OK");
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace ();
             } catch (IOException e) {
                 e.printStackTrace ();
             }
-            Log.d ("mmm", "end_doInBackground");
             return null;
         }
 
@@ -423,20 +419,15 @@ public class EventPage extends Activity implements View.OnClickListener {
         }
 
         public void parseJSON(String jsonStr) {
-            Log.d ("mmm", "begen_parseJSON");
             try {
                 JSONObject obj = new JSONObject (jsonStr);
                 duritation = obj.getJSONArray ("rows").getJSONObject (0).getJSONArray ("elements").getJSONObject (0).getJSONObject ("duration").get ("text").toString ();
                 if (walkNdrive) {
                     walkValue = (int) obj.getJSONArray ("rows").getJSONObject (0).getJSONArray ("elements").getJSONObject (0).getJSONObject ("duration").get ("value");
-                    Log.d ("mmm", "walkValue= " + walkValue);
                 }
             } catch (JSONException e) {
                 e.printStackTrace ();
             }
-
-            Log.d ("mmm", "duration= " + duritation);
-            Log.d ("mmm", "end_parseJSON");
         }
     }
 }

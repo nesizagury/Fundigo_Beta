@@ -24,6 +24,9 @@ public class EventInfo implements Serializable,Parcelable {
     boolean isSaved;
     String producerId;
     int indexInFullList;
+    double dist;
+    double x;
+    double y;
 
     public EventInfo(Bitmap imageId,
                      String date,
@@ -55,16 +58,6 @@ public class EventInfo implements Serializable,Parcelable {
         this.filterName = filterName;
     }
 
-    /*public static final Parcelable.Creator<MyParcelable> CREATOR
-        = new Parcelable.Creator<MyParcelable>() {
-    public MyParcelable createFromParcel(Parcel in) {
-        return new MyParcelable(in);
-    }
-
-    public MyParcelable[] newArray(int size) {
-        return new MyParcelable[size];
-    }
-};*/
     public EventInfo(Parcel in){
         String[] data = new String[11];
         in.readStringArray(data);

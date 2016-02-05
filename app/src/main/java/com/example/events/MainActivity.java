@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static String currentFilterName = "";
 
     static boolean savedAcctivityRunnig = false;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         event = (Button) findViewById (R.id.BarEvent_button);
         savedEvent = (Button) findViewById (R.id.BarSavedEvent_button);
         realTime = (Button) findViewById (R.id.BarRealTime_button);
+
+        context = this;
 
         popup = new PopupMenu (MainActivity.this, currentCityButton);
         currentCityButton = (Button) findViewById (R.id.city_item);
@@ -141,13 +144,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ParseQuery<Event> query = new ParseQuery ("Event");
         query.orderByDescending ("createdAt");
         query.findInBackground (new FindCallback<Event> () {
-            public void done(List<Event> eventParses, ParseException e) {
+            public void done(List<Event> eventParse, ParseException e) {
                 if (e == null) {
                     ParseFile imageFile;
                     byte[] data = null;
                     Bitmap bmp;
-                    for (int i = 0; i < eventParses.size (); i++) {
-                        imageFile = (ParseFile) eventParses.get (i).get ("ImageFile");
+                    for (int i = 0; i < eventParse.size (); i++) {
+                        imageFile = (ParseFile) eventParse.get (i).get ("ImageFile");
                         if (imageFile != null) {
                             try {
                                 data = imageFile.getData ();
@@ -160,20 +163,42 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         }
                         tempEventsList.add (new EventInfo (
                                                                   bmp,
-                                                                  eventParses.get (i).getDate (),
-                                                                  eventParses.get (i).getName (),
-                                                                  eventParses.get (i).getTags (),
-                                                                  eventParses.get (i).getPrice (),
-                                                                  eventParses.get (i).getDescription (),
-                                                                  eventParses.get (i).getAddress (),
-                                                                  eventParses.get (i).getEventToiletService (),
-                                                                  eventParses.get (i).getEventParkingService (),
-                                                                  eventParses.get (i).getEventCapacityService (),
-                                                                  eventParses.get (i).getEventATMService (),
-                                                                  eventParses.get (i).getCity (),
+                                                                  eventParse.get (i).getDate (),
+                                                                  eventParse.get (i).getName (),
+                                                                  eventParse.get (i).getTags (),
+                                                                  eventParse.get (i).getPrice (),
+                                                                  eventParse.get (i).getDescription (),
+                                                                  eventParse.get (i).getAddress (),
+                                                                  eventParse.get (i).getEventToiletService (),
+                                                                  eventParse.get (i).getEventParkingService (),
+                                                                  eventParse.get (i).getEventCapacityService (),
+                                                                  eventParse.get (i).getEventATMService (),
+                                                                  eventParse.get (i).getCity (),
                                                                   i,
-                                                                  eventParses.get (i).getFilterName ()));
-                        tempEventsList.get (i).setProducerId (eventParses.get (i).getProducerId ());
+                                                                  eventParse.get (i).getFilterName ()));
+                        tempEventsList.get (i).setProducerId (eventParse.get (i).getProducerId ());
+                        if(eventParse.get(i).getX () == 0 || eventParse.get(i).getY () == 0){
+                            Geocoder geocoder = new Geocoder (context);
+                            List<Address> addresses = null;
+                            try {
+                                addresses = geocoder.getFromLocationName (eventParse.get (i).getAddress (), 1);
+                                if (addresses.size () > 0) {
+                                    double latitude = addresses.get (0).getLatitude ();
+                                    double longitude = addresses.get (0).getLongitude ();
+                                    eventParse.get (i).setX (latitude);
+                                    eventParse.get (i).setY (longitude);
+                                    try {
+                                        eventParse.get (i).save ();
+                                    } catch (ParseException e1) {
+                                        e1.printStackTrace ();
+                                    }
+                                }
+                            } catch (IOException e1) {
+                                e1.printStackTrace ();
+                            }
+                        }
+                        tempEventsList.get (i).x = eventParse.get(i).getX ();
+                        tempEventsList.get (i).y = eventParse.get(i).getY ();
                     }
                     updateSavedEvents (tempEventsList);
                     all_events_data.clear ();
@@ -242,8 +267,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
             if (userChoosedCityManually) {
                 currentCityButton.setText (popup.getMenu ().getItem (indexCityChossen).getTitle ());
+            } else if (cityFoundGPS) {
+                currentCityButton.setText (cityGPS + "(GPS)");
             } else {
-                currentCityButton.setText (popup.getMenu ().getItem (indexCityGPS).getTitle ());
+                currentCityButton.setText (popup.getMenu ().getItem (0).getTitle ());
             }
         } catch (Exception e) {
             throw e;
@@ -393,6 +420,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         public void onLocationChanged(Location location) {
             if (location != null) {
                 String cityGPS = findCurrentCityGPS (location);
+                loc = location;
                 if (!cityGPS.isEmpty ()) {
                     MainActivity.cityGPS = cityGPS;
                     cityFoundGPS = true;

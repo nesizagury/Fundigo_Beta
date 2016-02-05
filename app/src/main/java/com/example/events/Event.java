@@ -65,6 +65,10 @@ public class Event extends ParseObject {
         return getDouble ("X");
     }
 
+    public double getY() {
+        return getDouble ("Y");
+    }
+
     public void setX(double x) {
         put ("X", x);
     }
@@ -160,6 +164,7 @@ public class Event extends ParseObject {
     public void setFilterName(String filterName) {
         put ("filterName", filterName);
     }
+
     @Override
     public String toString() {
         return getString ("Name") + "\n" +

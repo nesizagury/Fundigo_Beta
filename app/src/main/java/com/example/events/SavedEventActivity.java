@@ -110,7 +110,7 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
                         MainActivity.indexCityChossen = MainActivity.popUpIDToCityIndex.get (item.getItemId ());
                         currentCityButton.setText (item.getTitle ());
                         filterByCityAndFilterName (MainActivity.namesCity[MainActivity.indexCityChossen],
-                                                                       MainActivity.currentFilterName);
+                                                          MainActivity.currentFilterName);
                         eventsListAdapter.notifyDataSetChanged ();
                         MainActivity.userChoosedCityManually = true;
                         return true;
@@ -137,8 +137,10 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
             }
             if (MainActivity.userChoosedCityManually) {
                 currentCityButton.setText (popup.getMenu ().getItem (MainActivity.indexCityChossen).getTitle ());
+            } else if (MainActivity.cityFoundGPS) {
+                currentCityButton.setText (MainActivity.cityGPS + "(GPS)");
             } else {
-                currentCityButton.setText (popup.getMenu ().getItem (MainActivity.indexCityGPS).getTitle ());
+                currentCityButton.setText (popup.getMenu ().getItem (0).getTitle ());
             }
         } catch (Exception e) {
             throw e;
@@ -153,8 +155,8 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
             for (int i = 0; i < savedEventsList.size (); i++) {
                 String cityEvent = savedEventsList.get (i).getCity ();
                 if (cityName.equals ("All Cities") || (cityEvent != null && cityEvent.equals (cityName))) {
-                    if(currentFilterName.isEmpty () ||
-                               (currentFilterName.equals (savedEventsList.get (i).getFilterName ()))) {
+                    if (currentFilterName.isEmpty () ||
+                                (currentFilterName.equals (savedEventsList.get (i).getFilterName ()))) {
                         tempEventsList.add (savedEventsList.get (i));
                     }
                 }
@@ -285,6 +287,7 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
         public void onLocationChanged(Location location) {
             if (location != null) {
                 String cityGPS = findCurrentCityGPS (location);
+                MainActivity.loc = location;
                 if (!cityGPS.isEmpty ()) {
                     MainActivity.cityGPS = cityGPS;
                     MainActivity.cityFoundGPS = true;
@@ -293,7 +296,7 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
                     popup.getMenu ().getItem (MainActivity.indexCityGPS).setTitle (MainActivity.cityGPS + "(GPS)");
                     if (!MainActivity.userChoosedCityManually) {
                         filterByCityAndFilterName (MainActivity.cityGPS,
-                                                                       MainActivity.currentFilterName);
+                                                          MainActivity.currentFilterName);
                         currentCityButton.setText (MainActivity.cityGPS + "(GPS)");
                     }
                 }

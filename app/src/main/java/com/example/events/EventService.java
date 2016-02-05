@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,31 +29,27 @@ public class EventService extends Activity {
         ListView event_service_listView;
         DisplayMetrics ma = new DisplayMetrics ();
         getWindowManager ().getDefaultDisplay ().getMetrics (ma);
-        
-        
+
         int width = ma.widthPixels;
         int hieght = ma.heightPixels;
         
         getWindow ().setLayout ((int) (width * .7), (int) (hieght * .325));
         
         final Intent myintent = getIntent ();
-        
-        
+
         String toilet = myintent.getStringExtra ("toilet");
         String parking = myintent.getStringExtra ("parking");
         String capacity = myintent.getStringExtra ("capacity");
         String atm = myintent.getStringExtra ("atm");
         String driving = myintent.getStringExtra ("driving");
         String walking = myintent.getStringExtra ("walking");
-        int walkValue = myintent.getIntExtra ("walkValue", 0);
-        Log.d ("mmm", "driving=" + driving);
-        
+        int walkValue = myintent.getIntExtra ("walkValue", -1);
+
         event_service_listView = (ListView) findViewById (R.id.event_service_listView);
         event_service_listView.setAdapter (new CostumeAdapter (this, driving, walking, toilet, parking, capacity, atm, walkValue));
         
     }
 }
-
 
 class SignelRow {
     String title;
@@ -96,8 +91,7 @@ class CostumeAdapter extends BaseAdapter {
         this.atm = atm;
         this.context = c;
         this.walkValue = walkValue;
-        
-        
+
         list.add (new SignelRow (titles[0], driving, images[0]));
         list.add (new SignelRow (titles[1], walking, images[1]));
         list.add (new SignelRow (titles[2], toilet, images[2]));
@@ -105,7 +99,7 @@ class CostumeAdapter extends BaseAdapter {
         list.add (new SignelRow (titles[4], capacety, images[4]));
         list.add (new SignelRow (titles[5], atm, images[5]));
         
-        if (walkValue / 3600 > 1) {
+        if (walkValue == -1 || walkValue / 3600 > 1) {
             list.remove (1);
         }
         for (int i = 0; i < list.size (); i++) {
@@ -113,7 +107,6 @@ class CostumeAdapter extends BaseAdapter {
                 list.remove (i);
             }
         }
-        
     }
     
     @Override

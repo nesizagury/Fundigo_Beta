@@ -31,19 +31,17 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventsListAdapter extends BaseAdapter {
+public class EventsGridAdapter extends BaseAdapter {
 
     List<EventInfo> eventList = new ArrayList<EventInfo> ();
     Context context;
     private ImageView iv_share;
     static final int REQUEST_CODE_MY_PICK = 1;
     Uri uri;
-    boolean isSavedActivity;
 
-    public EventsListAdapter(Context c, List<EventInfo> eventList, boolean isSavedActivity) {
+    public EventsGridAdapter(Context c, List<EventInfo> eventList) {
         this.context = c;
         this.eventList = eventList;
-        this.isSavedActivity = isSavedActivity;
     }
 
     @Override
@@ -64,35 +62,32 @@ public class EventsListAdapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         View row = view;
-        final EventListHolder eventListHolder;
+        final EventGridHolder eventGridHolder;
 
         if (row == null) {
             LayoutInflater inflator = (LayoutInflater) context.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
-            row = inflator.inflate (R.layout.list_view, viewGroup, false);
-            eventListHolder = new EventListHolder (row);
-            row.setTag (eventListHolder);
+            row = inflator.inflate (R.layout.grid_view, viewGroup, false);
+            eventGridHolder = new EventGridHolder (row);
+            row.setTag (eventGridHolder);
         } else {
-            eventListHolder = (EventListHolder) row.getTag ();
+            eventGridHolder = (EventGridHolder) row.getTag ();
         }
         final EventInfo event = eventList.get (i);
 
-        if(isSavedActivity && !event.getIsSaved ()){
-            row.setVisibility(View.INVISIBLE);
-        }
-        eventListHolder.image.setImageBitmap (event.imageId);
-        eventListHolder.date.setText (event.getDate ());
-        eventListHolder.name.setText (event.getName ());
-        eventListHolder.tags.setText (event.getTags ());
-        eventListHolder.price.setText (event.getPrice ());
-        eventListHolder.place.setText (event.getPlace ());
-        checkIfChangeColorToSaveButtton (event, eventListHolder.saveEvent);
-        eventListHolder.saveEvent.setOnClickListener (new View.OnClickListener () {
+        eventGridHolder.image.setImageBitmap (event.imageId);
+        eventGridHolder.date.setText (event.getDate ());
+        eventGridHolder.name.setText (event.getName ());
+        eventGridHolder.tags.setText (event.getTags ());
+        eventGridHolder.price.setText (event.getPrice ());
+        eventGridHolder.place.setText (event.dist + " km away" );
+        checkIfChangeColorToSaveButtton (event, eventGridHolder.saveEvent);
+        eventGridHolder.saveEvent.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View v) {
                 final String eventName = event.name;
                 if (event.getIsSaved ()) {
                     event.setIsSaved (false);
-                    eventListHolder.saveEvent.setImageResource (R.mipmap.whh);
+                    eventGridHolder.saveEvent.setImageResource (R.mipmap.whh);
                     Toast.makeText (context, "You unSaved this event", Toast.LENGTH_SHORT).show ();
                     AsyncTask.execute (new Runnable () {
                         @Override
@@ -136,7 +131,7 @@ public class EventsListAdapter extends BaseAdapter {
                     });
                 } else {
                     event.setIsSaved (true);
-                    eventListHolder.saveEvent.setImageResource (R.mipmap.whhsaved);
+                    eventGridHolder.saveEvent.setImageResource (R.mipmap.whhsaved);
                     Toast.makeText (context, "You Saved this event", Toast.LENGTH_SHORT).show ();
                     AsyncTask.execute (new Runnable () {
                         @Override
@@ -159,12 +154,12 @@ public class EventsListAdapter extends BaseAdapter {
             }
         });
 
-        iv_share = (ImageView) row.findViewById (R.id.imageView2);
+        iv_share = (ImageView) row.findViewById (R.id.imageView2_grid);
         iv_share.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View v) {
                 switch (v.getId ()) {
-                    case R.id.imageView2:
+                    case R.id.imageView2_grid:
                         try {
                             Bitmap largeIcon = BitmapFactory.decodeResource (context.getResources (), R.mipmap.pic0);
                             ByteArrayOutputStream bytes = new ByteArrayOutputStream ();
@@ -179,9 +174,9 @@ public class EventsListAdapter extends BaseAdapter {
                         }
                         Intent intent = new Intent (Intent.ACTION_SEND);
                         intent.setType ("image/jpeg");
-                        intent.putExtra (Intent.EXTRA_TEXT, "I`m going to " + eventListHolder.name.getText ().toString () +
-                                                                    "\n" + "C u there at " + eventListHolder.date.getText ().toString () + " !" +
-                                                                    "\n" + "At " + eventListHolder.place.getText ().toString () +
+                        intent.putExtra (Intent.EXTRA_TEXT, "I`m going to " + eventGridHolder.name.getText ().toString () +
+                                                                    "\n" + "C u there at " + eventGridHolder.date.getText ().toString () + " !" +
+                                                                    "\n" + "At " + eventGridHolder.place.getText ().toString () +
                                                                     "\n" + "http://eventpageURL.com/here");
                         String imagePath = Environment.getExternalStorageDirectory () + File.separator + "test.jpg";
                         File imageFileToShare = new File (imagePath);
@@ -194,9 +189,9 @@ public class EventsListAdapter extends BaseAdapter {
                         intentPick.putExtra (Intent.EXTRA_INTENT, intent);
                         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences (context);
                         SharedPreferences.Editor editor = sp.edit ();
-                        editor.putString ("name", eventListHolder.name.getText ().toString ());
-                        editor.putString ("date", eventListHolder.date.getText ().toString ());
-                        editor.putString ("place", eventListHolder.place.getText ().toString ());
+                        editor.putString ("name", eventGridHolder.name.getText ().toString ());
+                        editor.putString ("date", eventGridHolder.date.getText ().toString ());
+                        editor.putString ("place", eventGridHolder.place.getText ().toString ());
                         editor.apply ();
                         ((Activity) context).startActivityForResult (intentPick, REQUEST_CODE_MY_PICK);
                         break;
@@ -214,7 +209,7 @@ public class EventsListAdapter extends BaseAdapter {
         }
     }
 
-    public EventsListAdapter(Context c, String name, ArrayList<EventInfo> arrayList) {
+    public EventsGridAdapter(Context c, String name, ArrayList<EventInfo> arrayList) {
         this.context = c;
         if (name.equals ("filter")) {
             eventList = arrayList;
