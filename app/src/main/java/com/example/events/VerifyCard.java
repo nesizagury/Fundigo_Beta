@@ -3,6 +3,7 @@ package com.example.events;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,5 +71,10 @@ public class VerifyCard extends AppCompatActivity {
             finish ();
         }
     };
+
+    public void pay(View view){
+        Intent intent = new Intent(VerifyCard.this, WebRequest.class);
+        startActivity(intent);
+    }
 
 }

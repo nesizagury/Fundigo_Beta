@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,8 +54,10 @@ public class EventPage extends Activity implements View.OnClickListener {
     String customer_id;
     private ImageView iv_share;
     private ImageView iv_chat;
+    Button ticketsStatus;
     static final int REQUEST_CODE_MY_PICK = 1;
     Intent intent;
+    Button editEvent;
 
     private String date;
     private String eventName;
@@ -70,6 +73,13 @@ public class EventPage extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_event_page);
+
+        if (Constants.IS_PRODUCER) {
+            ticketsStatus = (Button) findViewById (R.id.button);
+            ticketsStatus.setText ("Tickets Status");
+            editEvent = (Button) findViewById (R.id.priceEventPage);
+            editEvent.setText ("Edit Event");
+        }
 
         intent = getIntent ();
         if (getIntent ().getByteArrayExtra ("eventImage") != null) {
@@ -88,8 +98,14 @@ public class EventPage extends Activity implements View.OnClickListener {
         TextView event_tags = (TextView) findViewById (R.id.eventPage_tags);
         event_tags.setText (eventTags);
         String eventPrice = intent.getStringExtra ("eventPrice");
+        if (Constants.IS_PRODUCER) {
+            TextView event_price = (TextView) findViewById (R.id.priceEventPage);
+            event_price.setText (eventPrice);
+        }
+        ;
         TextView event_price = (TextView) findViewById (R.id.priceEventPage);
         event_price.setText (eventPrice);
+
         String eventInfo = intent.getStringExtra ("eventInfo");
         TextView event_info = (TextView) findViewById (R.id.eventInfoEventPage);
         event_info.setText (eventInfo);
@@ -133,13 +149,19 @@ public class EventPage extends Activity implements View.OnClickListener {
     }
 
     public void openTicketsPage(View view) {
-        Bundle b = new Bundle ();
-        Intent ticketsPageIntent = new Intent (EventPage.this, TicketsPage.class);
-        Intent intentHere = getIntent ();
-        ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
-        ticketsPageIntent.putExtra ("eventPrice", intentHere.getStringExtra ("eventPrice"));
-        ticketsPageIntent.putExtras (b);
-        startActivity (ticketsPageIntent);
+        if (Constants.IS_PRODUCER) {
+            Bundle b = new Bundle ();
+            Intent ticketsPageIntent = new Intent (EventPage.this, TicketsPage.class);
+            Intent intentHere = getIntent ();
+            ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
+            ticketsPageIntent.putExtra ("eventPrice", intentHere.getStringExtra ("eventPrice"));
+            ticketsPageIntent.putExtras (b);
+            startActivity (ticketsPageIntent);
+        } else {
+            Intent intent = new Intent (EventPage.this, EventStatus.class);
+            intent.putExtra ("name", getIntent ().getStringExtra ("eventName"));
+            startActivity (intent);
+        }
     }
 
     private void loadMessagesPage() {
@@ -220,12 +242,12 @@ public class EventPage extends Activity implements View.OnClickListener {
             Intent intent;
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    if (MainActivity.isCustomer) {
+                    if (!Constants.IS_PRODUCER) {
                         intent = new Intent (EventPage.this, ChatActivity.class);
                         intent.putExtra ("producer_id", producer_id);
-                        intent.putExtra ("customer_id", customer_id);
+                        intent.putExtra("customer_id", customer_id);
                         startActivity (intent);
-                    } else if (!MainActivity.isGuest) {
+                    } else {
                         loadMessagesPage ();
                     }
                     break;
@@ -266,11 +288,13 @@ public class EventPage extends Activity implements View.OnClickListener {
     }
 
     public void checkIfChangeColorToSaveButtton() {
-        int index = intent.getIntExtra ("index", 0);
-        if (MainActivity.all_events_data.get (index).getIsSaved ())
-            save.setImageResource (R.mipmap.whsavedd);
-        else {
-            save.setImageResource (R.mipmap.wh);
+        if(!Constants.IS_PRODUCER) {
+            int index = intent.getIntExtra ("index", 0);
+            if (MainActivity.all_events_data.get (index).getIsSaved ())
+                save.setImageResource (R.mipmap.whsavedd);
+            else {
+                save.setImageResource (R.mipmap.wh);
+            }
         }
     }
 
@@ -426,6 +450,15 @@ public class EventPage extends Activity implements View.OnClickListener {
                 }
             } catch (JSONException e) {
                 e.printStackTrace ();
+            }
+        }
+
+        public void editEvent(View view){
+            if(Constants.IS_PRODUCER) {
+                Intent intent = new Intent(EventPage.this, CreateEventActivity.class);
+                intent.putExtra("name", getIntent().getStringExtra("eventName"));
+                intent.putExtra("create","false");
+                startActivity(intent);
             }
         }
     }

@@ -57,25 +57,6 @@
 
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_payment">PaymentActivity</string>
-    <string-array name="filterTags">
-
-        <item>Drink</item>
-        <item>Music</item>
-        <item>Drink</item>
-        <item>Drink</item>
-        <item>Music</item>
-        <item>Travel</item>
-        <item>Education</item>
-        <item>Home&amp; LifeStyle</item>
-        <item>Education</item>
-        <item>Business</item>
-        <item>Fashion</item>
-        <item>Home&amp; LifeStyle</item>
-        <item>Sports</item>
-        <item>Government</item>
-        <item>Sports</item>
-
-    </string-array>
 
     <string name="pref_header_general">General</string>
 

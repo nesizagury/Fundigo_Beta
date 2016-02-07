@@ -110,6 +110,7 @@
             android:layout_weight="1"
             android:background="#3293CD"
             android:text="15$-25$"
+            android:onClick="editEvent"
             android:textColor="#ffffff"
             android:gravity="center"
             android:textAlignment="center"/>

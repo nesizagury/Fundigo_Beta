@@ -108,7 +108,11 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
                 popup.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener () {
                     public boolean onMenuItemClick(MenuItem item) {
                         MainActivity.indexCityChossen = MainActivity.popUpIDToCityIndex.get (item.getItemId ());
-                        currentCityButton.setText (item.getTitle ());
+                        if (MainActivity.cityFoundGPS && item.getTitle ().equals (MainActivity.cityGPS)) {
+                            currentCityButton.setText (item.getTitle () + "(GPS)");
+                        } else {
+                            currentCityButton.setText (item.getTitle ());
+                        }
                         filterByCityAndFilterName (MainActivity.namesCity[MainActivity.indexCityChossen],
                                                           MainActivity.currentFilterName);
                         eventsListAdapter.notifyDataSetChanged ();
@@ -367,7 +371,11 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
         eventsListAdapter.notifyDataSetChanged ();
         if (MainActivity.userChoosedCityManually) {
             filterByCityAndFilterName (MainActivity.namesCity[MainActivity.indexCityChossen], MainActivity.currentFilterName);
-            currentCityButton.setText (MainActivity.namesCity[MainActivity.indexCityChossen]);
+            if (MainActivity.cityFoundGPS && MainActivity.namesCity[MainActivity.indexCityChossen].equals (MainActivity.cityGPS)) {
+                currentCityButton.setText (MainActivity.namesCity[MainActivity.indexCityChossen] + "(GPS)");
+            } else {
+                currentCityButton.setText (MainActivity.namesCity[MainActivity.indexCityChossen]);
+            }
         } else if (!MainActivity.cityGPS.isEmpty ()) {
             filterByCityAndFilterName (MainActivity.cityGPS, MainActivity.currentFilterName);
             currentCityButton.setText (MainActivity.cityGPS + "(GPS)");
@@ -379,7 +387,11 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
         super.onResume ();
         if (MainActivity.userChoosedCityManually) {
             filterByCityAndFilterName (MainActivity.namesCity[MainActivity.indexCityChossen], MainActivity.currentFilterName);
-            currentCityButton.setText (MainActivity.namesCity[MainActivity.indexCityChossen]);
+            if (MainActivity.cityFoundGPS && MainActivity.namesCity[MainActivity.indexCityChossen].equals (MainActivity.cityGPS)) {
+                currentCityButton.setText (MainActivity.namesCity[MainActivity.indexCityChossen] + "(GPS)");
+            } else {
+                currentCityButton.setText (MainActivity.namesCity[MainActivity.indexCityChossen]);
+            }
         } else if (!MainActivity.cityGPS.isEmpty ()) {
             filterByCityAndFilterName (MainActivity.cityGPS, MainActivity.currentFilterName);
             currentCityButton.setText (MainActivity.cityGPS + "(GPS)");

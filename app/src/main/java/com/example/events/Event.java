@@ -165,6 +165,36 @@ public class Event extends ParseObject {
         put ("filterName", filterName);
     }
 
+    public String getArtist() {
+        return getString ("artist");
+    }
+
+    public void setArtist(String artist) {
+        put ("artist", artist);
+    }
+
+    public String getIncome() {
+        return getString ("income");
+    }
+
+    public void setIncome(String income) {
+        put ("income", income);
+    }
+
+    public String getSold() {
+        return getString ("sold");
+    }
+
+    public void setSold(String sold) {
+        put ("sold", sold);
+    }
+
+
+    public Bitmap getBitmap() {
+
+        return this.b;
+    }
+
     @Override
     public String toString() {
         return getString ("Name") + "\n" +

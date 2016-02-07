@@ -18,7 +18,9 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
@@ -74,9 +76,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static boolean userChoosedCityManually = false;
     public static int indexCityChossen = 0;
     static boolean cityFoundGPS = false;
-
-    Button create_button;
-
     public static String currentFilterName = "";
 
     static boolean savedAcctivityRunnig = false;
@@ -85,7 +84,59 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
+        Intent intent = getIntent ();
+        if (intent.getStringExtra ("chat_id") != null) {
+            customer_id = intent.getStringExtra ("chat_id");
+            isCustomer = true;
+        }
+        if (intent.getStringExtra ("is_guest") != null) {
+            isGuest = true;
+        }
+        if (Constants.IS_PRODUCER) {
+            producerId = intent.getStringExtra ("producerId");
+        }
+        if (!Constants.IS_PRODUCER) {
+            organizeCustomer ();
+        } else {
+            organizeProducer ();
+        }
+    }
+
+
+    public void organizeProducer() {
+        setContentView (R.layout.producer_avtivity_main);
+
+        TabLayout tabLayout = (TabLayout) findViewById (R.id.tab_layout);
+        tabLayout.addTab (tabLayout.newTab ().setText ("Artists"));
+        tabLayout.addTab (tabLayout.newTab ().setText ("Stats"));
+        tabLayout.setTabGravity (TabLayout.GRAVITY_FILL);
+
+        final ViewPager viewPager = (ViewPager) findViewById (R.id.pager);
+        final TabPagerAdapter adapter = new TabPagerAdapter
+                                                (getSupportFragmentManager (), tabLayout.getTabCount ());
+        viewPager.setAdapter (adapter);
+        viewPager.addOnPageChangeListener (new TabLayout.TabLayoutOnPageChangeListener (tabLayout));
+        tabLayout.setOnTabSelectedListener (new TabLayout.OnTabSelectedListener () {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem (tab.getPosition ());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
+    public void organizeCustomer() {
         setContentView (R.layout.activity_main);
+
         list_view = (ListView) findViewById (R.id.listView);
         event = (Button) findViewById (R.id.BarEvent_button);
         savedEvent = (Button) findViewById (R.id.BarSavedEvent_button);
@@ -107,22 +158,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         list_view.setSelector (new ColorDrawable (Color.TRANSPARENT));
         list_view.setOnItemClickListener (this);
 
-        uploadUserData ();
+        uploadUserData (null);
         inflateCityMenu ();
-
-        Intent intent = getIntent ();
-        if (intent.getStringExtra ("chat_id") != null) {
-            customer_id = intent.getStringExtra ("chat_id");
-            isCustomer = true;
-        }
-        if (intent.getStringExtra ("is_guest") != null) {
-            isGuest = true;
-        }
-        if (intent.getStringExtra ("is_producer") != null) {
-            producerId = intent.getStringExtra ("producerId");
-            create_button = (Button) findViewById (R.id.create_button);
-            create_button.setVisibility (View.VISIBLE);
-        }
     }
 
     @Override
@@ -130,14 +167,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onResume ();
         if (userChoosedCityManually) {
             filterByCityAndFilterName (namesCity[indexCityChossen], currentFilterName);
+            if (MainActivity.cityFoundGPS && MainActivity.namesCity[MainActivity.indexCityChossen].equals (MainActivity.cityGPS)) {
+                currentCityButton.setText (MainActivity.namesCity[MainActivity.indexCityChossen] + "(GPS)");
+            } else {
+                currentCityButton.setText (MainActivity.namesCity[MainActivity.indexCityChossen]);
+            }
         } else if (!cityGPS.isEmpty ()) {
             filterByCityAndFilterName (cityGPS, currentFilterName);
+            currentCityButton.setText (MainActivity.cityGPS + "(GPS)");
         }
     }
 
-    private void uploadUserData() {
+    private void uploadUserData(String artist) {
         final ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
         ParseQuery<Event> query = new ParseQuery ("Event");
+        if (artist != "" && artist != null) {
+            query.whereEqualTo ("artist", artist);
+        }
         query.orderByDescending ("createdAt");
         query.findInBackground (new FindCallback<Event> () {
             public void done(List<Event> eventParse, ParseException e) {
@@ -173,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                                                   i,
                                                                   eventParse.get (i).getFilterName ()));
                         tempEventsList.get (i).setProducerId (eventParse.get (i).getProducerId ());
-                        if(eventParse.get(i).getX () == 0 || eventParse.get(i).getY () == 0){
+                        if (eventParse.get (i).getX () == 0 || eventParse.get (i).getY () == 0) {
                             Geocoder geocoder = new Geocoder (context);
                             List<Address> addresses = null;
                             try {
@@ -193,8 +239,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 e1.printStackTrace ();
                             }
                         }
-                        tempEventsList.get (i).x = eventParse.get(i).getX ();
-                        tempEventsList.get (i).y = eventParse.get(i).getY ();
+                        tempEventsList.get (i).x = eventParse.get (i).getX ();
+                        tempEventsList.get (i).y = eventParse.get (i).getY ();
+                        tempEventsList.get (i).setArtist (eventParse.get (i).getArtist ());
+                        tempEventsList.get (i).setIncome (eventParse.get (i).getIncome ());
+                        tempEventsList.get (i).setSold (eventParse.get (i).getSold ());
+                        tempEventsList.get (i).setTicketsLeft (eventParse.get (i).getNumOfTicketsLeft ());
                     }
                     updateSavedEvents (tempEventsList);
                     all_events_data.clear ();
@@ -237,7 +287,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 popup.setOnMenuItemClickListener (new PopupMenu.OnMenuItemClickListener () {
                     public boolean onMenuItemClick(MenuItem item) {
                         indexCityChossen = popUpIDToCityIndex.get (item.getItemId ());
-                        currentCityButton.setText (item.getTitle ());
+                        if (cityFoundGPS && item.getTitle ().equals (cityGPS)) {
+                            currentCityButton.setText (item.getTitle () + "(GPS)");
+                        } else {
+                            currentCityButton.setText (item.getTitle ());
+                        }
                         filterByCityAndFilterName (namesCity[indexCityChossen], currentFilterName);
                         eventsListAdapter.notifyDataSetChanged ();
                         userChoosedCityManually = true;
@@ -281,8 +335,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             for (int i = 0; i < all_events_data.size (); i++) {
                 String cityEvent = all_events_data.get (i).getCity ();
                 if (cityName.equals ("All Cities") || (cityEvent != null && cityEvent.equals (cityName))) {
-                    if(currentFilterName.isEmpty () ||
-                               (currentFilterName.equals (MainActivity.all_events_data.get (i).getFilterName ()))) {
+                    if (currentFilterName.isEmpty () ||
+                                (currentFilterName.equals (MainActivity.all_events_data.get (i).getFilterName ()))) {
                         tempEventsList.add (all_events_data.get (i));
                     }
                 }
@@ -478,6 +532,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void createEvent(View view) {
         Intent intent = new Intent (MainActivity.this, CreateEventActivity.class);
+        intent.putExtra ("create", "true");
         startActivity (intent);
     }
 

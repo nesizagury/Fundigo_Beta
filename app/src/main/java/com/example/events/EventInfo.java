@@ -27,6 +27,10 @@ public class EventInfo implements Serializable,Parcelable {
     double dist;
     double x;
     double y;
+    String artist;
+    String sold;
+    String income;
+    String TicketsLeft;
 
     public EventInfo(Bitmap imageId,
                      String date,
@@ -214,5 +218,37 @@ public class EventInfo implements Serializable,Parcelable {
 
     public int getIndexInFullList() {
         return indexInFullList;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public String getSold() {
+        return sold;
+    }
+
+    public void setSold(String sold) {
+        this.sold = sold;
+    }
+
+    public String getIncome() {
+        return income;
+    }
+
+    public void setIncome(String income) {
+        this.income = income;
+    }
+
+    public String getTicketsLeft() {
+        return TicketsLeft;
+    }
+
+    public void setTicketsLeft(String ticketsLeft) {
+        TicketsLeft = ticketsLeft;
     }
 }
