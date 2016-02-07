@@ -2,6 +2,7 @@ package com.example.events;
 
 import android.app.Application;
 
+import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.parse.Parse;
 import com.parse.ParseACL;
@@ -30,11 +31,13 @@ public class Fundigo extends Application {
         ParseObject.registerSubclass (com.example.events.Message.class);
         ParseObject.registerSubclass (com.example.events.Room.class);
         ParseObject.registerSubclass (com.example.events.Numbers.class);
+        ParseObject.registerSubclass (MsgRealTime.class);
         FacebookSdk.sdkInitialize (getApplicationContext ());
         ParseUser.enableAutomaticUser ();
         ParseACL defaultAcl = new ParseACL ();
         defaultAcl.setPublicReadAccess (true);
         defaultAcl.setPublicWriteAccess (true);
         ParseACL.setDefaultACL (defaultAcl, true);
+        AccessToken.refreshCurrentAccessTokenAsync ();
     }
 }

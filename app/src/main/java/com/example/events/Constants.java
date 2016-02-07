@@ -5,4 +5,7 @@ package com.example.events;
  */
 public class Constants {
     public static boolean IS_PRODUCER = false;
+    public static final String FB_PIC_URL = "fb_pic_url";
+    public static final String FB_NAME = "fb_name";
+    public static final String FB_ID = "fb_id";
 }

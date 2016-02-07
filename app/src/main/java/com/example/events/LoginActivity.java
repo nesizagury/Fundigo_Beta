@@ -69,12 +69,12 @@ public class LoginActivity extends Activity {
         if (exists) {
             try {
                 ParseUser.logIn (producer_username, producer_password);
-                Toast.makeText (getApplicationContext (), "Successfully Loged in", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (getApplicationContext (), "Successfully Loged in as producer", Toast.LENGTH_SHORT).show ();
                 isProducer = "true";
                 Constants.IS_PRODUCER = true;
                 Intent intent = new Intent (this, MainActivity.class);
-                intent.putExtra("is_producer",isProducer);
-                intent.putExtra("producerId",producer_username);
+                intent.putExtra ("is_producer", isProducer);
+                intent.putExtra ("producerId", producer_username);
                 startActivity (intent);
                 finish ();
             } catch (ParseException e1) {

@@ -63,10 +63,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static String customer_id;
     static String producerId;
 
-    public static boolean turnGps = true;
-    public static boolean gps_enabled = false;
-    public static boolean network_enabled = false;
-    public static LocationManager LocationServices;
     private static LocationManager locationManager;
     static PopupMenu popup;
     public static String[] namesCity;

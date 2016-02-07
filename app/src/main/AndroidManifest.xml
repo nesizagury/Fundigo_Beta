@@ -94,7 +94,7 @@
 
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider1673502059557977"
+            android:authorities="com.facebook.app.FacebookContentProvider815026728619467"
             android:exported="true"/>
 
         <service android:name="com.parse.PushService"/>

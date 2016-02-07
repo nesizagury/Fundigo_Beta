@@ -126,9 +126,9 @@ public class EventPage extends Activity implements View.OnClickListener {
         even_addr = even_addr.replace (" ", "+");
         if (MainActivity.cityFoundGPS) {
             new GetEventDis2 (EventPage.this).execute (
-                      "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + getLocation2 ().getLatitude () + "," + getLocation2 ().getLongitude () + "&destinations=" + even_addr + "+Israel&mode=driving&language=en-EN&key=AIzaSyAuwajpG7_lKGFWModvUIoMqn3vvr9CMyc");
+                                                              "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + getLocation2 ().getLatitude () + "," + getLocation2 ().getLongitude () + "&destinations=" + even_addr + "+Israel&mode=driving&language=en-EN&key=AIzaSyAuwajpG7_lKGFWModvUIoMqn3vvr9CMyc");
             new GetEventDis2 (EventPage.this).execute (
-                      "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + getLocation2 ().getLatitude () + "," + getLocation2 ().getLongitude () + "&destinations=" + even_addr + "+Israel&mode=walking&language=en-EN&key=AIzaSyAuwajpG7_lKGFWModvUIoMqn3vvr9CMyc");
+                                                              "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + getLocation2 ().getLatitude () + "," + getLocation2 ().getLongitude () + "&destinations=" + even_addr + "+Israel&mode=walking&language=en-EN&key=AIzaSyAuwajpG7_lKGFWModvUIoMqn3vvr9CMyc");
         }
     }
 
@@ -366,7 +366,6 @@ public class EventPage extends Activity implements View.OnClickListener {
     }
 
     private class GetEventDis2 extends AsyncTask<String, Integer, String> {
-
         String jsonStr;
         String duritation;
         boolean toLongToWalk = false;

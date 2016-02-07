@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -29,7 +28,6 @@ import com.parse.GetDataCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.sinch.verification.CodeInterceptionException;
 import com.sinch.verification.Config;
@@ -203,35 +201,34 @@ public class SmsSignUpActivity extends AppCompatActivity {
             ParcelFileDescriptor parcelFileDescriptor =
                     null;
             try {
-                parcelFileDescriptor = getContentResolver().openFileDescriptor(selectedImage, "r");
+                parcelFileDescriptor = getContentResolver ().openFileDescriptor (selectedImage, "r");
             } catch (FileNotFoundException e) {
                 e.printStackTrace ();
             }
-            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor ();
             Bitmap image = BitmapFactory.decodeFileDescriptor (fileDescriptor);
             try {
-                parcelFileDescriptor.close();
+                parcelFileDescriptor.close ();
             } catch (IOException e) {
                 e.printStackTrace ();
             }
             Matrix matrix = new Matrix ();
             int angleToRotate = getOrientation (selectedImage);
-            Log.e("nesi", Integer.toString (angleToRotate));
             matrix.postRotate (angleToRotate);
-            Bitmap rotatedBitmap = Bitmap.createBitmap(image ,
-                                                              0,
-                                                              0,
-                                                              image.getWidth (),
-                                                              image .getHeight(),
-                                                              matrix,
-                                                              true);
+            Bitmap rotatedBitmap = Bitmap.createBitmap (image,
+                                                               0,
+                                                               0,
+                                                               image.getWidth (),
+                                                               image.getHeight (),
+                                                               matrix,
+                                                               true);
             imageV.setImageBitmap (rotatedBitmap);
             image_selected = true;
         }
     }
 
     public void smsVerify(String phone_number) {
-        Config config = SinchVerification.config ().applicationKey ("030961d4-2f78-4ca4-8f46-bd846b374308").context (getApplicationContext ()).build ();
+        Config config = SinchVerification.config ().applicationKey ("b9ee3da5-0dc9-40aa-90aa-3d30320746f3").context (getApplicationContext ()).build ();
         VerificationListener listener = new MyVerificationListener ();
         Verification verification = SinchVerification.createSmsVerification (config, phone_number, listener);
         verification.initiate ();
@@ -282,7 +279,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
     void saveToFile(String phone_number) {
         OutputStreamWriter outputStreamWriter = null;
         try {
-            outputStreamWriter = new OutputStreamWriter (this.openFileOutput ("verify.txt", Context.MODE_PRIVATE));
+            outputStreamWriter = new OutputStreamWriter (this.openFileOutput ("verify.txt", Context.MODE_MULTI_PROCESS));
         } catch (FileNotFoundException e) {
             e.printStackTrace ();
         }
@@ -311,7 +308,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
                         }
                         if (!image_selected) {
                             ParseFile imageFile = (ParseFile) numbers.get (0).get ("ImageFile");
-                            if(imageFile != null) {
+                            if (imageFile != null) {
                                 imageFile.getDataInBackground (new GetDataCallback () {
                                     public void done(byte[] data, ParseException e) {
                                         if (e == null) {
@@ -344,13 +341,13 @@ public class SmsSignUpActivity extends AppCompatActivity {
     public int getOrientation(Uri selectedImage) {
         int orientation = 0;
         final String[] projection = new String[]{MediaStore.Images.Media.ORIENTATION};
-        final Cursor cursor = this.getContentResolver().query(selectedImage, projection, null, null, null);
-        if(cursor != null) {
-            final int orientationColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.ORIENTATION);
-            if(cursor.moveToFirst()) {
-                orientation = cursor.isNull(orientationColumnIndex) ? 0 : cursor.getInt(orientationColumnIndex);
+        final Cursor cursor = this.getContentResolver ().query (selectedImage, projection, null, null, null);
+        if (cursor != null) {
+            final int orientationColumnIndex = cursor.getColumnIndex (MediaStore.Images.Media.ORIENTATION);
+            if (cursor.moveToFirst ()) {
+                orientation = cursor.isNull (orientationColumnIndex) ? 0 : cursor.getInt (orientationColumnIndex);
             }
-            cursor.close();
+            cursor.close ();
         }
         return orientation;
     }

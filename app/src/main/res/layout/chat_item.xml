@@ -14,14 +14,14 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:contentDescription="@string/profile_other"
-            android:src="@drawable/ic_gov" />
+            android:src="@drawable/ic_gov"/>
 
         <TextView
             android:id="@+id/user_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="USER ID" />
+            android:text="USER ID"/>
     </LinearLayout>
 
     <TextView
@@ -30,7 +30,7 @@
         android:layout_height="match_parent"
         android:layout_marginRight="64dp"
         android:padding="20dp"
-        android:textSize="18sp" />
+        android:textSize="18sp"/>
 
     <ImageView
         android:id="@+id/ivProfileRight"
@@ -38,6 +38,6 @@
         android:layout_height="64dp"
         android:layout_marginLeft="-64dp"
         android:contentDescription="@string/profile_me"
-        android:src="@drawable/ic_gov" />
+        android:src="@drawable/ic_gov"/>
 
 </LinearLayout>

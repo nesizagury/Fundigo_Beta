@@ -3,8 +3,8 @@ package com.example.events;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
-@ParseClassName("Message")
-public class Message extends ParseObject {
+@ParseClassName("MsgRealTime")
+public class MsgRealTime extends ParseObject {
     public String getUserId() {
         return getString ("userId");
     }
