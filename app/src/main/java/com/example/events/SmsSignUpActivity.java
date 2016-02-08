@@ -2,6 +2,7 @@ package com.example.events;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -10,6 +11,7 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -153,10 +155,20 @@ public class SmsSignUpActivity extends AppCompatActivity {
             number.put ("ImageFile", file);
         }
         number.setNumber (area + phoneET.getText ().toString ());
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences (SmsSignUpActivity.this);
+        String fbId = sp.getString (Constants.FB_ID, null);
+        if (fbId != null) {
+            number.setFbId (fbId);
+        }
+        String fbUrl = sp.getString (Constants.FB_PIC_URL, null);
+        if (fbUrl != null) {
+            number.setFbUrl (fbUrl);
+        }
         try {
             number.save ();
             Toast.makeText (getApplicationContext (), "Successfully Signed up", Toast.LENGTH_SHORT).show ();
             saveToFile (area + phoneET.getText ().toString ());
+            MainActivity.customer_id = area + phoneET.getText ().toString ();
             finish ();
         } catch (ParseException e) {
             Toast.makeText (getApplicationContext (), " Error ): ", Toast.LENGTH_SHORT).show ();

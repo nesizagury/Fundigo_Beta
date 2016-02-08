@@ -25,10 +25,6 @@ public class Message extends ParseObject {
         put ("producer", producer);
     }
 
-    public String getProducer() {
-        return getString ("producer");
-    }
-
     public void setCustomer(String customer) {
         put ("customer", customer);
     }
@@ -43,37 +39,5 @@ public class Message extends ParseObject {
 
     public void setEventName(String eventName) {
         put ("eventName", eventName);
-    }
-
-    public void setSenderName(String senderName) {
-        put ("senderName", senderName);
-    }
-
-    public String getSenderName() {
-        return getString ("senderName");
-    }
-
-    public boolean isProducer() {
-        return getBoolean ("isProducer");
-    }
-
-    public void setIsProducer(boolean isProducer) {
-        put ("isProducer", isProducer);
-    }
-
-    public String getFbId() {
-        return getString ("fbId");
-    }
-
-    public void setFbId(String fbId) {
-        put ("fbId", fbId);
-    }
-
-    public String getPicUrl() {
-        return getString ("picUrl");
-    }
-
-    public void setPicUrl(String picUrl) {
-        put ("picUrl", picUrl);
     }
 }

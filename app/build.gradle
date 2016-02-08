@@ -28,6 +28,7 @@ dependencies {
     compile group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
     compile 'com.facebook.android:facebook-android-sdk:4.+'
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.parse.bolts:bolts-android:1.+'
@@ -37,3 +38,4 @@ dependencies {
     compile files('libs/sinch-android-verification-1.1.2.jar')
     compile 'com.squareup.picasso:picasso:2.5.2'
 }
+

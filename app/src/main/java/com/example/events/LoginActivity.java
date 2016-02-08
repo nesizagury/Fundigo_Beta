@@ -45,6 +45,7 @@ public class LoginActivity extends Activity {
         if (customer_id.equals ("") || customer_id == null) {
             customer_loginButton.setText ("GUEST LOGIN");
             isGuest = "true";
+            Constants.IS_GUEST = true;
         }
     }
 
@@ -86,7 +87,7 @@ public class LoginActivity extends Activity {
         Toast.makeText (this, "Successfully Loged in as customer", Toast.LENGTH_SHORT).show ();
         Intent intent = new Intent (this, MainActivity.class);
         if (isGuest.equals ("true")) {
-            intent.putExtra ("chat_id", "1234");
+            intent.putExtra ("chat_id", "Guest User");
         } else {
             intent.putExtra ("chat_id", customer_id);
         }

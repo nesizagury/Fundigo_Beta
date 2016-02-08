@@ -17,6 +17,7 @@ public class MessagesRoom extends Activity implements AdapterView.OnItemClickLis
     List<MessageRoomBean> mrbList = new ArrayList<MessageRoomBean> ();
     MessageRoomAdapter mra;
     String producer_id;
+    int event_index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,7 @@ public class MessagesRoom extends Activity implements AdapterView.OnItemClickLis
         Intent intent = getIntent ();
         mrbList = (ArrayList<MessageRoomBean>) getIntent ().getSerializableExtra ("array");
         producer_id = intent.getStringExtra ("producer_id");
-
+        event_index = intent.getIntExtra ("index", 0);
         mra = new MessageRoomAdapter (this, mrbList);
         list_view.setAdapter (mra);
         list_view.setOnItemClickListener (this);
@@ -40,6 +41,7 @@ public class MessagesRoom extends Activity implements AdapterView.OnItemClickLis
         MessageRoomBean mrb = (MessageRoomBean) holder.customer.getTag ();
         intent.putExtra ("producer_id", producer_id);
         intent.putExtra ("customer_id", mrb.customer_id);
+        intent.putExtra ("index", event_index);
         startActivity (intent);
     }
 }

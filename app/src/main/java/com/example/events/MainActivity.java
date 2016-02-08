@@ -417,8 +417,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             bmp.compress (Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray ();
             intent.putExtra ("eventImage", byteArray);
-        } else
+        } else {
             intent.putExtra ("eventImage", "");
+        }
         intent.putExtra ("eventDate", filtered_events_data.get (i).getDate ());
         intent.putExtra ("eventName", filtered_events_data.get (i).getName ());
         intent.putExtra ("eventTags", filtered_events_data.get (i).getTags ());

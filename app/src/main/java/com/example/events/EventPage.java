@@ -181,6 +181,7 @@ public class EventPage extends Activity implements View.OnClickListener {
         Intent intent = new Intent (this, MessagesRoom.class);
         intent.putExtra ("array", (Serializable) mrbList);
         intent.putExtra ("producer_id", producer_id);
+        intent.putExtra ("index", this.intent.getIntExtra ("index", 0));
         startActivity (intent);
     }
 
@@ -224,7 +225,11 @@ public class EventPage extends Activity implements View.OnClickListener {
                 AlertDialog.Builder builder = new AlertDialog.Builder (this);
                 builder.setTitle ("You can get more info\nabout the event!");
                 builder.setMessage ("How do you want to do it?");
-                builder.setPositiveButton ("Send message to producer", listener);
+                if (!Constants.IS_PRODUCER) {
+                    builder.setPositiveButton ("Send message to producer", listener);
+                } else {
+                    builder.setPositiveButton ("See Customers' Massages", listener);
+                }
                 builder.setNegativeButton ("Real Time Chat", listener);
                 builder.setNeutralButton ("Cancel...", listener);
                 AlertDialog dialog = builder.create ();
@@ -237,26 +242,26 @@ public class EventPage extends Activity implements View.OnClickListener {
 
     DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener () {
         @Override
-
         public void onClick(DialogInterface dialog, int which) {
-            Intent intent;
+            Intent intentToSend;
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
                     if (!Constants.IS_PRODUCER) {
-                        intent = new Intent (EventPage.this, ChatActivity.class);
-                        intent.putExtra ("producer_id", producer_id);
-                        intent.putExtra("customer_id", customer_id);
-                        startActivity (intent);
+                        intentToSend = new Intent (EventPage.this, ChatActivity.class);
+                        intentToSend.putExtra ("producer_id", producer_id);
+                        intentToSend.putExtra ("customer_id", customer_id);
+                        intentToSend.putExtra ("index", intent.getIntExtra ("index", 0));
+                        startActivity (intentToSend);
                     } else {
                         loadMessagesPage ();
                     }
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
-                    intent = new Intent (EventPage.this, RealTimeChatActivity.class);
-                    intent.putExtra ("customer_id", customer_id);
-                    intent.putExtra ("producer_id", producer_id);
-                    intent.putExtra ("eventName", eventName);
-                    startActivity (intent);
+                    intentToSend = new Intent (EventPage.this, RealTimeChatActivity.class);
+                    intentToSend.putExtra ("customer_id", customer_id);
+                    intentToSend.putExtra ("producer_id", producer_id);
+                    intentToSend.putExtra ("eventName", eventName);
+                    startActivity (intentToSend);
                     break;
                 case DialogInterface.BUTTON_NEUTRAL:
                     dialog.dismiss ();
@@ -288,7 +293,7 @@ public class EventPage extends Activity implements View.OnClickListener {
     }
 
     public void checkIfChangeColorToSaveButtton() {
-        if(!Constants.IS_PRODUCER) {
+        if (!Constants.IS_PRODUCER) {
             int index = intent.getIntExtra ("index", 0);
             if (MainActivity.all_events_data.get (index).getIsSaved ())
                 save.setImageResource (R.mipmap.whsavedd);
@@ -453,12 +458,12 @@ public class EventPage extends Activity implements View.OnClickListener {
             }
         }
 
-        public void editEvent(View view){
-            if(Constants.IS_PRODUCER) {
-                Intent intent = new Intent(EventPage.this, CreateEventActivity.class);
-                intent.putExtra("name", getIntent().getStringExtra("eventName"));
-                intent.putExtra("create","false");
-                startActivity(intent);
+        public void editEvent(View view) {
+            if (Constants.IS_PRODUCER) {
+                Intent intent = new Intent (EventPage.this, CreateEventActivity.class);
+                intent.putExtra ("name", getIntent ().getStringExtra ("eventName"));
+                intent.putExtra ("create", "false");
+                startActivity (intent);
             }
         }
     }
