@@ -149,14 +149,25 @@ public class EventPage extends Activity implements View.OnClickListener {
     }
 
     public void openTicketsPage(View view) {
-        if (Constants.IS_PRODUCER) {
+        if (!Constants.IS_PRODUCER) {
             Bundle b = new Bundle ();
-            Intent ticketsPageIntent = new Intent (EventPage.this, TicketsPage.class);
+            Intent intentQr = new Intent (EventPage.this, GetQRCode.class);
             Intent intentHere = getIntent ();
-            ticketsPageIntent.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
-            ticketsPageIntent.putExtra ("eventPrice", intentHere.getStringExtra ("eventPrice"));
-            ticketsPageIntent.putExtras (b);
-            startActivity (ticketsPageIntent);
+            intentQr.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
+            intentQr.putExtras (b);
+            Bundle b1 = new Bundle ();
+            Intent intentSeat = new Intent (EventPage.this, SelectSeat.class);
+            Intent intentHere1 = getIntent ();
+            intentQr.putExtra ("eventName", intentHere1.getStringExtra ("eventName"));
+            intentQr.putExtras (b1);
+            intentSeat.putExtra ("eventName", intentHere1.getStringExtra ("eventName"));
+            intentSeat.getStringExtra ("eventPrice");
+            int id = intentHere.getExtras ().getInt ("index");
+            if (id % 2 != 0) {
+                startActivity (intentSeat);
+            } else {
+                startActivity (intentQr);
+            }
         } else {
             Intent intent = new Intent (EventPage.this, EventStatus.class);
             intent.putExtra ("name", getIntent ().getStringExtra ("eventName"));

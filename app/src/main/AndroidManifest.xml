@@ -15,6 +15,8 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <permission
         android:name="com.example.events.permission.C2D_MESSAGE"
@@ -37,6 +39,10 @@
         <activity android:name=".EventPage">
         </activity>
         <activity android:name=".TicketsPage">
+        </activity>
+        <activity android:name=".GetQRCode" >
+        </activity>
+        <activity android:name=".SelectSeat" >
         </activity>
         <activity android:name=".FilterPage">
         </activity>
