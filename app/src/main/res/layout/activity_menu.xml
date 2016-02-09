@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:facebook="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
     >
@@ -20,29 +21,27 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView7"
         android:layout_gravity="center_horizontal"
-        android:onClick="logOutFacebook"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="4dp"
+        />
 
-    <ImageView
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/logout_button11"
         android:layout_width="fill_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/login_button11"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/logout_fb"
-        android:layout_alignParentEnd="true"
-        android:scaleType="fitXY"
-        android:layout_marginTop="5dp"
-        android:onClick="logOutFacebook"/>
+        android:layout_marginTop="4dp"
+        android:onClick="logOutFacebook"
+        facebook:com_facebook_login_text="Log Out"/>
 
     <TextView
         android:id="@+id/profileUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="no_user"
-        android:freezesText="true"
         android:layout_below="@+id/logout_button11"
+        android:freezesText="true"
         android:gravity="center"
+        android:text="no_user"
         android:textSize="20sp"/>
 
     <ImageView
@@ -60,11 +59,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/faebook_profile"
+        android:layout_marginTop="7dp"
         android:background="#00b2ff"
         android:onClick="sendPush"
         android:text="Send PUSH"
-        android:textSize="20sp"
-        android:layout_marginTop="7dp"/>
+        android:textSize="20sp"/>
 
     <Button
         android:id="@+id/button3"
@@ -72,10 +71,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/button5"
+        android:layout_marginTop="2dp"
         android:onClick="smsLogin"
         android:text="Sms Verification"
-        android:textSize="20dp"
-        android:layout_marginTop="2dp"/>
+        android:textSize="20dp"/>
 
     <Button
         android:id="@+id/buttonUserProfile"

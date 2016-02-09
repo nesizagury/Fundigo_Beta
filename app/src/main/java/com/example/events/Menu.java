@@ -53,7 +53,7 @@ public class Menu extends AppCompatActivity {
     CallbackManager callbackManager;
     Button sms_login_button;
     Button user_profile_button;
-    ImageView facebook_logout_button;
+    LoginButton facebook_logout_button;
     protected String currentUser;
     protected String phoneNum;
     protected InputStream picStream;
@@ -74,7 +74,7 @@ public class Menu extends AppCompatActivity {
         profileFacebookPictureView = (ImageView) findViewById (R.id.faebook_profile);
         sms_login_button = (Button) findViewById (R.id.button3);
         user_profile_button = (Button) findViewById (R.id.buttonUserProfile);
-        facebook_logout_button = (ImageView) findViewById (R.id.logout_button11);
+        facebook_logout_button = (LoginButton) findViewById (R.id.logout_button11);
         String number = readFromFile ();
         if (!number.isEmpty ()) {
             sms_login_button.setText ("You logged in as " + number);

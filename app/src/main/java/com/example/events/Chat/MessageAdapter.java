@@ -17,9 +17,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-//import com.nostra13.universalimageloader.core.DisplayImageOptions;
-//import com.nostra13.universalimageloader.core.ImageLoader;
-
 public class MessageAdapter extends BaseAdapter {
 
     private Context context;
@@ -83,7 +80,7 @@ public class MessageAdapter extends BaseAdapter {
         }
 
         try {
-            String dateString = DateFormat.format ("yyyy-MM-dd h:mmaa", message.getTime ()).toString ();
+            String dateString = DateFormat.format ("dd-MM-yyyy h:mmaa", message.getTime ()).toString ();
             String[] t = dateString.split (" ");
             viewHolder.sendDateTextView.setText (t[0]);
             viewHolder.sendTimeTextView.setText (t[1]);
