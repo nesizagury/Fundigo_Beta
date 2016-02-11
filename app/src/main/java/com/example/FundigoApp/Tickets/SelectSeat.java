@@ -131,12 +131,10 @@ public class SelectSeat extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intentQr = new Intent(SelectSeat.this, GetQRCode.class);
-                    intentQr.putExtra("seatNumber",temp.title);
+                    intentQr.putExtra("seatNumber", temp.title);
                     intentQr.putExtra("eventObjectId", eventObjectId);
                     intentQr.putExtra("isChoose","yes");
                     intentQr.putExtra("seatKey",temp.getSeatKey());
-
-
                     startActivity(intentQr);
                 }
             });

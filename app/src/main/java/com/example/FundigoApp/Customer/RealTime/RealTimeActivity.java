@@ -157,7 +157,7 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void openMenuPage(View v) {
-        Intent menuPageIntent = new Intent (this, com.example.FundigoApp.Menu.class);
+        Intent menuPageIntent = new Intent (this, com.example.FundigoApp.Customer.CustomerMenu.Menu.class);
         startActivity (menuPageIntent);
     }
 

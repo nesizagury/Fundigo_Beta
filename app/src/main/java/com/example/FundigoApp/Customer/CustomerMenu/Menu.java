@@ -1,4 +1,4 @@
-package com.example.FundigoApp;
+package com.example.FundigoApp.Customer.CustomerMenu;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.FundigoApp.Constants;
+import com.example.FundigoApp.R;
 import com.example.FundigoApp.Verifications.SmsSignUpActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -46,9 +48,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by benjamin on 01/01/2016.
- */
 public class Menu extends AppCompatActivity {
     LoginButton facebook_login_button;
     CallbackManager callbackManager;
@@ -63,6 +62,8 @@ public class Menu extends AppCompatActivity {
     TextView facebookUserNameView;
     ImageView profileFacebookPictureView;
     Context context;
+    Button user_profile_update_button;
+    Button user_evnets_tickets_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +76,16 @@ public class Menu extends AppCompatActivity {
         profileFacebookPictureView = (ImageView) findViewById (R.id.faebook_profile);
         sms_login_button = (Button) findViewById (R.id.button3);
         user_profile_button = (Button) findViewById (R.id.buttonUserProfile);
+        user_profile_update_button = (Button) findViewById (R.id.buttonUserProfileUpdate);
+        user_evnets_tickets_button = (Button) findViewById (R.id.eventsTicketsButton);
         facebook_logout_button = (LoginButton) findViewById (R.id.logout_button11);
         String number = readFromFile ();
         if (!number.isEmpty ()) {
             sms_login_button.setText ("You logged in as " + number);
             sms_login_button.setOnClickListener (null);
             user_profile_button.setVisibility (View.VISIBLE);//if already registered then button is visible
+            user_profile_update_button.setVisibility (View.VISIBLE);
+            user_evnets_tickets_button.setVisibility (View.VISIBLE);
         }
         final AccessToken accessToken = AccessToken.getCurrentAccessToken ();
         if (accessToken != null) {
@@ -153,7 +158,9 @@ public class Menu extends AppCompatActivity {
                 inputStream.close ();
             }
         } catch (FileNotFoundException e) {
+            e.printStackTrace ();
         } catch (IOException e) {
+            e.printStackTrace ();
         }
         return phone_number;
     }
@@ -177,6 +184,8 @@ public class Menu extends AppCompatActivity {
             sms_login_button.setText ("You logged in as " + number);
             sms_login_button.setOnClickListener (null);
             user_profile_button.setVisibility (View.VISIBLE);
+            user_profile_update_button.setVisibility (View.VISIBLE);
+            user_evnets_tickets_button.setVisibility (View.VISIBLE);
         }
         tableLayout = (TableLayout) findViewById (R.id.profileTable);
         tableLayout.setVisibility (View.INVISIBLE);
@@ -294,5 +303,23 @@ public class Menu extends AppCompatActivity {
                 facebookUserNameView.setVisibility (View.GONE);
             }
         }).executeAsync ();
+    }
+
+    public void updateUserProfile(View v) {
+        try {
+            Intent I = new Intent (this, CustomerProfileUpdate.class);
+            startActivity (I);
+        } catch (Exception e) {
+            Log.e (e.toString (), "error in update flow");
+        }
+    }
+
+    public void EventsTicketsDisplay(View v) {
+        try {
+            Intent I = new Intent (this, EventsTickets.class);
+            startActivity (I);
+        } catch (Exception e) {
+            Log.e (e.toString (), "error in events tickets flow");
+        }
     }
 }

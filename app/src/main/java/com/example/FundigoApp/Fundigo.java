@@ -6,6 +6,7 @@ import com.example.FundigoApp.Chat.Message;
 import com.example.FundigoApp.Chat.MsgRealTime;
 import com.example.FundigoApp.Chat.Room;
 import com.example.FundigoApp.Events.Event;
+import com.example.FundigoApp.Events.EventsSeats;
 import com.example.FundigoApp.Verifications.Numbers;
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
@@ -37,6 +38,7 @@ public class Fundigo extends Application {
         ParseObject.registerSubclass (Room.class);
         ParseObject.registerSubclass (Numbers.class);
         ParseObject.registerSubclass (MsgRealTime.class);
+        ParseObject.registerSubclass (EventsSeats.class);
         FacebookSdk.sdkInitialize (getApplicationContext ());
         ParseUser.enableAutomaticUser ();
         ParseACL defaultAcl = new ParseACL ();

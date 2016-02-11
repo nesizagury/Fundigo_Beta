@@ -231,7 +231,7 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void openMenuPage(View v) {
-        Intent menuPageIntent = new Intent (this, com.example.FundigoApp.Menu.class);
+        Intent menuPageIntent = new Intent (this, com.example.FundigoApp.Customer.CustomerMenu.Menu.class);
         startActivity (menuPageIntent);
     }
 

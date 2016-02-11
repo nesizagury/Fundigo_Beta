@@ -59,13 +59,14 @@
         </activity>
         <activity android:name=".Customer.RealTime.RealTimeActivity">
         </activity>
-        <activity android:name="com.example.FundigoApp.Menu">
+        <activity android:name=".Customer.CustomerMenu.Menu">
         </activity>
         <activity android:name=".Customer.SavedEvents.SavedEventActivity">
         </activity>
         <activity android:name="com.example.FundigoApp.Search">
         </activity>
-        <activity android:name="com.example.FundigoApp.WebRequest"></activity>
+        <activity android:name=".Customer.CustomerMenu.CustomerProfileUpdate" />
+        <activity android:name=".Customer.CustomerMenu.EventsTickets"></activity>
         <activity android:name=".Events.EventStatus"></activity>
         <activity android:name="com.example.FundigoApp.Producer.Artists.ArtistStats"></activity>
         <activity
@@ -100,6 +101,7 @@
             android:name="com.example.FundigoApp.Chat.ChatActivity"
             android:label="@string/title_activity_chat"
             android:theme="@style/AppTheme"/>
+
 
         <provider
             android:name="com.facebook.FacebookContentProvider"

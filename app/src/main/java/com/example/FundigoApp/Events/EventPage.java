@@ -186,6 +186,7 @@ public class EventPage extends Activity implements View.OnClickListener {
             Intent intentSeat = new Intent (EventPage.this, SelectSeat.class);
             Intent intentHere1 = getIntent ();
             intentQr.putExtra ("eventName", intentHere1.getStringExtra ("eventName"));
+            intentQr.putExtra ("eventObjectId", event.getParseObjectId ());
             intentQr.putExtras (b1);
             intentSeat.putExtra ("eventName", intentHere1.getStringExtra ("eventName"));
             intentSeat.getStringExtra ("eventPrice");
