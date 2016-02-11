@@ -19,7 +19,8 @@
             android:text="2014-11-11"
             android:textColor="#ffffff"
             android:textSize="12sp"
-            android:paddingTop="7dp"/>
+            android:layout_gravity="center"
+            android:gravity="center"/>
     </LinearLayout>
 
     <RelativeLayout

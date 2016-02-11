@@ -18,7 +18,10 @@
             android:background="@drawable/messages_time_background"
             android:padding="2dp"
             android:textColor="#ffffff"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:text="11-02-216"
+            android:layout_gravity="center"
+            android:gravity="center"/>
     </LinearLayout>
 
     <RelativeLayout

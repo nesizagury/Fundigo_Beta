@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/events/Chat/FaceAdapter.java" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/events/Chat/FaceCategroyAdapter.java" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/events/Chat/FacePageFragment.java" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/events/Chat/FunctionAdapter.java" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/events/Chat/MainActivity.java" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/events/Chat/Message.java" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/events/Chat/MessageAdapter.java" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/events/Chat/MessageInputToolBox.java" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/events/Chat/OnOperationListener.java" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/events/Chat/Option.java" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/FaceAdapter.java" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/FaceCategroyAdapter.java" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/FacePageFragment.java" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/FunctionAdapter.java" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/MessageAdapter.java" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/MessageChat.java" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/MessageInputToolBox.java" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/OnOperationListener.java" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/Option.java" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/TestChat.java" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/avatar.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/background_tab.xml" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big1.png" charset="windows-1255" />

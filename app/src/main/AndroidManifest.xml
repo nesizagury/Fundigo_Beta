@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    package="com.example.events"
+    package="com.example.FundigoApp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.READ_SMS"/>
@@ -19,7 +19,7 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <permission
-        android:name="com.example.events.permission.C2D_MESSAGE"
+        android:name="com.example.FundigoApp.permission.C2D_MESSAGE"
         android:protectionLevel="signature"/>
     <uses-permission android:name="com.example.events.permission.C2D_MESSAGE"/>
 
@@ -29,52 +29,52 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
-        android:name="Fundigo"
+        android:name="com.example.FundigoApp.Fundigo"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Fundigo"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.FundigoApp.MainActivity">
         </activity>
-        <activity android:name=".EventPage">
+        <activity android:name="com.example.FundigoApp.Events.EventPage">
         </activity>
-        <activity android:name=".TicketsPage">
+        <activity android:name=".Tickets.TicketsPage">
         </activity>
-        <activity android:name=".GetQRCode" >
+        <activity android:name=".Tickets.GetQRCode" >
         </activity>
-        <activity android:name=".SelectSeat" >
+        <activity android:name=".Tickets.SelectSeat" >
         </activity>
-        <activity android:name=".FilterPage">
+        <activity android:name="com.example.FundigoApp.FilterPage">
         </activity>
-        <activity android:name=".CreateEventActivity">
+        <activity android:name="com.example.FundigoApp.Events.CreateEventActivity">
         </activity>
-        <activity android:name=".VerifyCard">
+        <activity android:name=".Verifications.VerifyCard">
         </activity>
-        <activity android:name=".LoginActivity">
+        <activity android:name=".Verifications.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".RealTime">
+        <activity android:name=".Customer.RealTime.RealTimeActivity">
         </activity>
-        <activity android:name=".Menu">
+        <activity android:name="com.example.FundigoApp.Menu">
         </activity>
-        <activity android:name=".SavedEventActivity">
+        <activity android:name=".Customer.SavedEvents.SavedEventActivity">
         </activity>
-        <activity android:name=".Search">
+        <activity android:name="com.example.FundigoApp.Search">
         </activity>
-        <activity android:name=".WebRequest"></activity>
-        <activity android:name=".EventStatus"></activity>
-        <activity android:name=".ArtistStats"></activity>
+        <activity android:name="com.example.FundigoApp.WebRequest"></activity>
+        <activity android:name=".Events.EventStatus"></activity>
+        <activity android:name="com.example.FundigoApp.Producer.Artists.ArtistStats"></activity>
         <activity
-            android:name=".EventService"
+            android:name="com.example.FundigoApp.Events.EventService"
             android:theme="@style/AppTheme.PopupServiceEvent"></activity>
         <activity
-            android:name="com.example.events.MessagesRoom"
+            android:name=".Chat.MessagesRoom"
             />
-        <activity android:name=".RealTimeChatActivity"></activity>
+        <activity android:name=".Chat.RealTimeChatActivity"></activity>
 
         <meta-data
             android:name="com.parse.APPLICATION_ID"
@@ -88,7 +88,7 @@
             android:value="@string/facebook_app_id"/>
 
         <activity
-            android:name=".SmsSignUpActivity"
+            android:name=".Verifications.SmsSignUpActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme"/>
         <activity
@@ -97,7 +97,7 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
         <activity
-            android:name=".ChatActivity"
+            android:name="com.example.FundigoApp.Chat.ChatActivity"
             android:label="@string/title_activity_chat"
             android:theme="@style/AppTheme"/>
 
