@@ -3,32 +3,18 @@ package com.example.FundigoApp.Events;
 import android.graphics.Bitmap;
 import android.location.Location;
 
-import com.example.FundigoApp.Customer.RealTime.RealTimeActivity;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
-/**
- * Created by rufflez on 8/31/14.
- */
 @ParseClassName("Event")
 public class Event extends ParseObject {
 
     private Location loc = new Location ("");
     private Bitmap b;
 
-    public void setLocation(double x, double y) {
-        loc.setLatitude (x);
-        loc.setLongitude (y);
-    }
-
-    public float getdis() {
-        return (RealTimeActivity.loc.distanceTo (getLocation ()) / 1000);
-    }
-
     public Location getLocation() {
         return loc;
     }
-
 
     public String getName() {
         return getString ("Name");
@@ -192,7 +178,6 @@ public class Event extends ParseObject {
 
 
     public Bitmap getBitmap() {
-
         return this.b;
     }
 

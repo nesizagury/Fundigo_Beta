@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.Events.EventsSeats;
 import com.example.FundigoApp.R;
 import com.parse.GetCallback;
@@ -25,13 +26,10 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,7 +46,6 @@ public class GetQRCode extends AppCompatActivity {
     private String fileName;
     private TextView congrad;
     private static int codeNum = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,14 +80,12 @@ public class GetQRCode extends AppCompatActivity {
                 }
             }
         });
-
         enterPhone.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View v) {
                 enterPhone.beginBatchEdit ();
             }
         });
-
     }
 
     private class DownlandTask extends AsyncTask<String, Integer, String> {
@@ -182,7 +177,7 @@ public class GetQRCode extends AppCompatActivity {
                             } catch (ParseException e1) {
                                 e1.printStackTrace ();
                             }
-                            String _userPhoneNumber = readFromFile ();
+                            String _userPhoneNumber = GlobalVariables.CUSTOMER_PHONE_NUM;
                             if (!_userPhoneNumber.isEmpty ()) {
                                 updateData.put ("buyer_phone", _userPhoneNumber);
                             }
@@ -203,7 +198,7 @@ public class GetQRCode extends AppCompatActivity {
                 } catch (ParseException e1) {
                     e1.printStackTrace ();
                 }
-                String _userPhoneNumber = readFromFile ();
+                String _userPhoneNumber = GlobalVariables.CUSTOMER_PHONE_NUM;
                 if (!_userPhoneNumber.isEmpty ()) {
                     eventsSeats.put ("buyer_phone", _userPhoneNumber);
                 }
@@ -216,28 +211,7 @@ public class GetQRCode extends AppCompatActivity {
                     e.printStackTrace ();
                 }
             }
-            finish();
-        }
-
-        private String readFromFile() {
-            String phone_number = "";
-            try {
-                InputStream inputStream = openFileInput ("verify.txt");
-                if (inputStream != null) {
-                    InputStreamReader inputStreamReader = new InputStreamReader (inputStream);
-                    BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
-                    String receiveString = "";
-                    while ((receiveString = bufferedReader.readLine ()) != null) {
-                        phone_number = receiveString;
-                    }
-                    inputStream.close ();
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace ();
-            } catch (IOException e) {
-                e.printStackTrace ();
-            }
-            return phone_number;
+            finish ();
         }
     }
 }

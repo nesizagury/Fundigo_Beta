@@ -20,8 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.FundigoApp.MainActivity;
-import com.example.FundigoApp.Producer.Artists.ArtistsPage;
+import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -76,7 +75,6 @@ public class CreateEventActivity extends Activity {
     CheckBox atmBox;
     EditText parkingET;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -93,7 +91,6 @@ public class CreateEventActivity extends Activity {
             }
         });
 
-
         placeET.setOnEditorActionListener (new TextView.OnEditorActionListener () {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode () == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
@@ -102,9 +99,7 @@ public class CreateEventActivity extends Activity {
                 return false;
             }
         });
-
     }
-
 
     public void imageUpload(View view) {
         Intent i = new Intent (
@@ -114,7 +109,6 @@ public class CreateEventActivity extends Activity {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData ();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -128,10 +122,7 @@ public class CreateEventActivity extends Activity {
         }
     }
 
-
     public void saveEvent(View view) {
-
-
         Event event = new Event ();
         if (tagsET.getText ().length () != 0) {
             if (getIntent ().getStringExtra ("create").equals ("false")) {
@@ -143,7 +134,6 @@ public class CreateEventActivity extends Activity {
                 event.setIncome ("0");
             }
 
-
             event.setName (nameET.getText ().toString ());
             event.setDescription (descriptionET.getText ().toString ());
             event.setPrice (priceET.getText ().toString ());
@@ -152,7 +142,7 @@ public class CreateEventActivity extends Activity {
             event.setX (Double.parseDouble (xET.getText ().toString ()));
             event.setY (Double.parseDouble (yET.getText ().toString ()));
             event.setTags (tagsET.getText ().toString ());
-            event.setProducerId (MainActivity.producerId);
+            event.setProducerId (GlobalVariables.PRODUCER_PARSE_OBJECT_ID);
             event.setDate (dateET.getText ().toString ());
             event.setPlace (placeET.getText ().toString ());
             event.setArtist (artistET.getText ().toString ());
@@ -163,7 +153,6 @@ public class CreateEventActivity extends Activity {
                 event.setEventATMService ("Yes");
             else
                 event.setEventATMService ("No");
-
 
             if (pictureSelected || headTV.getText ().toString ().equals ("Edit Event")) {
                 imageV.buildDrawingCache ();
@@ -177,11 +166,8 @@ public class CreateEventActivity extends Activity {
                 } catch (ParseException e) {
                     e.printStackTrace ();
                 }
-
-
                 event.put ("ImageFile", file);
             }
-
             try {
                 event.save ();
             } catch (ParseException e) {
@@ -196,7 +182,6 @@ public class CreateEventActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-
         if (nameET.getVisibility () == View.VISIBLE) {
             AlertDialog.Builder builder = new AlertDialog.Builder (this);
             builder.setMessage ("Are you sure you want to exit?")
@@ -226,12 +211,9 @@ public class CreateEventActivity extends Activity {
             hideThirdStage (null);
             showSecondStage (null);
         }
-
-
     }
 
     public void showFirstStage(View view) {
-
         nameTV.setVisibility (View.VISIBLE);
         descriptionTV.setVisibility (View.VISIBLE);
         nameET.setVisibility (View.VISIBLE);
@@ -244,7 +226,6 @@ public class CreateEventActivity extends Activity {
     }
 
     public void HideFirstStage(View view) {
-
         if (nameET.getText ().length () != 0 && descriptionET.getText ().length () != 0
                     && dateET.getText ().length () != 0) {
             nameTV.setVisibility (View.INVISIBLE);
@@ -256,14 +237,10 @@ public class CreateEventActivity extends Activity {
             artistTV.setVisibility (View.INVISIBLE);
             artistET.setVisibility (View.INVISIBLE);
             showSecondStage (null);
-
         }
-
     }
 
     public void showSecondStage(View view) {
-
-
         priceTV.setVisibility (View.VISIBLE);
         priceET.setVisibility (View.VISIBLE);
         quantityTV.setVisibility (View.VISIBLE);
@@ -276,12 +253,9 @@ public class CreateEventActivity extends Activity {
         xET.setVisibility (View.VISIBLE);
         yTV.setVisibility (View.VISIBLE);
         yET.setVisibility (View.VISIBLE);
-
     }
 
     public void hideSecondStage(View view) {
-
-
         priceTV.setVisibility (View.INVISIBLE);
         priceET.setVisibility (View.INVISIBLE);
         quantityTV.setVisibility (View.INVISIBLE);
@@ -294,11 +268,9 @@ public class CreateEventActivity extends Activity {
         xET.setVisibility (View.INVISIBLE);
         yTV.setVisibility (View.INVISIBLE);
         yET.setVisibility (View.INVISIBLE);
-
     }
 
     public void showThirdStage(View view) {
-
         if (priceET.getText ().length () != 0 && quantityET.getText ().length () != 0 &&
                     addressET.getText ().length () != 0 && xET.getText ().length () != 0 &&
                     yET.getText ().length () != 0 && placeET.getText ().length () != 0) {
@@ -315,16 +287,12 @@ public class CreateEventActivity extends Activity {
             parkingET.setVisibility (View.VISIBLE);
             capacityET.setVisibility (View.VISIBLE);
             capacityTV.setVisibility (View.VISIBLE);
-
             hideSecondStage (null);
         } else
             Toast.makeText (getApplicationContext (), "Please fill the  empty fields", Toast.LENGTH_SHORT).show ();
-
-
     }
 
     public void hideThirdStage(View view) {
-
         imageTV.setVisibility (View.INVISIBLE);
         imageV.setVisibility (View.INVISIBLE);
         browse_button.setVisibility (View.INVISIBLE);
@@ -338,11 +306,9 @@ public class CreateEventActivity extends Activity {
         parkingET.setVisibility (View.INVISIBLE);
         capacityET.setVisibility (View.INVISIBLE);
         capacityTV.setVisibility (View.INVISIBLE);
-
     }
 
     private void componentInit() {
-
         nameTV = (TextView) findViewById (R.id.nameTV);
         descriptionTV = (TextView) findViewById (R.id.descriptionTV);
         nameET = (EditText) findViewById (R.id.nameET);
@@ -374,7 +340,6 @@ public class CreateEventActivity extends Activity {
         capacityTV = (TextView) findViewById (R.id.capacityTV);
         toiletTV = (TextView) findViewById (R.id.toiletTV);
 
-
         tagsTV = (TextView) findViewById (R.id.tagsTV);
         tagsET = (EditText) findViewById (R.id.tagsET);
         done_button = (Button) findViewById (R.id.done_button);
@@ -384,8 +349,8 @@ public class CreateEventActivity extends Activity {
             headTV.setText ("Edit Event");
             nameET.setText ("" + getIntent ().getStringExtra ("name"));
 
-            for (int i = 0; i < ArtistsPage.all_events.size (); i++) {
-                EventInfo event = ArtistsPage.all_events.get (i);
+            for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size (); i++) {
+                EventInfo event = GlobalVariables.ALL_EVENTS_DATA.get (i);
                 if (event.getParseObjectId ().equals (getIntent ().getStringExtra ("eventObjectId"))) {
                     income = event.getIncome ();
                     sold = event.getSold ();
@@ -398,10 +363,8 @@ public class CreateEventActivity extends Activity {
                     imageV.setImageBitmap (event.getImageId ());
                     tagsET.setText (event.getTags ());
                 }
-
             }
         }
-
     }
 
     public void deleteRow() {
@@ -421,7 +384,5 @@ public class CreateEventActivity extends Activity {
                 }
             }
         });
-
     }
-
 }

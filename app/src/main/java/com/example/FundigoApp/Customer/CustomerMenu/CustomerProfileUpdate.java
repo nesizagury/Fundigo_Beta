@@ -14,22 +14,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 
 public class CustomerProfileUpdate extends AppCompatActivity {
 
-    protected String customer;
+    String customer;
     EditText customerName;
     ImageView customerImg;
     boolean IMAGE_SELECTED = false;
@@ -48,10 +44,9 @@ public class CustomerProfileUpdate extends AppCompatActivity {
     public void updateProfile(View view) {
         customer = customerName.getText ().toString ();
         byte[] imageToUpdate;
-        //Task<List<ParseObject>> list;
         List<ParseObject> list;
         if (!customer.isEmpty () || IMAGE_SELECTED) {
-            String _userPhoneNumber = this.readFromFile ();
+            String _userPhoneNumber = GlobalVariables.CUSTOMER_PHONE_NUM;
             if (!_userPhoneNumber.isEmpty ()) {
                 try {
                     ParseQuery<ParseObject> query = ParseQuery.getQuery ("Numbers");
@@ -64,7 +59,6 @@ public class CustomerProfileUpdate extends AppCompatActivity {
                             ParseFile picFile = new ParseFile (imageToUpdate);
                             obj.put ("ImageFile", picFile);
                         }
-                        // obj.save();
                         obj.save ();
                         finish ();
                     }
@@ -120,25 +114,5 @@ public class CustomerProfileUpdate extends AppCompatActivity {
         } catch (Exception e) {
             Log.e ("On ActivityResult Error", e.toString ());
         }
-    }
-
-    private String readFromFile() {
-        String phone_number = "";
-        try {
-            InputStream inputStream = openFileInput ("verify.txt");
-            if (inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader (inputStream);
-                BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
-                String receiveString = "";
-                while ((receiveString = bufferedReader.readLine ()) != null) {
-                    phone_number = receiveString;
-                }
-                inputStream.close ();
-            }
-        } catch (FileNotFoundException e) {
-        } catch (IOException e) {
-            e.printStackTrace ();
-        }
-        return phone_number;
     }
 }

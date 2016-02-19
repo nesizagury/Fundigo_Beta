@@ -6,7 +6,7 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
-public class EventInfo implements Serializable,Parcelable {
+public class EventInfo implements Serializable, Parcelable {
 
     Bitmap imageId;
     String date;
@@ -63,16 +63,16 @@ public class EventInfo implements Serializable,Parcelable {
         this.filterName = filterName;
     }
 
-    public EventInfo(Parcel in){
+    public EventInfo(Parcel in) {
         String[] data = new String[11];
-        in.readStringArray(data);
+        in.readStringArray (data);
         this.date = data[0];
         this.name = data[1];
         this.tags = data[2];
         this.price = data[3];
         this.info = data[4];
         this.place = data[5];
-        this.toilet= data[6];
+        this.toilet = data[6];
         this.parking = data[7];
         this.capacity = data[8];
         this.atm = data[9];
@@ -81,19 +81,20 @@ public class EventInfo implements Serializable,Parcelable {
     }
 
     @Override
-    public int describeContents(){
+    public int describeContents() {
         return 0;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[] {
+        dest.writeStringArray (new String[]{
                                                    this.date, this.name, this.tags, this.price, this.info, this.place,
                                                    this.toilet, this.parking, this.capacity, this.atm, this.filterName});
     }
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator () {
         public EventInfo createFromParcel(Parcel in) {
-            return new EventInfo(in);
+            return new EventInfo (in);
         }
 
         public EventInfo[] newArray(int size) {

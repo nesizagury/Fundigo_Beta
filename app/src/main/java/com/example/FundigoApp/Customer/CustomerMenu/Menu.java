@@ -15,7 +15,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.FundigoApp.Constants;
+import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.Verifications.SmsSignUpActivity;
 import com.facebook.AccessToken;
@@ -38,11 +38,8 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -79,8 +76,8 @@ public class Menu extends AppCompatActivity {
         user_profile_update_button = (Button) findViewById (R.id.buttonUserProfileUpdate);
         user_evnets_tickets_button = (Button) findViewById (R.id.eventsTicketsButton);
         facebook_logout_button = (LoginButton) findViewById (R.id.logout_button11);
-        String number = readFromFile ();
-        if (!number.isEmpty ()) {
+        String number = GlobalVariables.CUSTOMER_PHONE_NUM;
+        if (!number.equals ("GUEST")) {
             sms_login_button.setText ("You logged in as " + number);
             sms_login_button.setOnClickListener (null);
             user_profile_button.setVisibility (View.VISIBLE);//if already registered then button is visible
@@ -94,8 +91,8 @@ public class Menu extends AppCompatActivity {
             facebookUserNameView.setVisibility (View.VISIBLE);
             facebook_logout_button.setVisibility (View.VISIBLE);
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences (Menu.this);
-            String name = sp.getString (Constants.FB_NAME, null);
-            String pic_url = sp.getString (Constants.FB_PIC_URL, null);
+            String name = sp.getString (GlobalVariables.FB_NAME, null);
+            String pic_url = sp.getString (GlobalVariables.FB_PIC_URL, null);
             Picasso.with (context).load (pic_url).into (profileFacebookPictureView);
             facebookUserNameView.setText (name);
         } else {
@@ -144,27 +141,6 @@ public class Menu extends AppCompatActivity {
         });
     }
 
-    private String readFromFile() {
-        String phone_number = "";
-        try {
-            InputStream inputStream = openFileInput ("verify.txt");
-            if (inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader (inputStream);
-                BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
-                String receiveString = "";
-                while ((receiveString = bufferedReader.readLine ()) != null) {
-                    phone_number = receiveString;
-                }
-                inputStream.close ();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace ();
-        } catch (IOException e) {
-            e.printStackTrace ();
-        }
-        return phone_number;
-    }
-
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult (requestCode, resultCode, data);
@@ -179,8 +155,8 @@ public class Menu extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume ();
-        String number = readFromFile ();
-        if (!number.isEmpty ()) {
+        String number = GlobalVariables.CUSTOMER_PHONE_NUM;
+        if (!number.equals ("GUEST")) {
             sms_login_button.setText ("You logged in as " + number);
             sms_login_button.setOnClickListener (null);
             user_profile_button.setVisibility (View.VISIBLE);
@@ -196,8 +172,8 @@ public class Menu extends AppCompatActivity {
     public void getUserProfile(View view) { //get onclick event for pulling the user profile
         /// verify if not Guest and set the Button to visible done in Oncreate function
         List<ParseObject> list;
-        String _userPhoneNumber = this.readFromFile ();
-        if (!_userPhoneNumber.isEmpty ()) {
+        String _userPhoneNumber = GlobalVariables.CUSTOMER_PHONE_NUM;
+        if (!_userPhoneNumber.equals ("GUEST")) {
             try {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery ("Numbers");
                 query.whereEqualTo ("number", _userPhoneNumber);
@@ -277,9 +253,9 @@ public class Menu extends AppCompatActivity {
                                              JSONObject data = picture.getJSONObject ("data");
                                              SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences (Menu.this);
                                              SharedPreferences.Editor editor = sp.edit ();
-                                             editor.putString (Constants.FB_NAME, response.getJSONObject ().getString ("name"));
-                                             editor.putString (Constants.FB_PIC_URL, data.getString ("url"));
-                                             editor.putString (Constants.FB_ID, response.getJSONObject ().getString ("id"));
+                                             editor.putString (GlobalVariables.FB_NAME, response.getJSONObject ().getString ("name"));
+                                             editor.putString (GlobalVariables.FB_PIC_URL, data.getString ("url"));
+                                             editor.putString (GlobalVariables.FB_ID, response.getJSONObject ().getString ("id"));
                                              editor.apply ();
                                              Picasso.with (context).load (data.getString ("url")).into (profileFacebookPictureView);
                                              facebookUserNameView.setText (response.getJSONObject ().getString ("name"));

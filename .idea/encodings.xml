@@ -13,16 +13,6 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/FundigoApp/Chat/TestChat.java" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/avatar.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/background_tab.xml" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big1.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big10.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big2.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big3.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big4.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big5.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big6.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big7.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big8.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/big9.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/chatfrom_bg.xml" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/chatfrom_bg_focused.9.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/chatfrom_bg_normal.9.png" charset="windows-1255" />
@@ -31,38 +21,7 @@
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/chatto_bg_focused.9.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/chatto_bg_normal.9.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/chatto_bg_pressed.9.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/cig1.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/cig2.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/cig3.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/cig4.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/cig5.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/cig6.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/cig7.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/device_2014_08_21_215311.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig1.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig10.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig11.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig12.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig13.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig14.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig15.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig16.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig17.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig18.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig19.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig2.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig20.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig21.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig22.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig23.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig24.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig3.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig4.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig5.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig6.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig7.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig8.png" charset="windows-1255" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/dig9.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/em_cate_bat.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/em_cate_doll.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/em_cate_duck.png" charset="windows-1255" />
@@ -81,6 +40,7 @@
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/take_photo.9.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/type_select_btn_normal.png" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main_chat.xml" charset="windows-1255" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_real_time_cahts.xml" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/face_fragment.xml" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/face_item.xml" charset="windows-1255" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/function_item.xml" charset="windows-1255" />

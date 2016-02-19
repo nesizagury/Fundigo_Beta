@@ -15,8 +15,9 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
 
     <permission
         android:name="com.example.FundigoApp.permission.C2D_MESSAGE"
@@ -34,15 +35,24 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Fundigo"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.FundigoApp.MainActivity">
+        <activity android:name=".MainActivity"
+                  android:launchMode="singleTask">
+            <intent-filter>
+                <data android:scheme="event" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
         </activity>
-        <activity android:name="com.example.FundigoApp.Events.EventPage">
+        <activity
+            android:name="com.example.FundigoApp.Events.EventPage"
+            android:launchMode="singleTask">
         </activity>
         <activity android:name=".Tickets.TicketsPage">
         </activity>
-        <activity android:name=".Tickets.GetQRCode" >
+        <activity android:name=".Tickets.GetQRCode">
         </activity>
-        <activity android:name=".Tickets.SelectSeat" >
+        <activity android:name=".Tickets.SelectSeat">
         </activity>
         <activity android:name="com.example.FundigoApp.FilterPage">
         </activity>
@@ -53,27 +63,41 @@
         <activity android:name=".Verifications.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <data android:scheme="event"/>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
             </intent-filter>
         </activity>
         <activity android:name=".Customer.RealTime.RealTimeActivity">
         </activity>
         <activity android:name=".Customer.CustomerMenu.Menu">
         </activity>
+        <activity android:name=".Verifications.SignUpActivity"></activity>
+        <activity android:name=".Producer.EventOnRealtime"></activity>
+        <activity android:name=".Producer.RealTimeGuestAddition"></activity>
+        <activity
+            android:name=".DeepLinkActivity"
+            android:theme="@android:style/Theme.Holo.Dialog">
+        </activity>
         <activity android:name=".Customer.SavedEvents.SavedEventActivity">
         </activity>
         <activity android:name="com.example.FundigoApp.Search">
         </activity>
-        <activity android:name=".Customer.CustomerMenu.CustomerProfileUpdate" />
+        <activity android:name=".Customer.CustomerMenu.CustomerProfileUpdate"/>
         <activity android:name=".Customer.CustomerMenu.EventsTickets"></activity>
         <activity android:name=".Events.EventStatus"></activity>
-        <activity android:name="com.example.FundigoApp.Producer.Artists.ArtistStats"></activity>
+        <activity android:name=".Producer.Artists.ArtistEventsActivity"></activity>
+        <activity android:name=".Producer.Artists.ArtistStatsActivity"></activity>
         <activity
             android:name="com.example.FundigoApp.Events.EventService"
             android:theme="@style/AppTheme.PopupServiceEvent"></activity>
         <activity
-            android:name=".Chat.MessagesRoom"
+            android:name=".Chat.MessagesRoomActivity"
             />
         <activity android:name=".Chat.RealTimeChatActivity"></activity>
 
@@ -129,6 +153,9 @@
                 <category android:name="com.example.events"/>
             </intent-filter>
         </receiver>
+        <meta-data
+            android:name="io.branch.sdk.BranchKey"
+            android:value="key_live_bop3jOlEx4NaSVitfZ2zHoiaBFejkB4S"/>
     </application>
 
 </manifest>
