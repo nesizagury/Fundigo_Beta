@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.FundigoApp.GlobalVariables;
-import com.example.FundigoApp.Events.EventsSeats;
 import com.example.FundigoApp.R;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -155,11 +154,10 @@ public class GetQRCode extends AppCompatActivity {
         protected void onPostExecute(String result) {
             progressDialog.hide ();
             congrad.setVisibility (View.VISIBLE);
-            Toast.makeText (getApplicationContext (), result, Toast.LENGTH_LONG).show ();
+            Toast.makeText (getApplicationContext (), result, Toast.LENGTH_SHORT).show ();
             String parh = "sdcard/fundigo_qr_code/" + fileName + ".jpg";
             qr_image.setImageDrawable (Drawable.createFromPath (parh));
             Intent myIntent = getIntent ();
-            String seatNumber = myIntent.getStringExtra ("seatNumber");
             String choose = myIntent.getStringExtra ("isChoose");
             String seatKey = myIntent.getStringExtra ("seatKey");
             if (choose != null) {
@@ -184,6 +182,8 @@ public class GetQRCode extends AppCompatActivity {
                             Date myDate = new Date ();
                             updateData.put ("purchase_date", myDate);
                             updateData.saveInBackground ();
+                        } else{
+                            e.printStackTrace ();
                         }
                     }
                 });
@@ -205,13 +205,13 @@ public class GetQRCode extends AppCompatActivity {
                 Date myDate = new Date ();
                 eventsSeats.put ("purchase_date", myDate);
                 eventsSeats.put ("eventObjectId", getIntent ().getStringExtra ("eventObjectId"));
+                eventsSeats.setPrice (Integer.parseInt (myIntent.getStringExtra ("eventPrice")));
                 try {
                     eventsSeats.save ();
                 } catch (ParseException e) {
                     e.printStackTrace ();
                 }
             }
-            finish ();
         }
     }
 }

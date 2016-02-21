@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,6 +23,9 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 public class CustomerProfileUpdate extends AppCompatActivity {
@@ -101,18 +106,50 @@ public class CustomerProfileUpdate extends AppCompatActivity {
         try {
             if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && null != data) {
                 Uri selectedImage = data.getData ();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getContentResolver ().query (selectedImage, filePathColumn, null, null, null);
-                cursor.moveToFirst ();
-                int columnIndex = cursor.getColumnIndex (filePathColumn[0]);
-                picturePath = cursor.getString (columnIndex);
-                cursor.close ();
-                customerImg.setImageBitmap (BitmapFactory.decodeFile (picturePath));
-                IMAGE_SELECTED = true;
+                ParcelFileDescriptor parcelFileDescriptor =
+                        null;
+                try {
+                    parcelFileDescriptor = getContentResolver ().openFileDescriptor (selectedImage, "r");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace ();
+                }
+                FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor ();
+                Bitmap image = BitmapFactory.decodeFileDescriptor (fileDescriptor);
+                try {
+                    parcelFileDescriptor.close ();
+                } catch (IOException e) {
+                    e.printStackTrace ();
+                }
+                Matrix matrix = new Matrix ();
+                int angleToRotate = getOrientation (selectedImage);
+                matrix.postRotate (angleToRotate);
+                Bitmap rotatedBitmap = Bitmap.createBitmap (image,
+                                                                   0,
+                                                                   0,
+                                                                   image.getWidth (),
+                                                                   image.getHeight (),
+                                                                   matrix,
+                                                                   true);
+                customerImg.setImageBitmap (rotatedBitmap);
                 customerImg.setVisibility (View.VISIBLE);
+                IMAGE_SELECTED = true;
             }
         } catch (Exception e) {
             Log.e ("On ActivityResult Error", e.toString ());
         }
+    }
+
+    public int getOrientation(Uri selectedImage) {
+        int orientation = 0;
+        final String[] projection = new String[]{MediaStore.Images.Media.ORIENTATION};
+        final Cursor cursor = this.getContentResolver ().query (selectedImage, projection, null, null, null);
+        if (cursor != null) {
+            final int orientationColumnIndex = cursor.getColumnIndex (MediaStore.Images.Media.ORIENTATION);
+            if (cursor.moveToFirst ()) {
+                orientation = cursor.isNull (orientationColumnIndex) ? 0 : cursor.getInt (orientationColumnIndex);
+            }
+            cursor.close ();
+        }
+        return orientation;
     }
 }

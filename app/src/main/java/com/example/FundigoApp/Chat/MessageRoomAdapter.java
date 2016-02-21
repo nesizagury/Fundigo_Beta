@@ -1,6 +1,7 @@
 package com.example.FundigoApp.Chat;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,20 @@ import java.util.List;
 public class MessageRoomAdapter extends BaseAdapter {
 
     List<MessageRoomBean> list = new ArrayList<MessageRoomBean> ();
+    ArrayList<Bitmap> arr = new ArrayList<> ();
     Context context;
+    Boolean comeFromMessageProducer = false;
 
     public MessageRoomAdapter(Context c, List list) {
         this.context = c;
         this.list = list;
+    }
+
+    public MessageRoomAdapter(Context c, List list, ArrayList<Bitmap> arr) {
+        this.context = c;
+        this.list = list;
+        this.arr = arr;
+        comeFromMessageProducer = true;
     }
 
     @Override
@@ -52,8 +62,10 @@ public class MessageRoomAdapter extends BaseAdapter {
             holder = (MessageRoomItemHolder) row.getTag ();
         }
         MessageRoomBean message_bean = list.get (i);
-        if (message_bean.getCustomerImageFacebookUrl () != null &&
-                    !message_bean.getCustomerImageFacebookUrl ().isEmpty ()) {
+        if (comeFromMessageProducer) {
+            holder.customerImage.setImageBitmap (arr.get (i));
+        } else if (message_bean.getCustomerImageFacebookUrl () != null &&
+                           !message_bean.getCustomerImageFacebookUrl ().isEmpty ()) {
             Picasso.with (context).load (message_bean.getCustomerImageFacebookUrl ()).into (holder.customerImage);
         } else if (message_bean.getCustomerImage () != null) {
             holder.customerImage.setImageBitmap (message_bean.getCustomerImage ());

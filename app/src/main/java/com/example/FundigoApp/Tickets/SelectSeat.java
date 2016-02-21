@@ -26,6 +26,7 @@ public class SelectSeat extends AppCompatActivity {
 
     private String eventObjectId;
     private ListView mylist;
+    private String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +36,71 @@ public class SelectSeat extends AppCompatActivity {
 
         Intent intentHere1 = getIntent ();
         eventObjectId = intentHere1.getStringExtra ("eventObjectId");
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery ("EventsSeats").whereMatches ("EventName", eventObjectId).whereDoesNotExist ("QR_Code");
+        phone = intentHere1.getStringExtra ("phone");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery ("EventsSeats").whereMatches ("eventObjectId", eventObjectId).whereDoesNotExist ("QR_Code");
 
         ArrayList<ParseObject> seatsList = new ArrayList<> ();
-
         try {
             List<ParseObject> commentList = query.find ();
+            if(commentList.size () == 0){
+                for(int i = 1; i <= 4; i++){
+                    EventsSeats eventsSeats = new EventsSeats ();
+                    eventsSeats.put("price", 200);
+                    eventsSeats.put("eventObjectId", eventObjectId);
+                    eventsSeats.put("seatNumber", "Floor " + i);
+                    eventsSeats.save ();
+                }
+                for(int i = 11; i <= 27; i++){
+                    EventsSeats eventsSeats = new EventsSeats ();
+                    eventsSeats.put("price", 175);
+                    eventsSeats.put("eventObjectId", eventObjectId);
+                    eventsSeats.put ("seatNumber", "Orange " + i);
+                    eventsSeats.save ();
+                }
+                for(int i = 101; i <= 117; i++){
+                    EventsSeats eventsSeats = new EventsSeats ();
+                    eventsSeats.put("price", 150);
+                    eventsSeats.put("eventObjectId", eventObjectId);
+                    eventsSeats.put("seatNumber", "Pink " + i);
+                    eventsSeats.save ();
+                }
+                for(int i = 121; i <= 136; i++){
+                    EventsSeats eventsSeats = new EventsSeats ();
+                    eventsSeats.put("price", 150);
+                    eventsSeats.put("eventObjectId", eventObjectId);
+                    eventsSeats.put("seatNumber", "Pink " + i);
+                    eventsSeats.save ();
+                }
+                for(int i = 201; i <= 217; i++){
+                    EventsSeats eventsSeats = new EventsSeats ();
+                    eventsSeats.put("price", 125);
+                    eventsSeats.put("eventObjectId", eventObjectId);
+                    eventsSeats.put("seatNumber", "Yellow " + i);
+                    eventsSeats.save ();
+                }
+                for(int i = 221; i <= 236; i++){
+                    EventsSeats eventsSeats = new EventsSeats ();
+                    eventsSeats.put("price", 125);
+                    eventsSeats.put("eventObjectId", eventObjectId);
+                    eventsSeats.put("seatNumber", "Yellow " + i);
+                    eventsSeats.save ();
+                }
+                for(int i = 207; i <= 213; i++){
+                    EventsSeats eventsSeats = new EventsSeats ();
+                    eventsSeats.put("price", 100);
+                    eventsSeats.put("eventObjectId", eventObjectId);
+                    eventsSeats.put("seatNumber", "Green " + i);
+                    eventsSeats.save ();
+                }
+                for(int i = 225; i <= 231; i++){
+                    EventsSeats eventsSeats = new EventsSeats ();
+                    eventsSeats.put("price", 100);
+                    eventsSeats.put("eventObjectId", eventObjectId);
+                    eventsSeats.put("seatNumber", "Green " + i);
+                    eventsSeats.save ();
+                }
+                commentList = query.find ();
+            }
             seatsList.addAll (commentList);
         } catch (ParseException e) {
             e.printStackTrace ();
@@ -107,9 +166,7 @@ public class SelectSeat extends AppCompatActivity {
             row.setOnClickListener (new View.OnClickListener () {
                 @Override
                 public void onClick(View v) {
-
                     if (row.findViewById (R.id.button3).getVisibility () == View.GONE) {
-
                         row.findViewById (R.id.button3).setVisibility (View.VISIBLE);
                     } else {
                         row.findViewById (R.id.button3).setVisibility (View.GONE);
@@ -124,12 +181,15 @@ public class SelectSeat extends AppCompatActivity {
             buyTicket.setOnClickListener (new View.OnClickListener () {
                 @Override
                 public void onClick(View v) {
-                    Intent intentQr = new Intent (SelectSeat.this, GetQRCode.class);
+                    Intent intentQr = new Intent (SelectSeat.this, WebBrowser.class);
                     intentQr.putExtra ("seatNumber", temp.title);
                     intentQr.putExtra ("eventObjectId", eventObjectId);
                     intentQr.putExtra ("isChoose", "yes");
                     intentQr.putExtra ("seatKey", temp.getSeatKey ());
+                    intentQr.putExtra ("phone", phone);
+                    intentQr.putExtra ("eventPrice",temp.description);
                     startActivity (intentQr);
+
                 }
             });
 

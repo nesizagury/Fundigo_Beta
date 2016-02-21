@@ -106,16 +106,16 @@ public class MessageAdapter extends BaseAdapter {
                 if (messageChat.getIsSend ()) {
                     LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams ();
                     sendTimeTextViewLayoutParams.addRule (RelativeLayout.LEFT_OF, R.id.textTextView);
-                    if(!isRealTime) {
+                    if (!isRealTime) {
                         viewHolder.sendTimeTextView.setLayoutParams (sendTimeTextViewLayoutParams);
-                    } else{
+                    } else {
                         viewHolder.sendTimeTextView.setVisibility (View.INVISIBLE);
                     }
                 } else {
                     LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams ();
                     sendTimeTextViewLayoutParams.addRule (RelativeLayout.RIGHT_OF, R.id.textTextView);
                     viewHolder.sendTimeTextView.setLayoutParams (sendTimeTextViewLayoutParams);
-                    if(isRealTime) {
+                    if (isRealTime) {
                         viewHolder.sendTimeTextView.setText (messageChat.getFromUserName ());
                     }
                 }

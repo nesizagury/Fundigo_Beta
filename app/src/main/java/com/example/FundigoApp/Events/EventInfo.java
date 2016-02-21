@@ -102,7 +102,7 @@ public class EventInfo implements Serializable, Parcelable {
         }
     };
 
-    public Bitmap getImageId() {
+    public Bitmap getImageBitmap() {
         return imageId;
     }
 

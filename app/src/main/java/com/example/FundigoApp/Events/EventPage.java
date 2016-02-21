@@ -27,6 +27,7 @@ import com.example.FundigoApp.Chat.MessagesRoomActivity;
 import com.example.FundigoApp.Chat.RealTimeChatActivity;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.Producer.EventOnRealtime;
+import com.example.FundigoApp.Producer.ProducerSendPuchActivity;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.StaticMethods;
 import com.example.FundigoApp.Tickets.GetQRCode;
@@ -36,6 +37,8 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,6 +67,7 @@ public class EventPage extends Activity implements View.OnClickListener {
     Button ticketsStatus;
     Intent intent;
     Button editEvent;
+    Button producerPush;
 
     private String date;
     private String eventName;
@@ -82,12 +86,14 @@ public class EventPage extends Activity implements View.OnClickListener {
     private String mTitle;
     private String mDescription;
     String i = "";
+    private ImageView ivQrScan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_event_page);
-
+        ivQrScan = (ImageView) findViewById (R.id.iv_qrscan);
+        producerPush = (Button) findViewById (R.id.pushButton);
         if (GlobalVariables.IS_PRODUCER) {
             ticketsStatus = (Button) findViewById (R.id.button);
             ticketsStatus.setText ("Tickets Status");
@@ -95,6 +101,12 @@ public class EventPage extends Activity implements View.OnClickListener {
             editEvent.setText ("Edit Event");
             realTimeButton = (Button) findViewById (R.id.realTime);
             realTimeButton.setVisibility (View.VISIBLE);
+            ivQrScan.setOnClickListener (this);
+            producerPush.setVisibility (View.VISIBLE);
+            producerPush.setOnClickListener (this);
+        } else {
+            ivQrScan.setVisibility (View.GONE);
+            producerPush.setVisibility (View.GONE);
         }
 
         mClient = new GoogleApiClient.Builder (this).addApi (AppIndex.API).build ();
@@ -117,7 +129,7 @@ public class EventPage extends Activity implements View.OnClickListener {
         eventName = intent.getStringExtra ("eventName");
         event = GlobalVariables.ALL_EVENTS_DATA.get
                                                         (intent.getIntExtra ("index", 0));
-        i = getIntent ().getStringExtra("i");
+        i = getIntent ().getStringExtra ("i");
         TextView event_name = (TextView) findViewById (R.id.eventPage_name);
         event_name.setText (eventName);
         String eventTags = intent.getStringExtra ("eventTags");
@@ -186,24 +198,31 @@ public class EventPage extends Activity implements View.OnClickListener {
 
     public void openTicketsPage(View view) {
         if (!GlobalVariables.IS_PRODUCER) {
-            Bundle b = new Bundle ();
-            Intent intentQr = new Intent (EventPage.this, GetQRCode.class);
-            Intent intentHere = getIntent ();
-            intentQr.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
-            intentQr.putExtras (b);
-            Bundle b1 = new Bundle ();
-            Intent intentSeat = new Intent (EventPage.this, SelectSeat.class);
-            Intent intentHere1 = getIntent ();
-            intentQr.putExtra ("eventName", intentHere1.getStringExtra ("eventName"));
-            intentQr.putExtra ("eventObjectId", event.getParseObjectId ());
-            intentQr.putExtras (b1);
-            intentSeat.putExtra ("eventName", intentHere1.getStringExtra ("eventName"));
-            intentSeat.putExtra ("eventObjectId", event.getParseObjectId ());
-            int id = intentHere.getExtras ().getInt ("index");
-            if (id % 2 != 0) {
-                startActivity (intentSeat);
+            if (event.getPrice ().equals ("FREE")) {
+                Toast.makeText (this, "Event Is Free", Toast.LENGTH_LONG).show ();
             } else {
-                startActivity (intentQr);
+                int id = event.getIndexInFullList ();
+                String eventPrice = event.getPrice ();
+                if (id % 2 != 0 || eventPrice.contains ("-")) {
+                    Bundle b = new Bundle ();
+                    Intent intentSeat = new Intent (EventPage.this, SelectSeat.class);
+                    intentSeat.putExtras (b);
+                    intentSeat.putExtra ("eventPrice", event.getPrice ());
+                    intentSeat.putExtra ("eventName", event.getName ());
+                    intentSeat.putExtra ("phone", GlobalVariables.CUSTOMER_PHONE_NUM);
+                    intentSeat.getStringExtra ("eventPrice");
+                    intentSeat.putExtra ("eventObjectId", event.getParseObjectId ());
+                    startActivity (intentSeat);
+                } else {
+                    Bundle b = new Bundle ();
+                    Intent intentQR = new Intent (EventPage.this, GetQRCode.class);
+                    intentQR.putExtra ("eventName", event.getName ());
+                    intentQR.putExtra ("eventPrice", event.getPrice ().replace ("$","").replace (" ",""));
+                    intentQR.putExtra ("phone", GlobalVariables.CUSTOMER_PHONE_NUM);
+                    intentQR.putExtra ("eventObjectId", event.getParseObjectId ());
+                    intentQR.putExtras (b);
+                    startActivity (intentQR);
+                }
             }
         } else {
             Intent intent = new Intent (EventPage.this, EventStatus.class);
@@ -223,51 +242,51 @@ public class EventPage extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId ()) {
             case R.id.imageEvenetPageView2:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Share:")
-                        .setCancelable(false)
-                        .setPositiveButton("Share App Page", new DialogInterface.OnClickListener() {
+                AlertDialog.Builder builder = new AlertDialog.Builder (this);
+                builder.setMessage ("Share:")
+                        .setCancelable (false)
+                        .setPositiveButton ("Share App Page", new DialogInterface.OnClickListener () {
                             public void onClick(DialogInterface dialog, int id) {
 
-                                shareDeepLink();
+                                shareDeepLink ();
 
                             }
                         })
 
-                        .setNegativeButton("Share Web Page", new DialogInterface.OnClickListener() {
+                        .setNegativeButton ("Share Web Page", new DialogInterface.OnClickListener () {
                             public void onClick(DialogInterface dialog, int id) {
                                 try {
-                                    Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.pic0);
-                                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                                    largeIcon.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-                                    File f = new File(Environment.getExternalStorageDirectory() + File.separator + "test.jpg");
-                                    f.createNewFile();
-                                    FileOutputStream fo = new FileOutputStream(f);
-                                    fo.write(bytes.toByteArray());
-                                    fo.close();
+                                    Bitmap largeIcon = BitmapFactory.decodeResource (getResources (), R.mipmap.pic0);
+                                    ByteArrayOutputStream bytes = new ByteArrayOutputStream ();
+                                    largeIcon.compress (Bitmap.CompressFormat.JPEG, 40, bytes);
+                                    File f = new File (Environment.getExternalStorageDirectory () + File.separator + "test.jpg");
+                                    f.createNewFile ();
+                                    FileOutputStream fo = new FileOutputStream (f);
+                                    fo.write (bytes.toByteArray ());
+                                    fo.close ();
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    e.printStackTrace ();
                                 }
-                                Intent intent = new Intent(Intent.ACTION_SEND);
-                                intent.setType("image/jpeg");
-                                intent.putExtra(Intent.EXTRA_TEXT, "I`m going to " + eventName +
-                                                                           "\n" + "C u there at " + date + " !" +
-                                                                           "\n" + "At " + eventPlace +
-                                                                           "\n" + "http://eventpageURL.com/here");
-                                String imagePath = Environment.getExternalStorageDirectory() + File.separator + "test.jpg";
-                                File imageFileToShare = new File(imagePath);
-                                uri = Uri.fromFile(imageFileToShare);
-                                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                                Intent intent = new Intent (Intent.ACTION_SEND);
+                                intent.setType ("image/jpeg");
+                                intent.putExtra (Intent.EXTRA_TEXT, "I`m going to " + eventName +
+                                                                            "\n" + "C u there at " + date + " !" +
+                                                                            "\n" + "At " + eventPlace +
+                                                                            "\n" + "http://eventpageURL.com/here");
+                                String imagePath = Environment.getExternalStorageDirectory () + File.separator + "test.jpg";
+                                File imageFileToShare = new File (imagePath);
+                                uri = Uri.fromFile (imageFileToShare);
+                                intent.putExtra (Intent.EXTRA_STREAM, uri);
 
-                                Intent intentPick = new Intent();
-                                intentPick.setAction(Intent.ACTION_PICK_ACTIVITY);
-                                intentPick.putExtra(Intent.EXTRA_TITLE, "Launch using");
-                                intentPick.putExtra(Intent.EXTRA_INTENT, intent);
-                                startActivityForResult(intentPick, GlobalVariables.REQUEST_CODE_MY_PICK);
+                                Intent intentPick = new Intent ();
+                                intentPick.setAction (Intent.ACTION_PICK_ACTIVITY);
+                                intentPick.putExtra (Intent.EXTRA_TITLE, "Launch using");
+                                intentPick.putExtra (Intent.EXTRA_INTENT, intent);
+                                startActivityForResult (intentPick, GlobalVariables.REQUEST_CODE_MY_PICK);
                             }
                         })
                         .setCancelable (true);
-                AlertDialog alert = builder.create();
+                AlertDialog alert = builder.create ();
                 alert.show ();
                 break;
             case R.id.imageEvenetPageView3:
@@ -288,6 +307,15 @@ public class EventPage extends Activity implements View.OnClickListener {
                 dialog.show ();
                 TextView messageText = (TextView) dialog.findViewById (android.R.id.message);
                 messageText.setGravity (Gravity.CENTER);
+                break;
+            case R.id.pushButton:
+                Intent pushIntent = new Intent (EventPage.this, ProducerSendPuchActivity.class);
+                pushIntent.putExtra ("id", event.getParseObjectId ());
+                startActivity (pushIntent);
+                break;
+            case R.id.iv_qrscan:
+                IntentIntegrator integrator = new IntentIntegrator (this);
+                integrator.initiateScan ();
                 break;
         }
     }
@@ -322,9 +350,25 @@ public class EventPage extends Activity implements View.OnClickListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        StaticMethods.onActivityResult (requestCode,
-                                               data,
-                                               this);
+        IntentResult scan = null;
+        if (data != null) {
+            scan = IntentIntegrator.parseActivityResult (requestCode,
+                                                                resultCode,
+                                                                data);
+        }
+        if (scan != null) {
+            String result = scan.getContents ();
+            String objectId = result.substring (13, 23);
+            Toast.makeText (EventPage.this, "" + scan.getFormatName () + " " + scan.getContents () + " ObjectId is " + objectId, Toast.LENGTH_LONG).show ();
+
+        } else {
+            Toast.makeText (EventPage.this, "Scan didn`t finish", Toast.LENGTH_SHORT).show ();
+        }
+        if (data != null && requestCode == GlobalVariables.REQUEST_CODE_MY_PICK) {
+            StaticMethods.onActivityResult (requestCode,
+                                                   data,
+                                                   this);
+        }
     }
 
     public void checkIfChangeColorToSaveButtton() {
@@ -459,8 +503,8 @@ public class EventPage extends Activity implements View.OnClickListener {
                                                               .addContentMetadata ("i", i);
 
         io.branch.referral.util.LinkProperties linkProperties = new LinkProperties ()
-                                                .setChannel ("My Application")
-                                                .setFeature ("sharing");
+                                                                        .setChannel ("My Application")
+                                                                        .setFeature ("sharing");
 
         ShareSheetStyle shareSheetStyle = new ShareSheetStyle (EventPage.this, "Check this out!", "This stuff is awesome: ")
                                                   .setCopyUrlStyle (getResources ().getDrawable (android.R.drawable.ic_menu_send), "Copy", "Added to clipboard")

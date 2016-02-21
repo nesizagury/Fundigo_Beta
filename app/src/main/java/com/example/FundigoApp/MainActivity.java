@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.FundigoApp.Customer.RealTime.RealTimeActivity;
 import com.example.FundigoApp.Customer.SavedEvents.SavedEventActivity;
+import com.example.FundigoApp.Customer.Social.MyNotifications;
 import com.example.FundigoApp.Events.CreateEventActivity;
 import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.Events.EventPage;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static EventsListAdapter eventsListAdapter;
     Button event, savedEvent, realTime;
     static Button currentCityButton;
-    ImageView search;
+    ImageView search, notification;
 
     static PopupMenu popup;
     Context context;
@@ -97,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         event = (Button) findViewById (R.id.BarEvent_button);
         savedEvent = (Button) findViewById (R.id.BarSavedEvent_button);
         realTime = (Button) findViewById (R.id.BarRealTime_button);
+        notification = (ImageView) findViewById (R.id.notification_item);
+        notification.setOnClickListener (this);
 
         context = this;
 
@@ -262,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void loadCityNamesToPopUp() {
         try {
             boolean foundCity = true;
-            if(!GlobalVariables.CURRENT_CITY_NAME.isEmpty ()){
+            if (!GlobalVariables.CURRENT_CITY_NAME.isEmpty ()) {
                 foundCity = false;
             }
             for (int i = 0; i < GlobalVariables.namesCity.length; i++) {
@@ -272,13 +275,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     popup.getMenu ().getItem (i).setTitle (GlobalVariables.namesCity[i]);
                 }
                 GlobalVariables.popUpIDToCityIndex.put (popup.getMenu ().getItem (i).getItemId (), i);
-                if(!GlobalVariables.CURRENT_CITY_NAME.isEmpty () &&
-                           GlobalVariables.CURRENT_CITY_NAME.equals (GlobalVariables.namesCity[i])){
+                if (!GlobalVariables.CURRENT_CITY_NAME.isEmpty () &&
+                            GlobalVariables.CURRENT_CITY_NAME.equals (GlobalVariables.namesCity[i])) {
                     GlobalVariables.indexCityChosen = i;
                     foundCity = true;
                 }
             }
-            if(!foundCity){
+            if (!foundCity) {
                 GlobalVariables.CURRENT_CITY_NAME = "";
                 GlobalVariables.indexCityChosen = 0;
             }
@@ -309,6 +312,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             startActivity (newIntent);
         } else if (v.getId () == search.getId ()) {
             newIntent = new Intent (this, Search.class);
+            startActivity (newIntent);
+        } else if (v.getId () == notification.getId ()) {
+            newIntent = new Intent (this, MyNotifications.class);
             startActivity (newIntent);
         }
     }
@@ -348,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onStart() {
         super.onStart ();
-        Branch branch = Branch.getInstance(getApplicationContext());
+        Branch branch = Branch.getInstance (getApplicationContext ());
         branch.initSession (new Branch.BranchReferralInitListener () {
             @Override
             public void onInitFinished(JSONObject referringParams, BranchError error) {

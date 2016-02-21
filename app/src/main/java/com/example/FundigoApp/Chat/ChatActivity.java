@@ -66,7 +66,7 @@ public class ChatActivity extends Activity {
             updateUserDetailsFromParse ();
         } else if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
             profileName.setText (eventName + " (Chat with Producer)");
-            setEventInfo (eventInfo.getImageId ());
+            setEventInfo (eventInfo.getImageBitmap ());
         }
         etMessage = (EditText) findViewById (R.id.etMessageChat);
         lvChat = (ListView) findViewById (R.id.messageListviewChat);

@@ -427,8 +427,8 @@ public class StaticMethods {
     public static void onEventItemClick(int positionViewItem,
                                         List<EventInfo> eventsList,
                                         Intent intent) {
-        if (eventsList.get (positionViewItem).getImageId () != null) {
-            Bitmap bmp = eventsList.get (positionViewItem).getImageId ();
+        if (eventsList.get (positionViewItem).getImageBitmap () != null) {
+            Bitmap bmp = eventsList.get (positionViewItem).getImageBitmap ();
             ByteArrayOutputStream stream = new ByteArrayOutputStream ();
             bmp.compress (Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray ();

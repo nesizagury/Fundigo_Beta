@@ -15,6 +15,9 @@ public class GlobalVariables {
     public static final String FB_ID = "fb_id";
     public static final String All_Events = "NoArtist Events";
     public static final int REQUEST_CODE_MY_PICK = 1;
+    public static final String QR = "qr";
+    public static final String GEO_API_ADDRESS = "https://maps.googleapis.com/maps/api/geocode/json?";
+    public static final String GEO_API_KEY = "AIzaSyAO_BADR0qgh5i6oirplDXw0wCCxCZoLe8";
 
     public static boolean IS_CUSTOMER_GUEST = false;
     public static boolean IS_CUSTOMER_REGISTERED_USER = false;
@@ -36,5 +39,4 @@ public class GlobalVariables {
     public static HashMap<Integer, Integer> popUpIDToCityIndex = new HashMap<Integer, Integer> ();
     public static int indexCityChosen = 0;
     public static String deepLink_params = "";
-
 }

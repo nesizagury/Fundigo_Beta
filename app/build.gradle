@@ -39,5 +39,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
     compile 'io.branch.sdk.android:library:1.+'
+    compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
+    compile 'com.google.zxing:core:3.2.1'
+    compile 'com.google.code.gson:gson:2.6.1'
 }
 

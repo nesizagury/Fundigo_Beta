@@ -55,7 +55,7 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
         Intent intent = getIntent ();
         eventObjectId = intent.getStringExtra ("eventObjectId");
         eventInfo = StaticMethods.getEventFromObjID (eventObjectId, GlobalVariables.ALL_EVENTS_DATA);
-        eventImage.setImageBitmap (eventInfo.getImageId ());
+        eventImage.setImageBitmap (eventInfo.getImageBitmap ());
         eventName.setText (eventInfo.getName () + " (Real Time Chat)");
         if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
             current_user_id = GlobalVariables.CUSTOMER_PHONE_NUM;

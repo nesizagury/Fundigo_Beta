@@ -1,27 +1,34 @@
 package com.example.FundigoApp.Events;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
+import com.google.gson.Gson;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -29,79 +36,113 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Calendar;
 
-public class CreateEventActivity extends Activity {
+public class CreateEventActivity extends Activity implements View.OnClickListener {
 
-    String picturePath;
+    private static final String TAG = "CreateEventActivity";
+
+    TextView tv_create;
+    TextView tv_name;
+    TextView tv_artist;
+    TextView tv_description;
+    EditText et_name;
+    EditText et_artist;
+    EditText et_description;
+    EditText et_price;
+    EditText et_quantity;
+    EditText et_address;
+    EditText et_place;
+    EditText et_capacity;
+    EditText et_parking;
+    EditText et_tags;
+    EditText et_toilet;
+    Button btn_validate_address;
+    ImageView iv_val_add;
+    Button btn_next;
+    Button btn_next1;
+    Button btn_next2;
+    Button btn_pic;
+    ImageView pic;
+    LinearLayout create_event2;
+    LinearLayout create_event3;
+    LinearLayout ll_name;
+    LinearLayout ll_date;
+    LinearLayout ll_artist;
+    LinearLayout ll_description;
+    CheckBox atmBox;
     private static final int SELECT_PICTURE = 1;
-    ImageView imageV;
-    TextView imageTV;
-    EditText nameET;
-    TextView nameTV;
-    TextView descriptionTV;
-    Button browse_button;
-    EditText descriptionET;
-
-    TextView priceTV;
-    TextView addressTV;
-    TextView quantityTV;
-    TextView xTV;
-    TextView yTV;
-    EditText priceET;
-    EditText addressET;
-    EditText quantityET;
-    EditText xET;
-    EditText yET;
-
-    Button done_button;
-    TextView tagsTV;
-    EditText tagsET;
-    boolean pictureSelected = false;
-    TextView dateTV;
-    EditText dateET;
-    TextView placeTV;
-    EditText placeET;
-    TextView artistTV;
-    EditText artistET;
-    TextView headTV;
+    String picturePath;
+    private boolean pictureSelected;
+    private boolean address_ok = false;
+    Gson gson;
+    Result result;
+    String address;
     String income;
     String sold;
-
-    TextView capacityTV;
-    TextView toiletTV;
-    TextView parkingTV;
-    EditText capacityET;
-    EditText toiletET;
-    CheckBox atmBox;
-    EditText parkingET;
+    private String valid_address;
+    private double lat;
+    private double lng;
+    private String city;
+    private Button btn_date;
+    private TextView tv_date_new;
+    private String date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_create_event);
-
         componentInit ();
-
-        descriptionET.setOnEditorActionListener (new TextView.OnEditorActionListener () {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null && (event.getKeyCode () == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    HideFirstStage (null);
-                }
-                return false;
-            }
-        });
-
-        placeET.setOnEditorActionListener (new TextView.OnEditorActionListener () {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null && (event.getKeyCode () == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    showThirdStage (null);
-                }
-                return false;
-            }
-        });
     }
 
-    public void imageUpload(View view) {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId ()) {
+            case R.id.btn_next:
+                showSecondStage ();
+                break;
+            case R.id.btn_next1:
+                if (address_ok) {
+                    showThirdStage ();
+                } else {
+                    Toast.makeText (CreateEventActivity.this, "Please enter valid address", Toast.LENGTH_SHORT).show ();
+                }
+                break;
+            case R.id.btn_validate_address:
+                validateAddress ();
+                break;
+            case R.id.btn_next2:
+                saveEvent ();
+                break;
+            case R.id.btn_pic:
+                uploadPic ();
+                break;
+            case R.id.btn_date:
+                int year = Calendar.getInstance ().get (Calendar.YEAR);
+                int day = Calendar.getInstance ().get (Calendar.DAY_OF_MONTH);
+                int month = Calendar.getInstance ().get (Calendar.MONTH);
+                DatePickerDialog dialog = new DatePickerDialog (this, listener, year, month, day);
+                dialog.show ();
+                break;
+        }
+    }
+
+    DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            date = dayOfMonth +"."+ (monthOfYear+1)+"."+ (year-2000);
+            tv_date_new.setText(date);
+            tv_date_new.setVisibility(View.VISIBLE);
+            Log.e(TAG, ""+ date);
+        }
+    };
+
+    private void uploadPic() {
         Intent i = new Intent (
                                       Intent.ACTION_PICK,
                                       MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -111,20 +152,82 @@ public class CreateEventActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData ();
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver ().query (selectedImage, filePathColumn, null, null, null);
-            cursor.moveToFirst ();
-            int columnIndex = cursor.getColumnIndex (filePathColumn[0]);
-            picturePath = cursor.getString (columnIndex);
-            cursor.close ();
-            imageV.setImageBitmap (BitmapFactory.decodeFile (picturePath));
+            ParcelFileDescriptor parcelFileDescriptor =
+                    null;
+            try {
+                parcelFileDescriptor = getContentResolver ().openFileDescriptor (selectedImage, "r");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace ();
+            }
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor ();
+            Bitmap image = BitmapFactory.decodeFileDescriptor (fileDescriptor);
+            try {
+                parcelFileDescriptor.close ();
+            } catch (IOException e) {
+                e.printStackTrace ();
+            }
+            Matrix matrix = new Matrix ();
+            int angleToRotate = getOrientation (selectedImage);
+            matrix.postRotate (angleToRotate);
+            Bitmap rotatedBitmap = Bitmap.createBitmap (image,
+                                                               0,
+                                                               0,
+                                                               image.getWidth (),
+                                                               image.getHeight (),
+                                                               matrix,
+                                                               true);
+            pic.setImageBitmap (rotatedBitmap);
+            pic.setVisibility (View.VISIBLE);
             pictureSelected = true;
         }
     }
 
-    public void saveEvent(View view) {
+    public int getOrientation(Uri selectedImage) {
+        int orientation = 0;
+        final String[] projection = new String[]{MediaStore.Images.Media.ORIENTATION};
+        final Cursor cursor = this.getContentResolver ().query (selectedImage, projection, null, null, null);
+        if (cursor != null) {
+            final int orientationColumnIndex = cursor.getColumnIndex (MediaStore.Images.Media.ORIENTATION);
+            if (cursor.moveToFirst ()) {
+                orientation = cursor.isNull (orientationColumnIndex) ? 0 : cursor.getInt (orientationColumnIndex);
+            }
+            cursor.close ();
+        }
+        return orientation;
+    }
+
+    private void showSecondStage() {
+        if (et_name.length () != 0 && date.length () != 0 && et_artist.length () != 0 && et_description.length () != 0) {
+            tv_create.setVisibility (View.GONE);
+            ll_name.setVisibility (View.GONE);
+            ll_date.setVisibility (View.GONE);
+            ll_artist.setVisibility (View.GONE);
+            ll_description.setVisibility (View.GONE);
+            btn_next.setVisibility (View.GONE);
+            create_event2.setVisibility (View.VISIBLE);
+        } else {
+            Toast.makeText (CreateEventActivity.this, "Please fill empty forms", Toast.LENGTH_SHORT).show ();
+        }
+    }
+
+    private void validateAddress() {
+        address = et_address.getText ().toString ();
+        iv_val_add.setVisibility (View.INVISIBLE);
+        new ValidateAddress ().execute (GlobalVariables.GEO_API_ADDRESS);
+    }
+
+    private void showThirdStage() {
+        if (et_price.length () != 0 && et_quantity.length () != 0 && address_ok && et_place.length () != 0) {
+            create_event2.setVisibility (View.GONE);
+            create_event3.setVisibility (View.VISIBLE);
+        } else {
+            Toast.makeText (CreateEventActivity.this, "Please fill empty forms", Toast.LENGTH_SHORT).show ();
+        }
+    }
+
+    public void saveEvent() {
         Event event = new Event ();
-        if (tagsET.getText ().length () != 0) {
+        if (et_tags.getText ().length () != 0) {
             if (getIntent ().getStringExtra ("create").equals ("false")) {
                 deleteRow ();
                 event.setSold (sold);
@@ -133,30 +236,31 @@ public class CreateEventActivity extends Activity {
                 event.setSold ("0");
                 event.setIncome ("0");
             }
-
-            event.setName (nameET.getText ().toString ());
-            event.setDescription (descriptionET.getText ().toString ());
-            event.setPrice (priceET.getText ().toString ());
-            event.setNumOfTicketsLeft (quantityET.getText ().toString ());
-            event.setAddress (addressET.getText ().toString ());
-            event.setX (Double.parseDouble (xET.getText ().toString ()));
-            event.setY (Double.parseDouble (yET.getText ().toString ()));
-            event.setTags (tagsET.getText ().toString ());
+            event.setName (et_name.getText ().toString ());
+            event.setDescription (et_description.getText ().toString ());
+            event.setPrice (et_price.getText ().toString ());
+            event.setNumOfTicketsLeft (et_quantity.getText ().toString ());
+            event.setAddress (valid_address);
+            event.setCity (city);
+            event.setX (lat);
+            event.setY (lng);
+            event.setTags (et_tags.getText ().toString ());
             event.setProducerId (GlobalVariables.PRODUCER_PARSE_OBJECT_ID);
-            event.setDate (dateET.getText ().toString ());
-            event.setPlace (placeET.getText ().toString ());
-            event.setArtist (artistET.getText ().toString ());
-            event.setEventToiletService (toiletET.getText ().toString ());
-            event.setEventParkingService (parkingET.getText ().toString ());
-            event.setEventCapacityService (capacityET.getText ().toString ());
+            event.setDate (date);
+            event.setPlace (et_place.getText ().toString ());
+            event.setArtist (et_artist.getText ().toString ());
+            event.setEventToiletService (et_toilet.getText ().toString ());
+            event.setEventParkingService (et_parking.getText ().toString ());
+            event.setEventCapacityService (et_capacity.getText ().toString ());
+
             if (atmBox.isChecked ())
                 event.setEventATMService ("Yes");
             else
                 event.setEventATMService ("No");
 
-            if (pictureSelected || headTV.getText ().toString ().equals ("Edit Event")) {
-                imageV.buildDrawingCache ();
-                Bitmap bitmap = imageV.getDrawingCache ();
+            if (pictureSelected || tv_create.getText ().toString ().equals ("Edit Event")) {
+                pic.buildDrawingCache ();
+                Bitmap bitmap = pic.getDrawingCache ();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream ();
                 bitmap.compress (Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] image = stream.toByteArray ();
@@ -180,193 +284,6 @@ public class CreateEventActivity extends Activity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        if (nameET.getVisibility () == View.VISIBLE) {
-            AlertDialog.Builder builder = new AlertDialog.Builder (this);
-            builder.setMessage ("Are you sure you want to exit?")
-                    .setCancelable (false)
-                    .setPositiveButton ("Yes", new DialogInterface.OnClickListener () {
-                        public void onClick(DialogInterface dialog, int id) {
-                            CreateEventActivity.this.finish ();
-                        }
-                    })
-                    .setNegativeButton ("No", new DialogInterface.OnClickListener () {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel ();
-                        }
-                    });
-            AlertDialog alert = builder.create ();
-            alert.show ();
-        }
-
-        // at stage two
-        if (priceET.getVisibility () == View.VISIBLE) {
-            showFirstStage (null);
-            hideSecondStage (null);
-        }
-
-        // at stage three
-        if (tagsET.getVisibility () == View.VISIBLE) {
-            hideThirdStage (null);
-            showSecondStage (null);
-        }
-    }
-
-    public void showFirstStage(View view) {
-        nameTV.setVisibility (View.VISIBLE);
-        descriptionTV.setVisibility (View.VISIBLE);
-        nameET.setVisibility (View.VISIBLE);
-        descriptionET.setVisibility (View.VISIBLE);
-        dateTV.setVisibility (View.VISIBLE);
-        dateET.setVisibility (View.VISIBLE);
-        artistTV.setVisibility (View.VISIBLE);
-        artistET.setVisibility (View.VISIBLE);
-
-    }
-
-    public void HideFirstStage(View view) {
-        if (nameET.getText ().length () != 0 && descriptionET.getText ().length () != 0
-                    && dateET.getText ().length () != 0) {
-            nameTV.setVisibility (View.INVISIBLE);
-            descriptionTV.setVisibility (View.INVISIBLE);
-            nameET.setVisibility (View.INVISIBLE);
-            descriptionET.setVisibility (View.INVISIBLE);
-            dateTV.setVisibility (View.INVISIBLE);
-            dateET.setVisibility (View.INVISIBLE);
-            artistTV.setVisibility (View.INVISIBLE);
-            artistET.setVisibility (View.INVISIBLE);
-            showSecondStage (null);
-        }
-    }
-
-    public void showSecondStage(View view) {
-        priceTV.setVisibility (View.VISIBLE);
-        priceET.setVisibility (View.VISIBLE);
-        quantityTV.setVisibility (View.VISIBLE);
-        quantityET.setVisibility (View.VISIBLE);
-        addressTV.setVisibility (View.VISIBLE);
-        addressET.setVisibility (View.VISIBLE);
-        placeTV.setVisibility (View.VISIBLE);
-        placeET.setVisibility (View.VISIBLE);
-        xTV.setVisibility (View.VISIBLE);
-        xET.setVisibility (View.VISIBLE);
-        yTV.setVisibility (View.VISIBLE);
-        yET.setVisibility (View.VISIBLE);
-    }
-
-    public void hideSecondStage(View view) {
-        priceTV.setVisibility (View.INVISIBLE);
-        priceET.setVisibility (View.INVISIBLE);
-        quantityTV.setVisibility (View.INVISIBLE);
-        quantityET.setVisibility (View.INVISIBLE);
-        placeET.setVisibility (View.INVISIBLE);
-        placeTV.setVisibility (View.INVISIBLE);
-        addressTV.setVisibility (View.INVISIBLE);
-        addressET.setVisibility (View.INVISIBLE);
-        xTV.setVisibility (View.INVISIBLE);
-        xET.setVisibility (View.INVISIBLE);
-        yTV.setVisibility (View.INVISIBLE);
-        yET.setVisibility (View.INVISIBLE);
-    }
-
-    public void showThirdStage(View view) {
-        if (priceET.getText ().length () != 0 && quantityET.getText ().length () != 0 &&
-                    addressET.getText ().length () != 0 && xET.getText ().length () != 0 &&
-                    yET.getText ().length () != 0 && placeET.getText ().length () != 0) {
-            imageTV.setVisibility (View.VISIBLE);
-            imageV.setVisibility (View.VISIBLE);
-            browse_button.setVisibility (View.VISIBLE);
-            tagsTV.setVisibility (View.VISIBLE);
-            tagsET.setVisibility (View.VISIBLE);
-            done_button.setVisibility (View.VISIBLE);
-            atmBox.setVisibility (View.VISIBLE);
-            toiletTV.setVisibility (View.VISIBLE);
-            toiletET.setVisibility (View.VISIBLE);
-            parkingTV.setVisibility (View.VISIBLE);
-            parkingET.setVisibility (View.VISIBLE);
-            capacityET.setVisibility (View.VISIBLE);
-            capacityTV.setVisibility (View.VISIBLE);
-            hideSecondStage (null);
-        } else
-            Toast.makeText (getApplicationContext (), "Please fill the  empty fields", Toast.LENGTH_SHORT).show ();
-    }
-
-    public void hideThirdStage(View view) {
-        imageTV.setVisibility (View.INVISIBLE);
-        imageV.setVisibility (View.INVISIBLE);
-        browse_button.setVisibility (View.INVISIBLE);
-        tagsTV.setVisibility (View.INVISIBLE);
-        tagsET.setVisibility (View.INVISIBLE);
-        done_button.setVisibility (View.INVISIBLE);
-        atmBox.setVisibility (View.INVISIBLE);
-        toiletTV.setVisibility (View.INVISIBLE);
-        toiletET.setVisibility (View.INVISIBLE);
-        parkingTV.setVisibility (View.INVISIBLE);
-        parkingET.setVisibility (View.INVISIBLE);
-        capacityET.setVisibility (View.INVISIBLE);
-        capacityTV.setVisibility (View.INVISIBLE);
-    }
-
-    private void componentInit() {
-        nameTV = (TextView) findViewById (R.id.nameTV);
-        descriptionTV = (TextView) findViewById (R.id.descriptionTV);
-        nameET = (EditText) findViewById (R.id.nameET);
-        descriptionET = (EditText) findViewById (R.id.descriptionET);
-        priceTV = (TextView) findViewById (R.id.priceTV);
-        priceET = (EditText) findViewById (R.id.priceET);
-        artistTV = (TextView) findViewById (R.id.artistTV);
-        artistET = (EditText) findViewById (R.id.artistET);
-        quantityTV = (TextView) findViewById (R.id.quantityTV);
-        quantityET = (EditText) findViewById (R.id.quantityET);
-        addressTV = (TextView) findViewById (R.id.addressTV);
-        addressET = (EditText) findViewById (R.id.addressET);
-        placeTV = (TextView) findViewById (R.id.placeTV);
-        placeET = (EditText) findViewById (R.id.placeET);
-        xTV = (TextView) findViewById (R.id.xTV);
-        xET = (EditText) findViewById (R.id.xET);
-        yTV = (TextView) findViewById (R.id.yTV);
-        yET = (EditText) findViewById (R.id.yET);
-        dateTV = (TextView) findViewById (R.id.dateTV);
-        dateET = (EditText) findViewById (R.id.dateET);
-        imageTV = (TextView) findViewById (R.id.imageTV);
-        imageV = (ImageView) findViewById (R.id.create_imageV);
-        browse_button = (Button) findViewById (R.id.browse_button);
-        capacityET = (EditText) findViewById (R.id.capacityET);
-        toiletET = (EditText) findViewById (R.id.toiletET);
-        parkingET = (EditText) findViewById (R.id.parkingET);
-        parkingTV = (TextView) findViewById (R.id.parkingTV);
-        atmBox = (CheckBox) findViewById (R.id.checkBox);
-        capacityTV = (TextView) findViewById (R.id.capacityTV);
-        toiletTV = (TextView) findViewById (R.id.toiletTV);
-
-        tagsTV = (TextView) findViewById (R.id.tagsTV);
-        tagsET = (EditText) findViewById (R.id.tagsET);
-        done_button = (Button) findViewById (R.id.done_button);
-
-        if (!getIntent ().getStringExtra ("create").equals ("true")) {
-            headTV = (TextView) findViewById (R.id.headTV);
-            headTV.setText ("Edit Event");
-            nameET.setText ("" + getIntent ().getStringExtra ("name"));
-
-            for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size (); i++) {
-                EventInfo event = GlobalVariables.ALL_EVENTS_DATA.get (i);
-                if (event.getParseObjectId ().equals (getIntent ().getStringExtra ("eventObjectId"))) {
-                    income = event.getIncome ();
-                    sold = event.getSold ();
-                    dateET.setText (event.getDate ());
-                    artistET.setText (event.getArtist ());
-                    descriptionET.setText (event.getInfo ());
-                    priceET.setText (event.getPrice ());
-                    quantityET.setText (event.getTicketsLeft ());
-                    addressET.setText (event.getPlace ());
-                    imageV.setImageBitmap (event.getImageId ());
-                    tagsET.setText (event.getTags ());
-                }
-            }
-        }
-    }
-
     public void deleteRow() {
         ParseQuery<ParseObject> query = ParseQuery.getQuery ("Event");
         query.whereEqualTo ("objectId", getIntent ().getStringExtra ("eventObjectId"));
@@ -384,5 +301,156 @@ public class CreateEventActivity extends Activity {
                 }
             }
         });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (et_name.getVisibility () == View.VISIBLE) {
+            AlertDialog.Builder builder = new AlertDialog.Builder (this);
+            builder.setMessage ("Are you sure you want to exit?")
+                    .setCancelable (false)
+                    .setPositiveButton ("Yes", new DialogInterface.OnClickListener () {
+                        public void onClick(DialogInterface dialog, int id) {
+                            CreateEventActivity.this.finish ();
+                        }
+                    })
+                    .setNegativeButton ("No", new DialogInterface.OnClickListener () {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel ();
+                        }
+                    });
+            AlertDialog alert = builder.create ();
+            alert.show ();
+        }
+    }
+
+
+    private void componentInit() {
+        tv_create = (TextView) findViewById (R.id.tv_create);
+        tv_name = (TextView) findViewById (R.id.tv_name);
+        tv_artist = (TextView) findViewById (R.id.tv_address);
+        tv_description = (TextView) findViewById (R.id.tv_description);
+        et_name = (EditText) findViewById (R.id.et_name);
+        et_artist = (EditText) findViewById (R.id.et_artist);
+        et_description = (EditText) findViewById (R.id.et_description);
+        et_price = (EditText) findViewById (R.id.et_price);
+        et_quantity = (EditText) findViewById (R.id.et_quantity);
+        et_address = (EditText) findViewById (R.id.et_address);
+        et_place = (EditText) findViewById (R.id.et_place);
+        et_capacity = (EditText) findViewById (R.id.et_capacity);
+        et_parking = (EditText) findViewById (R.id.et_parking);
+        et_tags = (EditText) findViewById (R.id.et_tags);
+        et_toilet = (EditText) findViewById (R.id.et_toilet);
+        btn_validate_address = (Button) findViewById (R.id.btn_validate_address);
+        iv_val_add = (ImageView) findViewById (R.id.iv_val_add);
+        atmBox = (CheckBox) findViewById (R.id.checkBox);
+        tv_date_new = (TextView) findViewById(R.id.tv_date_new);
+        btn_date = (Button) findViewById(R.id.btn_date);
+
+        btn_next = (Button) findViewById (R.id.btn_next);
+        btn_next1 = (Button) findViewById (R.id.btn_next1);
+        btn_next2 = (Button) findViewById (R.id.btn_next2);
+        btn_pic = (Button) findViewById (R.id.btn_pic);
+        pic = (ImageView) findViewById (R.id.pic);
+        btn_next.setOnClickListener (this);
+        btn_next1.setOnClickListener (this);
+        btn_next2.setOnClickListener (this);
+        btn_pic.setOnClickListener (this);
+        btn_validate_address.setOnClickListener (this);
+        btn_date.setOnClickListener(this);
+        create_event2 = (LinearLayout) findViewById (R.id.create_event2);
+        create_event3 = (LinearLayout) findViewById (R.id.create_event3);
+        ll_name = (LinearLayout) findViewById (R.id.ll_name);
+        ll_date = (LinearLayout) findViewById (R.id.ll_date);
+        ll_artist = (LinearLayout) findViewById (R.id.ll_artist);
+        ll_description = (LinearLayout) findViewById (R.id.ll_description);
+
+        if (!getIntent ().getStringExtra ("create").equals ("true")) {
+            tv_create.setText ("Edit Event");
+            et_name.setText ("" + getIntent ().getStringExtra ("name"));
+
+            for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size (); i++) {
+                EventInfo event = GlobalVariables.ALL_EVENTS_DATA.get (i);
+                if (event.getParseObjectId ().equals (getIntent ().getStringExtra ("eventObjectId"))) {
+                    income = event.getIncome ();
+                    sold = event.getSold ();
+                    et_artist.setText (event.getArtist ());
+                    et_description.setText (event.getInfo ());
+                    et_price.setText (event.getPrice ());
+                    et_quantity.setText (event.getTicketsLeft ());
+                    et_address.setText (event.getPlace ());
+                    pic.setImageBitmap (event.getImageBitmap ());
+                    et_tags.setText (event.getTags ());
+                }
+            }
+        }
+    }
+
+    class ValidateAddress extends AsyncTask<String, Void, String> {
+
+        private ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog (CreateEventActivity.this);
+            dialog.setMessage ("Validating...");
+            dialog.show ();
+        }
+
+        // ----------------------------------------------------
+        @Override
+        protected String doInBackground(String... params) {
+            dialog.dismiss ();
+            String queryString = null;
+            try {
+                queryString = "" +
+                                      "&address=" + URLEncoder.encode (address, "utf-8") +
+                                      "&key=" + GlobalVariables.GEO_API_KEY;
+                Log.e (TAG, " " + queryString);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace ();
+            }
+
+
+            return HttpHandler.get (params[0], queryString);
+        }
+
+        // ----------------------------------------------------
+        @Override
+        protected void onPostExecute(String s) {
+            if (s == null) {
+                Log.e (TAG, "No results ");
+                Toast.makeText (CreateEventActivity.this, "Something went wrong, plese try again", Toast.LENGTH_SHORT).show ();
+                iv_val_add.setVisibility (View.VISIBLE);
+                iv_val_add.setImageResource (R.drawable.x);
+
+            } else {
+                Log.e (TAG, "Result is " + s);
+                gson = new Gson ();
+                result = gson.fromJson (s, Result.class);
+                Log.e (TAG, "status " + result.getStatus ());
+                if (result.getStatus ().equals ("OK")) {
+                    address_ok = true;
+                    iv_val_add.setVisibility (View.VISIBLE);
+                    iv_val_add.setImageResource (R.drawable.v);
+                    String street = result.getResults ().get (0).getAddress_components ().get (1).getShort_name ();
+                    String number = result.getResults ().get (0).getAddress_components ().get (0).getShort_name ();
+                    valid_address = street + "." + " , " + number;
+                    Log.e (TAG, "valid address - " + valid_address);
+                    lat = result.getResults ().get (0).getGeometry ().getLocation ().getLat ();
+                    lng = result.getResults ().get (0).getGeometry ().getLocation ().getLng ();
+                    city = result.getResults ().get (0).getAddress_components ().get (2).getShort_name ();
+                    Log.e (TAG, "city - " + city);
+
+                } else if (result.getStatus ().equals ("ZERO_RESULTS")) {
+                    address_ok = false;
+                    iv_val_add.setVisibility (View.VISIBLE);
+                    iv_val_add.setImageResource (R.drawable.x);
+                    Toast.makeText (CreateEventActivity.this, "Problem is " + result.getStatus (), Toast.LENGTH_SHORT).show ();
+                }
+            }
+        }
     }
 }
