@@ -24,7 +24,7 @@ public class MessagesRoomActivity extends Activity implements AdapterView.OnItem
 
     ListView list_view;
     List<MessageRoomBean> conversationsList = new ArrayList<MessageRoomBean> ();
-    MessageRoomAdapter mra;
+    MessageRoomAdapter messageRoomAdapter;
     int event_index;
     private Handler handler = new Handler ();
     HashMap<String, CustomerDetails> customerPhoneToDetailsMap = new HashMap<String, CustomerDetails> ();
@@ -37,8 +37,8 @@ public class MessagesRoomActivity extends Activity implements AdapterView.OnItem
         list_view = (ListView) findViewById (R.id.listView);
         Intent intent = getIntent ();
         event_index = intent.getIntExtra ("index", 0);
-        mra = new MessageRoomAdapter (this, conversationsList);
-        list_view.setAdapter (mra);
+        messageRoomAdapter = new MessageRoomAdapter (this, conversationsList);
+        list_view.setAdapter (messageRoomAdapter);
         list_view.setOnItemClickListener (this);
         getConversationsFromParseMainThread ();
         handler.postDelayed (runnable, 500);
@@ -92,12 +92,12 @@ public class MessagesRoomActivity extends Activity implements AdapterView.OnItem
         }
         conversationsList.clear ();
         conversationsList.addAll (tempConversationsList);
-        mra.notifyDataSetChanged ();
+        messageRoomAdapter.notifyDataSetChanged ();
 
     }
 
     private void updateUserDetailsFromParse(MessageRoomBean messageRoomBean) {
-        CustomerDetails customerDetails = StaticMethods.getUserDetailsFromParse (messageRoomBean.getCustomer_id ());
+        CustomerDetails customerDetails = StaticMethods.getUserDetailsFromParseInMainThread (messageRoomBean.getCustomer_id ());
         updateMessageBeanWithCustomerDetails (messageRoomBean, customerDetails);
         customerPhoneToDetailsMap.put (messageRoomBean.getCustomer_id (),
                                               customerDetails);
@@ -106,8 +106,8 @@ public class MessagesRoomActivity extends Activity implements AdapterView.OnItem
     private void updateMessageBeanWithCustomerDetails(MessageRoomBean messageRoomBean, CustomerDetails customerDetails) {
         if (customerDetails.getPicUrl () != null && !customerDetails.getPicUrl ().isEmpty ()) {
             messageRoomBean.setCustomerImageFacebookUrl (customerDetails.getPicUrl ());
-        } else if (customerDetails.getBmp () != null) {
-            messageRoomBean.setCustomerImage (customerDetails.getBmp ());
+        } else if (customerDetails.getCustomerImage () != null) {
+            messageRoomBean.setCustomerImage (customerDetails.getCustomerImage ());
         }
     }
 

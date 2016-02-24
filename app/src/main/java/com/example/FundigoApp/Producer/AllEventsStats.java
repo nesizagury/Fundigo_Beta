@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.FundigoApp.Events.EventInfo;
-import com.example.FundigoApp.Events.EventPage;
+import com.example.FundigoApp.Events.EventPageActivity;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.Producer.Artists.Artist;
 import com.example.FundigoApp.R;
@@ -49,7 +49,7 @@ public class AllEventsStats extends Fragment implements GetEventsDataCallback {
         sumArtist = (TextView) rootView.findViewById (R.id.sumArtistTV);
 
         if (GlobalVariables.ALL_EVENTS_DATA.size () == 0) {
-            Intent intent = new Intent (this.getActivity (), EventPage.class);
+            Intent intent = new Intent (this.getActivity (), EventPageActivity.class);
             StaticMethods.uploadEventsData (this, GlobalVariables.PRODUCER_PARSE_OBJECT_ID, this.getContext (), intent);
         } else {
             if (artist_list.size () == 0) {

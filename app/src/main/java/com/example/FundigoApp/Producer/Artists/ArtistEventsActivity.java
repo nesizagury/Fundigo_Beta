@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.FundigoApp.Events.EventInfo;
-import com.example.FundigoApp.Events.EventPage;
+import com.example.FundigoApp.Events.EventPageActivity;
 import com.example.FundigoApp.Events.EventsListAdapter;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.StaticMethods;
@@ -48,7 +48,7 @@ public class ArtistEventsActivity extends Activity implements AdapterView.OnItem
     @Override
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Bundle b = new Bundle ();
-        Intent intent = new Intent (this, EventPage.class);
+        Intent intent = new Intent (this, EventPageActivity.class);
         StaticMethods.onEventItemClick (i, eventsList, intent);
         intent.putExtras (b);
         startActivity (intent);

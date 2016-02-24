@@ -31,13 +31,13 @@ import java.util.List;
 
 public class ChatActivity extends Activity {
 
-    private EditText etMessage;
-    private ListView lvChat;
-    private ArrayList<MessageChat> mMessageChats;
+    private EditText editTextMessage;
+    private ListView chatListView;
+    private ArrayList<MessageChat> mMessageChatsList;
     private com.example.FundigoApp.Chat.MessageAdapter mAdapter;
-    private boolean mFirstLoad;
+    private boolean messagesFirstLoad;
     private Handler handler = new Handler ();
-    String body;
+    String messageBody;
     ImageView profileImage;
     Button profileName;
     Button profileFaceBook;
@@ -68,20 +68,20 @@ public class ChatActivity extends Activity {
             profileName.setText (eventName + " (Chat with Producer)");
             setEventInfo (eventInfo.getImageBitmap ());
         }
-        etMessage = (EditText) findViewById (R.id.etMessageChat);
-        lvChat = (ListView) findViewById (R.id.messageListviewChat);
-        mMessageChats = new ArrayList<MessageChat> ();
+        editTextMessage = (EditText) findViewById (R.id.etMessageChat);
+        chatListView = (ListView) findViewById (R.id.messageListviewChat);
+        mMessageChatsList = new ArrayList<MessageChat> ();
         // Automatically scroll to the bottom when a data set change notification is received and only if the last item is already visible on screen. Don't scroll to the bottom otherwise.
-        lvChat.setTranscriptMode (1);
-        mFirstLoad = true;
-        mAdapter = new MessageAdapter (this, mMessageChats, false);
+        chatListView.setTranscriptMode (1);
+        messagesFirstLoad = true;
+        mAdapter = new MessageAdapter (this, mMessageChatsList, false);
 
-        lvChat.setAdapter (mAdapter);
+        chatListView.setAdapter (mAdapter);
         handler.postDelayed (runnable, 0);
     }
 
     private void updateUserDetailsFromParse() {
-        CustomerDetails customerDetails = StaticMethods.getUserDetailsFromParse (customerPhone);
+        CustomerDetails customerDetails = StaticMethods.getUserDetailsFromParseInMainThread (customerPhone);
         if (customerDetails.getFaceBookId () == null || customerDetails.getFaceBookId ().isEmpty ()) {
             profileFaceBook.setText ("");
             profileFaceBook.setClickable (false);
@@ -90,10 +90,10 @@ public class ChatActivity extends Activity {
         }
         if (customerDetails.getPicUrl () != null && !customerDetails.getPicUrl ().isEmpty ()) {
             Picasso.with (this).load (customerDetails.getPicUrl ()).into (profileImage);
-        } else if (customerDetails.getBmp () != null) {
-            profileImage.setImageBitmap (customerDetails.getBmp ());
+        } else if (customerDetails.getCustomerImage () != null) {
+            profileImage.setImageBitmap (customerDetails.getCustomerImage ());
         }
-        if (customerDetails.getBmp () == null &&
+        if (customerDetails.getCustomerImage () == null &&
                     customerDetails.getPicUrl () == null &&
                     customerDetails.getFaceBookId () == null) {
             profileFaceBook.setText ("");
@@ -122,9 +122,9 @@ public class ChatActivity extends Activity {
     };
 
     public void sendMessage(View view) {
-        body = etMessage.getText ().toString ();
+        messageBody = editTextMessage.getText ().toString ();
         Message message = new Message ();
-        message.setBody (body);
+        message.setBody (messageBody);
         if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
             message.setUserId (customerPhone);
         } else {
@@ -138,7 +138,7 @@ public class ChatActivity extends Activity {
         } catch (ParseException e) {
             e.printStackTrace ();
         }
-        etMessage.setText ("");
+        editTextMessage.setText ("");
         getAllMessagesFromParseInMainThread (eventInfo.getProducerId (), customerPhone);
         updateMessageRoomItemInBackGround (message);
     }
@@ -152,7 +152,7 @@ public class ChatActivity extends Activity {
         query.findInBackground (new FindCallback<Message> () {
             public void done(List<Message> messages, ParseException e) {
                 if (e == null) {
-                    if (messages.size () > mMessageChats.size ()) {
+                    if (messages.size () > mMessageChatsList.size ()) {
                         updateMessagesList (messages);
                     }
                 } else {
@@ -171,7 +171,7 @@ public class ChatActivity extends Activity {
         List<Message> messages = null;
         try {
             messages = query.find ();
-            if (messages.size () > mMessageChats.size ()) {
+            if (messages.size () > mMessageChatsList.size ()) {
                 updateMessagesList (messages);
             }
         } catch (ParseException e) {
@@ -180,7 +180,7 @@ public class ChatActivity extends Activity {
     }
 
     private void updateMessagesList(List<Message> messages) {
-        mMessageChats.clear ();
+        mMessageChatsList.clear ();
         for (int i = 0; i < messages.size (); i++) {
             Message msg = messages.get (i);
             String id = msg.getUserId ();
@@ -198,13 +198,10 @@ public class ChatActivity extends Activity {
                     id = "Customer " + id;
                 }
             }
-            mMessageChats.add (new MessageChat (
+            mMessageChatsList.add (new MessageChat (
                                                        MessageChat.MSG_TYPE_TEXT,
                                                        MessageChat.MSG_STATE_SUCCESS,
                                                        id,
-                                                       "avatar",
-                                                       "Jerry",
-                                                       "avatar",
                                                        msg.getBody (),
                                                        isMe,
                                                        true,
@@ -212,9 +209,9 @@ public class ChatActivity extends Activity {
         }
         mAdapter.notifyDataSetChanged (); // update adapter
         // Scroll to the bottom of the eventList on initial load
-        if (mFirstLoad) {
-            lvChat.setSelection (mAdapter.getCount () - 1);
-            mFirstLoad = false;
+        if (messagesFirstLoad) {
+            chatListView.setSelection (mAdapter.getCount () - 1);
+            messagesFirstLoad = false;
         }
     }
 

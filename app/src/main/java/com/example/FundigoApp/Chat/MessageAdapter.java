@@ -20,24 +20,24 @@ import java.util.List;
 public class MessageAdapter extends BaseAdapter {
 
     private Context context;
-    private List<MessageChat> data = null;
+    private List<MessageChat> allMessagesList = null;
     boolean isRealTime;
 
     public MessageAdapter(Context context, List<MessageChat> list, boolean isRealTime) {
         super ();
         this.context = context;
-        this.data = list;
+        this.allMessagesList = list;
         this.isRealTime = isRealTime;
     }
 
     @Override
     public int getCount() {
-        return data != null ? data.size () : 0;
+        return allMessagesList != null ? allMessagesList.size () : 0;
     }
 
     @Override
     public Object getItem(int position) {
-        return data.get (position);
+        return allMessagesList.get (position);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class MessageAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return this.data.get (position).getIsSend () ? 1 : 0;
+        return this.allMessagesList.get (position).getIsSend () ? 1 : 0;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class MessageAdapter extends BaseAdapter {
     @SuppressLint("InflateParams")
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        final MessageChat messageChat = data.get (position);
+        final MessageChat messageChat = allMessagesList.get (position);
         boolean isSend = messageChat.getIsSend ();
 
         ViewHolder viewHolder = null;
@@ -81,15 +81,15 @@ public class MessageAdapter extends BaseAdapter {
 
         try {
             String dateString = DateFormat.format ("dd-MM-yyyy h:mmaa", messageChat.getTime ()).toString ();
-            String[] t = dateString.split (" ");
-            viewHolder.sendDateTextView.setText (t[0]);
-            viewHolder.sendTimeTextView.setText (t[1]);
+            String[] time = dateString.split (" ");
+            viewHolder.sendDateTextView.setText (time[0]);
+            viewHolder.sendTimeTextView.setText (time[1]);
 
             if (position == 0) {
                 viewHolder.sendDateTextView.setVisibility (View.VISIBLE);
             } else {
-                MessageChat pmsg = data.get (position - 1);
-                if (inSameDay (pmsg.getTime (), messageChat.getTime ())) {
+                MessageChat previousMessage = allMessagesList.get (position - 1);
+                if (inSameDay (previousMessage.getTime (), messageChat.getTime ())) {
                     viewHolder.sendDateTextView.setVisibility (View.GONE);
                 } else {
                     viewHolder.sendDateTextView.setVisibility (View.VISIBLE);
@@ -119,8 +119,6 @@ public class MessageAdapter extends BaseAdapter {
                         viewHolder.sendTimeTextView.setText (messageChat.getFromUserName ());
                     }
                 }
-
-
                 break;
 
             default:
@@ -128,14 +126,6 @@ public class MessageAdapter extends BaseAdapter {
                 break;
         }
         return convertView;
-    }
-
-    public List<MessageChat> getData() {
-        return data;
-    }
-
-    public void setData(List<MessageChat> data) {
-        this.data = data;
     }
 
     public static boolean inSameDay(Date date1, Date Date2) {
@@ -147,7 +137,6 @@ public class MessageAdapter extends BaseAdapter {
         calendar.setTime (Date2);
         int year2 = calendar.get (Calendar.YEAR);
         int day2 = calendar.get (Calendar.DAY_OF_YEAR);
-
         if ((year1 == year2) && (day1 == day2)) {
             return true;
         }

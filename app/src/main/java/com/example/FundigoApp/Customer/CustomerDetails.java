@@ -5,12 +5,18 @@ import android.graphics.Bitmap;
 public class CustomerDetails {
     String faceBookId;
     String picUrl;
-    Bitmap bmp;
+    Bitmap customerImage;
+    String customerName;
 
-    public CustomerDetails(String faceBookId, String picUrl, Bitmap bmp) {
+
+    public CustomerDetails(String faceBookId,
+                           String picUrl,
+                           Bitmap customerImage,
+                           String customerName) {
         this.faceBookId = faceBookId;
         this.picUrl = picUrl;
-        this.bmp = bmp;
+        this.customerImage = customerImage;
+        this.customerName = customerName;
     }
 
     public String getFaceBookId() {
@@ -29,11 +35,19 @@ public class CustomerDetails {
         this.picUrl = picUrl;
     }
 
-    public Bitmap getBmp() {
-        return bmp;
+    public Bitmap getCustomerImage() {
+        return customerImage;
     }
 
-    public void setBmp(Bitmap bmp) {
-        this.bmp = bmp;
+    public void setCustomerImage(Bitmap customerImage) {
+        this.customerImage = customerImage;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 }

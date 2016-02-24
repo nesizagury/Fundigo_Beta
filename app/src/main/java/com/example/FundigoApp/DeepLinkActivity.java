@@ -25,16 +25,12 @@ import io.branch.referral.util.LinkProperties;
 import io.branch.referral.util.ShareSheetStyle;
 
 public class DeepLinkActivity extends Activity {
-    String index;
-    static final int REQUEST_CODE_MY_PICK = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_deeplink);
-        Intent in = getIntent ();
     }
-
 
     public void AppPage(View v) {
         BranchUniversalObject branchUniversalObject = new BranchUniversalObject ()
@@ -80,8 +76,6 @@ public class DeepLinkActivity extends Activity {
             public void onLinkCreate(String url, BranchError error) {
                 if (error == null) {
                     Toast.makeText (getApplicationContext (), url, Toast.LENGTH_LONG).show ();
-
-
                 } else
                     Toast.makeText (getApplication (), error.getMessage () + "", Toast.LENGTH_SHORT).show ();
 
@@ -91,7 +85,6 @@ public class DeepLinkActivity extends Activity {
     }
 
     public void WebPage(View v) {
-
         try {
             Bitmap largeIcon = BitmapFactory.decodeResource (getResources (), R.mipmap.pic0);
             ByteArrayOutputStream bytes = new ByteArrayOutputStream ();

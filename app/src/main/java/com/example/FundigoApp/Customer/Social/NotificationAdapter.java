@@ -15,7 +15,7 @@ import java.util.List;
 
 public class NotificationAdapter extends BaseAdapter {
     Context c;
-    List<ParseObject> message = new ArrayList<> ();
+    List<ParseObject> pushObjectsList = new ArrayList<> ();
     List<EventInfo> notificationsEventList = new ArrayList<EventInfo> ();
 
     public NotificationAdapter(Context context,
@@ -23,7 +23,7 @@ public class NotificationAdapter extends BaseAdapter {
                                List<ParseObject> message) {
         c = context;
         this.notificationsEventList = notificationsEventList;
-        this.message = message;
+        this.pushObjectsList = message;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class NotificationAdapter extends BaseAdapter {
         } else {
             holder = (NotificationHolder) row.getTag ();
         }
-        String mes = message.get (i).getString ("pushMessage").toString ();
+        String mes = pushObjectsList.get (i).getString ("pushMessage");
         if (mes.length () > 12) {
             mes = mes.substring (0, 12) + "...";
         }
@@ -51,12 +51,12 @@ public class NotificationAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return message.size ();
+        return pushObjectsList.size ();
     }
 
     @Override
     public Object getItem(int i) {
-        return message.get (i);
+        return pushObjectsList.get (i);
     }
 
     @Override

@@ -5,17 +5,11 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
+import com.example.FundigoApp.StaticMethods;
 import com.google.gson.Gson;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -36,17 +31,11 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Calendar;
 
 public class CreateEventActivity extends Activity implements View.OnClickListener {
-
-    private static final String TAG = "CreateEventActivity";
-
     TextView tv_create;
     TextView tv_name;
     TextView tv_artist;
@@ -76,8 +65,6 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
     LinearLayout ll_artist;
     LinearLayout ll_description;
     CheckBox atmBox;
-    private static final int SELECT_PICTURE = 1;
-    String picturePath;
     private boolean pictureSelected;
     private boolean address_ok = false;
     Gson gson;
@@ -132,13 +119,12 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
         }
     }
 
-    DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
+    DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener () {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            date = dayOfMonth +"."+ (monthOfYear+1)+"."+ (year-2000);
-            tv_date_new.setText(date);
-            tv_date_new.setVisibility(View.VISIBLE);
-            Log.e(TAG, ""+ date);
+            date = dayOfMonth + "." + (monthOfYear + 1) + "." + (year - 2000);
+            tv_date_new.setText (date);
+            tv_date_new.setVisibility (View.VISIBLE);
         }
     };
 
@@ -146,54 +132,16 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
         Intent i = new Intent (
                                       Intent.ACTION_PICK,
                                       MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult (i, SELECT_PICTURE);
+        startActivityForResult (i, GlobalVariables.SELECT_PICTURE);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && null != data) {
-            Uri selectedImage = data.getData ();
-            ParcelFileDescriptor parcelFileDescriptor =
-                    null;
-            try {
-                parcelFileDescriptor = getContentResolver ().openFileDescriptor (selectedImage, "r");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace ();
-            }
-            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor ();
-            Bitmap image = BitmapFactory.decodeFileDescriptor (fileDescriptor);
-            try {
-                parcelFileDescriptor.close ();
-            } catch (IOException e) {
-                e.printStackTrace ();
-            }
-            Matrix matrix = new Matrix ();
-            int angleToRotate = getOrientation (selectedImage);
-            matrix.postRotate (angleToRotate);
-            Bitmap rotatedBitmap = Bitmap.createBitmap (image,
-                                                               0,
-                                                               0,
-                                                               image.getWidth (),
-                                                               image.getHeight (),
-                                                               matrix,
-                                                               true);
-            pic.setImageBitmap (rotatedBitmap);
+        if (requestCode == GlobalVariables.SELECT_PICTURE && resultCode == RESULT_OK && null != data) {
+            Bitmap image = StaticMethods.getImageFromDevice (data, this);
+            pic.setImageBitmap (image);
             pic.setVisibility (View.VISIBLE);
             pictureSelected = true;
         }
-    }
-
-    public int getOrientation(Uri selectedImage) {
-        int orientation = 0;
-        final String[] projection = new String[]{MediaStore.Images.Media.ORIENTATION};
-        final Cursor cursor = this.getContentResolver ().query (selectedImage, projection, null, null, null);
-        if (cursor != null) {
-            final int orientationColumnIndex = cursor.getColumnIndex (MediaStore.Images.Media.ORIENTATION);
-            if (cursor.moveToFirst ()) {
-                orientation = cursor.isNull (orientationColumnIndex) ? 0 : cursor.getInt (orientationColumnIndex);
-            }
-            cursor.close ();
-        }
-        return orientation;
     }
 
     private void showSecondStage() {
@@ -212,7 +160,6 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
 
     private void validateAddress() {
         address = et_address.getText ().toString ();
-        iv_val_add.setVisibility (View.INVISIBLE);
         new ValidateAddress ().execute (GlobalVariables.GEO_API_ADDRESS);
     }
 
@@ -306,7 +253,6 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
 
     @Override
     public void onBackPressed() {
-
         if (et_name.getVisibility () == View.VISIBLE) {
             AlertDialog.Builder builder = new AlertDialog.Builder (this);
             builder.setMessage ("Are you sure you want to exit?")
@@ -325,7 +271,6 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
             alert.show ();
         }
     }
-
 
     private void componentInit() {
         tv_create = (TextView) findViewById (R.id.tv_create);
@@ -346,8 +291,8 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
         btn_validate_address = (Button) findViewById (R.id.btn_validate_address);
         iv_val_add = (ImageView) findViewById (R.id.iv_val_add);
         atmBox = (CheckBox) findViewById (R.id.checkBox);
-        tv_date_new = (TextView) findViewById(R.id.tv_date_new);
-        btn_date = (Button) findViewById(R.id.btn_date);
+        tv_date_new = (TextView) findViewById (R.id.tv_date_new);
+        btn_date = (Button) findViewById (R.id.btn_date);
 
         btn_next = (Button) findViewById (R.id.btn_next);
         btn_next1 = (Button) findViewById (R.id.btn_next1);
@@ -359,7 +304,7 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
         btn_next2.setOnClickListener (this);
         btn_pic.setOnClickListener (this);
         btn_validate_address.setOnClickListener (this);
-        btn_date.setOnClickListener(this);
+        btn_date.setOnClickListener (this);
         create_event2 = (LinearLayout) findViewById (R.id.create_event2);
         create_event3 = (LinearLayout) findViewById (R.id.create_event3);
         ll_name = (LinearLayout) findViewById (R.id.ll_name);
@@ -389,7 +334,6 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
     }
 
     class ValidateAddress extends AsyncTask<String, Void, String> {
-
         private ProgressDialog dialog;
 
         @Override
@@ -408,12 +352,9 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
                 queryString = "" +
                                       "&address=" + URLEncoder.encode (address, "utf-8") +
                                       "&key=" + GlobalVariables.GEO_API_KEY;
-                Log.e (TAG, " " + queryString);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace ();
             }
-
-
             return HttpHandler.get (params[0], queryString);
         }
 
@@ -421,32 +362,23 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
         @Override
         protected void onPostExecute(String s) {
             if (s == null) {
-                Log.e (TAG, "No results ");
                 Toast.makeText (CreateEventActivity.this, "Something went wrong, plese try again", Toast.LENGTH_SHORT).show ();
-                iv_val_add.setVisibility (View.VISIBLE);
                 iv_val_add.setImageResource (R.drawable.x);
-
             } else {
-                Log.e (TAG, "Result is " + s);
                 gson = new Gson ();
                 result = gson.fromJson (s, Result.class);
-                Log.e (TAG, "status " + result.getStatus ());
                 if (result.getStatus ().equals ("OK")) {
                     address_ok = true;
-                    iv_val_add.setVisibility (View.VISIBLE);
-                    iv_val_add.setImageResource (R.drawable.v);
-                    String street = result.getResults ().get (0).getAddress_components ().get (1).getShort_name ();
-                    String number = result.getResults ().get (0).getAddress_components ().get (0).getShort_name ();
-                    valid_address = street + "." + " , " + number;
-                    Log.e (TAG, "valid address - " + valid_address);
-                    lat = result.getResults ().get (0).getGeometry ().getLocation ().getLat ();
-                    lng = result.getResults ().get (0).getGeometry ().getLocation ().getLng ();
-                    city = result.getResults ().get (0).getAddress_components ().get (2).getShort_name ();
-                    Log.e (TAG, "city - " + city);
-
+                    iv_val_add.setImageResource(R.drawable.v);
+                    String long_name = result.getResults().get(0).getAddress_components().get(1).getLong_name();
+                    String street = long_name.replaceAll("Street", "");
+                    String number = result.getResults().get(0).getAddress_components().get(0).getShort_name();
+                    lat = result.getResults().get(0).getGeometry().getLocation().getLat();
+                    lng = result.getResults().get(0).getGeometry().getLocation().getLng();
+                    city = result.getResults().get(0).getAddress_components().get(2).getShort_name();
+                    valid_address = street + number + ", " + city;
                 } else if (result.getStatus ().equals ("ZERO_RESULTS")) {
                     address_ok = false;
-                    iv_val_add.setVisibility (View.VISIBLE);
                     iv_val_add.setImageResource (R.drawable.x);
                     Toast.makeText (CreateEventActivity.this, "Problem is " + result.getStatus (), Toast.LENGTH_SHORT).show ();
                 }

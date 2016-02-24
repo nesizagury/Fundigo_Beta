@@ -31,8 +31,8 @@ public class CustomerMessageConversationsListActivity extends AppCompatActivity 
     ImageView notification;
     ListView listView;
     String customer_id;
-    List<MessageRoomBean> list = new ArrayList<> ();
-    ArrayList<Bitmap> pic = new ArrayList<> ();
+    List<MessageRoomBean> listOfConversationsBeans = new ArrayList<> ();
+    ArrayList<Bitmap> eventsImageList = new ArrayList<> ();
     List<EventInfo> event_info_list = new ArrayList<EventInfo> ();
     private Handler handler = new Handler ();
     MessageRoomAdapter messageRoomAdapter;
@@ -47,7 +47,7 @@ public class CustomerMessageConversationsListActivity extends AppCompatActivity 
         notification = (ImageView) findViewById (R.id.notification_MassageProducer);
         if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
             customer_id = GlobalVariables.CUSTOMER_PHONE_NUM;
-            messageRoomAdapter = new MessageRoomAdapter (this, list, pic);
+            messageRoomAdapter = new MessageRoomAdapter (this, listOfConversationsBeans, eventsImageList);
             listView.setAdapter (messageRoomAdapter);
             listView.setOnItemClickListener (this);
             getMassage ();
@@ -55,16 +55,15 @@ public class CustomerMessageConversationsListActivity extends AppCompatActivity 
         }
         mipo.setOnClickListener (this);
         notification.setOnClickListener (this);
-
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId () == R.id.notification_MassageProducer) {
-            Intent MessageIntent = new Intent (CustomerMessageConversationsListActivity.this, MyNotifications.class);
+            Intent MessageIntent = new Intent (CustomerMessageConversationsListActivity.this, MyNotificationsActivity.class);
             startActivity (MessageIntent);
         } else if (v.getId () == R.id.mipo_MassageProducer) {
-            Intent mipoIntent = new Intent (CustomerMessageConversationsListActivity.this, Mipo.class);
+            Intent mipoIntent = new Intent (CustomerMessageConversationsListActivity.this, MipoActivity.class);
             startActivity (mipoIntent);
         }
     }
@@ -98,22 +97,22 @@ public class CustomerMessageConversationsListActivity extends AppCompatActivity 
     }
 
     private void updateLists(List<Room> listOfConversationWithProducer) {
-        List<MessageRoomBean> arr = new ArrayList<> ();
-        ArrayList<Bitmap> pic_temp = new ArrayList<> ();
+        List<MessageRoomBean> tempConversationsList = new ArrayList<> ();
+        ArrayList<Bitmap> eventImageListTemp = new ArrayList<> ();
         List<EventInfo> event_info_list_temp = new ArrayList<EventInfo> ();
         for (int i = 0; i < listOfConversationWithProducer.size (); i++) {
             Room room = listOfConversationWithProducer.get (i);
             EventInfo eventInfo = StaticMethods.getEventFromObjID (room.getEventObjId (), GlobalVariables.ALL_EVENTS_DATA);
-            pic_temp.add (eventInfo.getImageBitmap ());
+            eventImageListTemp.add (eventInfo.getImageBitmap ());
             event_info_list_temp.add (eventInfo);
-            arr.add (new MessageRoomBean (room.getLastMessage (),
+            tempConversationsList.add (new MessageRoomBean (room.getLastMessage (),
                                                  eventInfo.getName (),
                                                  room.getProducer_id ()));
         }
-        list.clear ();
-        list.addAll (arr);
-        pic.clear ();
-        pic.addAll (pic_temp);
+        listOfConversationsBeans.clear ();
+        listOfConversationsBeans.addAll (tempConversationsList);
+        eventsImageList.clear ();
+        eventsImageList.addAll (eventImageListTemp);
         event_info_list.clear ();
         event_info_list.addAll (event_info_list_temp);
         messageRoomAdapter.notifyDataSetChanged ();

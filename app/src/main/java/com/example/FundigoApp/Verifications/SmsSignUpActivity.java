@@ -3,14 +3,9 @@ package com.example.FundigoApp.Verifications;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -25,10 +20,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.FundigoApp.Customer.CustomerDetails;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
+import com.example.FundigoApp.StaticMethods;
 import com.parse.FindCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -43,7 +39,6 @@ import com.sinch.verification.Verification;
 import com.sinch.verification.VerificationListener;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -51,9 +46,6 @@ import java.io.PrintWriter;
 import java.util.List;
 
 public class SmsSignUpActivity extends AppCompatActivity {
-
-    private static final int SELECT_PICTURE = 1;
-    String picturePath;
     Spinner s;
     private String array_spinner[];
     String username;
@@ -65,10 +57,10 @@ public class SmsSignUpActivity extends AppCompatActivity {
     EditText usernameTE;
     Button upload_button;
     Button signup;
-    ImageView imageV;
+    ImageView customerImageView;
     TextView optionalTV;
     TextView expTV;
-    boolean image_selected;
+    boolean image_selected = false;
     Numbers previousDataFound = null;
 
     @Override
@@ -93,7 +85,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
         usernameTE = (EditText) findViewById (R.id.usernameTE);
         phoneET = (EditText) findViewById (R.id.phoneET);
         phoneTV = (TextView) findViewById (R.id.phoneTV);
-        imageV = (ImageView) findViewById (R.id.imageV);
+        customerImageView = (ImageView) findViewById (R.id.imageV);
 
         phoneET.setOnEditorActionListener (new TextView.OnEditorActionListener () {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -115,8 +107,8 @@ public class SmsSignUpActivity extends AppCompatActivity {
                 if ((event != null && (event.getKeyCode () == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     usernameTE.setVisibility (View.INVISIBLE);
                     usernameTV.setVisibility (View.INVISIBLE);
-                    imageV = (ImageView) findViewById (R.id.imageV);
-                    imageV.setVisibility (View.VISIBLE);
+                    customerImageView = (ImageView) findViewById (R.id.imageV);
+                    customerImageView.setVisibility (View.VISIBLE);
                     upload_button = (Button) findViewById (R.id.upload_button);
                     upload_button.setVisibility (View.VISIBLE);
                     signup = (Button) findViewById (R.id.button2);
@@ -139,8 +131,8 @@ public class SmsSignUpActivity extends AppCompatActivity {
         }
         number.setName (username);
         if (image_selected) {
-            imageV.buildDrawingCache ();
-            Bitmap bitmap = imageV.getDrawingCache ();
+            customerImageView.buildDrawingCache ();
+            Bitmap bitmap = customerImageView.getDrawingCache ();
             ByteArrayOutputStream stream = new ByteArrayOutputStream ();
             bitmap.compress (CompressFormat.JPEG, 100, stream);
             byte[] image = stream.toByteArray ();
@@ -207,37 +199,13 @@ public class SmsSignUpActivity extends AppCompatActivity {
         Intent i = new Intent (
                                       Intent.ACTION_PICK,
                                       MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult (i, SELECT_PICTURE);
+        startActivityForResult (i, GlobalVariables.SELECT_PICTURE);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK && null != data) {
-            Uri selectedImage = data.getData ();
-            ParcelFileDescriptor parcelFileDescriptor =
-                    null;
-            try {
-                parcelFileDescriptor = getContentResolver ().openFileDescriptor (selectedImage, "r");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace ();
-            }
-            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor ();
-            Bitmap image = BitmapFactory.decodeFileDescriptor (fileDescriptor);
-            try {
-                parcelFileDescriptor.close ();
-            } catch (IOException e) {
-                e.printStackTrace ();
-            }
-            Matrix matrix = new Matrix ();
-            int angleToRotate = getOrientation (selectedImage);
-            matrix.postRotate (angleToRotate);
-            Bitmap rotatedBitmap = Bitmap.createBitmap (image,
-                                                               0,
-                                                               0,
-                                                               image.getWidth (),
-                                                               image.getHeight (),
-                                                               matrix,
-                                                               true);
-            imageV.setImageBitmap (rotatedBitmap);
+        if (requestCode == GlobalVariables.SELECT_PICTURE && resultCode == RESULT_OK && null != data) {
+            Bitmap image = StaticMethods.getImageFromDevice (data, this);
+            customerImageView.setImageBitmap (image);
             image_selected = true;
         }
     }
@@ -317,40 +285,22 @@ public class SmsSignUpActivity extends AppCompatActivity {
     }
 
     private void getUserPreviousDetails(String user_number) {
-        ParseQuery<Numbers> query = ParseQuery.getQuery ("Numbers");
+        ParseQuery<Numbers> query = ParseQuery.getQuery (Numbers.class);
         query.whereEqualTo ("number", user_number);
-        query.orderByDescending ("createdAt");
         query.findInBackground (new FindCallback<Numbers> () {
             public void done(List<Numbers> numbers, ParseException e) {
                 if (e == null) {
                     if (numbers.size () > 0) {
-                        previousDataFound = numbers.get (0);
+                        CustomerDetails customerDetails = StaticMethods.getUserDetails (numbers);
                         if (usernameTE.getText ().toString ().isEmpty ()) {
-                            usernameTE.setText (numbers.get (0).get ("name") + "");
+                            usernameTE.setText (customerDetails.getCustomerName () + "");
                             usernameTE.setSelection (usernameTE.getText ().length ());
                         }
                         if (!image_selected) {
-                            ParseFile imageFile = (ParseFile) numbers.get (0).get ("ImageFile");
-                            if (imageFile != null) {
-                                imageFile.getDataInBackground (new GetDataCallback () {
-                                    public void done(byte[] data, ParseException e) {
-                                        if (e == null) {
-                                            image_selected = true;
-                                            Bitmap bmp = BitmapFactory
-                                                                 .decodeByteArray (
-                                                                                          data, 0,
-                                                                                          data.length);
-                                            imageV.setImageBitmap (bmp);
-                                        } else {
-                                            e.printStackTrace ();
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                        if (numbers.size () > 1) {
-                            for (int i = 1; i < numbers.size (); i++) {
-                                numbers.get (i).deleteInBackground ();
+                            Bitmap customerImage = customerDetails.getCustomerImage ();
+                            if (customerImage != null) {
+                                image_selected = true;
+                                customerImageView.setImageBitmap (customerImage);
                             }
                         }
                     }
@@ -359,19 +309,5 @@ public class SmsSignUpActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    public int getOrientation(Uri selectedImage) {
-        int orientation = 0;
-        final String[] projection = new String[]{MediaStore.Images.Media.ORIENTATION};
-        final Cursor cursor = this.getContentResolver ().query (selectedImage, projection, null, null, null);
-        if (cursor != null) {
-            final int orientationColumnIndex = cursor.getColumnIndex (MediaStore.Images.Media.ORIENTATION);
-            if (cursor.moveToFirst ()) {
-                orientation = cursor.isNull (orientationColumnIndex) ? 0 : cursor.getInt (orientationColumnIndex);
-            }
-            cursor.close ();
-        }
-        return orientation;
     }
 }

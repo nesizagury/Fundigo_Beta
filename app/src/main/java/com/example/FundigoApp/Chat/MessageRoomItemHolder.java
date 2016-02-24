@@ -7,13 +7,13 @@ import android.widget.TextView;
 import com.example.FundigoApp.R;
 
 public class MessageRoomItemHolder {
-    ImageView customerImage;
-    TextView body;
-    TextView customer;
+    ImageView customerOrEventImage;
+    TextView messageBody;
+    TextView customerOrEventName;
 
     public MessageRoomItemHolder(View v) {
-        customerImage = (ImageView) v.findViewById (R.id.message_itemIV);
-        customer = (TextView) v.findViewById (R.id.message_item_nameTV);
-        body = (TextView) v.findViewById (R.id.message_item_bodyTV);
+        customerOrEventImage = (ImageView) v.findViewById (R.id.message_itemIV);
+        customerOrEventName = (TextView) v.findViewById (R.id.message_item_nameTV);
+        messageBody = (TextView) v.findViewById (R.id.message_item_bodyTV);
     }
 }

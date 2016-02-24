@@ -3,6 +3,7 @@ package com.example.FundigoApp.Verifications;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -36,7 +37,6 @@ public class LoginActivity extends Activity {
     EditText producer_usernameET;
     Button customer_loginButton;
     boolean emailVerified = false;
-    public static String x = "";
     boolean passwordVerified;
 
     @Override
@@ -60,19 +60,19 @@ public class LoginActivity extends Activity {
         producer_password = producer_passwordET.getText ().toString ();
         passwordVerified = false;
         emailVerified = false;
-        List<ParseUser> list = new ArrayList<ParseUser> ();
+        List<ParseUser> parseUsers = new ArrayList<ParseUser> ();
         ParseQuery<ParseUser> query1 = ParseUser.getQuery ();
         try {
-            list = query1.find ();
+            parseUsers = query1.find ();
         } catch (ParseException e) {
-            Toast.makeText (this, "Error " + e, Toast.LENGTH_SHORT).show ();
+            e.printStackTrace ();
         }
         boolean exists = false;
-        for (ParseUser user : list) {
+        for (ParseUser user : parseUsers) {
             if (user.getUsername ().equals (producer_username)) {
                 exists = true;
                 if (user.get ("emailVerified") != null &&
-                            (boolean)user.get ("emailVerified") == true) {
+                            (boolean) user.get ("emailVerified")) {
                     emailVerified = true;
                 }
                 break;
@@ -97,6 +97,7 @@ public class LoginActivity extends Activity {
                 startActivity (intent);
                 finish ();
             } catch (ParseException e1) {
+                e1.printStackTrace ();
                 Toast.makeText (getApplicationContext (), "Wrong Password, try again :)", Toast.LENGTH_SHORT).show ();
             }
         } else {
@@ -129,7 +130,6 @@ public class LoginActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart ();
-
         Branch branch = Branch.getInstance ();
         branch.initSession (new Branch.BranchReferralInitListener () {
             @Override
@@ -137,25 +137,19 @@ public class LoginActivity extends Activity {
                 if (error == null) {
                     // params are the deep linked params associated with the link that the user clicked before showing up
                     try {
-                        x = referringParams.getString ("objectId");
-                        Toast.makeText (getApplicationContext (), "id = " + x, Toast.LENGTH_SHORT).show ();
-
+                        GlobalVariables.deepLinkEventObjID = referringParams.getString ("objectId");
                     } catch (JSONException e) {
                         e.printStackTrace ();
                     }
-
-                } else
-                    Toast.makeText (getApplicationContext (), error.getMessage (), Toast.LENGTH_SHORT).show ();
-
+                } else {
+                    Log.e ("LoginActivity", error.getMessage ());
+                }
             }
-
         }, this.getIntent ().getData (), this);
-
-
     }
 
     public void signUp(View view) {
-        Intent intent = new Intent (LoginActivity.this, SignUpActivity.class);
+        Intent intent = new Intent (LoginActivity.this, CreateNewProducerActivity.class);
         startActivity (intent);
     }
 

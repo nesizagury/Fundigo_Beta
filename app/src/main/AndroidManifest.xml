@@ -47,29 +47,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.FundigoApp.Events.EventPage"
+            android:name=".Events.EventPageActivity"
             android:launchMode="singleTask">
         </activity>
-        <activity android:name=".Tickets.TicketsPage">
+        <activity android:name=".Tickets.GetTicketQRCodeActivity">
         </activity>
-        <activity android:name=".Tickets.GetQRCode">
+        <activity android:name=".Tickets.SelectSeatActivity">
         </activity>
-        <activity android:name=".Tickets.SelectSeat">
-        </activity>
-        <activity android:name=".Customer.Social.DetailedNotificationPage"/>
-        <activity android:name=".Customer.Social.MyNotifications"/>
+        <activity android:name=".Customer.Social.DetailedNotificationActivity"/>
+        <activity android:name=".Customer.Social.MyNotificationsActivity"/>
         <activity android:name=".Producer.ProducerSendPuchActivity"/>
         <activity android:name=".Customer.Social.CustomerMessageConversationsListActivity"/>
-        <activity android:name=".Customer.Social.Mipo"></activity>
-        <activity android:name="com.example.FundigoApp.FilterPage">
+        <activity android:name=".Customer.Social.MipoActivity"></activity>
+        <activity android:name=".FilterPageActivity">
         </activity>
-        <activity android:name=".Tickets.WebBrowser">
+        <activity android:name=".Tickets.WebBrowserActivity">
         </activity>
-        <activity android:name=".Tickets.Web1">
+        <activity android:name=".Tickets.Web1Activity">
         </activity>
         <activity android:name="com.example.FundigoApp.Events.CreateEventActivity">
         </activity>
-        <activity android:name=".Verifications.VerifyCard">
+        <activity android:name=".Verifications.VerifyCardActivity">
         </activity>
         <activity android:name=".Verifications.LoginActivity">
             <intent-filter>
@@ -86,26 +84,26 @@
         </activity>
         <activity android:name=".Customer.RealTime.RealTimeActivity">
         </activity>
-        <activity android:name=".Customer.CustomerMenu.Menu">
+        <activity android:name=".Customer.CustomerMenu.MenuActivity">
         </activity>
-        <activity android:name=".Verifications.SignUpActivity"></activity>
-        <activity android:name=".Producer.EventOnRealtime"></activity>
-        <activity android:name=".Producer.RealTimeGuestAddition"></activity>
+        <activity android:name=".Verifications.CreateNewProducerActivity"></activity>
+        <activity android:name=".Producer.EventOnRealtimeActivity"></activity>
+        <activity android:name=".Producer.RealTimeGuestAdditionActivity"></activity>
         <activity
             android:name=".DeepLinkActivity"
             android:theme="@android:style/Theme.Holo.Dialog">
         </activity>
         <activity android:name=".Customer.SavedEvents.SavedEventActivity">
         </activity>
-        <activity android:name="com.example.FundigoApp.Search">
+        <activity android:name=".SearchActivity">
         </activity>
         <activity android:name=".Customer.CustomerMenu.CustomerProfileUpdate"/>
-        <activity android:name=".Customer.CustomerMenu.EventsTickets"></activity>
-        <activity android:name=".Events.EventStatus"></activity>
+        <activity android:name=".Customer.CustomerMenu.MyEventsTicketsActivity"></activity>
+        <activity android:name=".Events.EventStatusActivity"></activity>
         <activity android:name=".Producer.Artists.ArtistEventsActivity"></activity>
         <activity android:name=".Producer.Artists.ArtistStatsActivity"></activity>
         <activity
-            android:name="com.example.FundigoApp.Events.EventService"
+            android:name=".Events.EventServiceActivity"
             android:theme="@style/AppTheme.PopupServiceEvent"></activity>
         <activity
             android:name=".Chat.MessagesRoomActivity"

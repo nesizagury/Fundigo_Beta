@@ -19,12 +19,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.FundigoApp.Customer.CustomerMenu.MenuActivity;
 import com.example.FundigoApp.Customer.RealTime.RealTimeActivity;
 import com.example.FundigoApp.Customer.SavedEvents.SavedEventActivity;
-import com.example.FundigoApp.Customer.Social.MyNotifications;
+import com.example.FundigoApp.Customer.Social.MyNotificationsActivity;
 import com.example.FundigoApp.Events.CreateEventActivity;
 import com.example.FundigoApp.Events.EventInfo;
-import com.example.FundigoApp.Events.EventPage;
+import com.example.FundigoApp.Events.EventPageActivity;
 import com.example.FundigoApp.Events.EventsListAdapter;
 import com.example.FundigoApp.MyLocation.CityMenu;
 import com.example.FundigoApp.Producer.TabPagerAdapter;
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         list_view.setOnItemClickListener (this);
 
         if (GlobalVariables.ALL_EVENTS_DATA.size () == 0) {
-            Intent intent = new Intent (this, EventPage.class);
+            Intent intent = new Intent (this, EventPageActivity.class);
             StaticMethods.uploadEventsData (this, null, this.context, intent);
         } else {
             inflateCityMenu ();
@@ -311,28 +312,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             newIntent = new Intent (this, RealTimeActivity.class);
             startActivity (newIntent);
         } else if (v.getId () == search.getId ()) {
-            newIntent = new Intent (this, Search.class);
+            newIntent = new Intent (this, SearchActivity.class);
             startActivity (newIntent);
         } else if (v.getId () == notification.getId ()) {
-            newIntent = new Intent (this, MyNotifications.class);
+            newIntent = new Intent (this, MyNotificationsActivity.class);
             startActivity (newIntent);
         }
     }
 
     public void openFilterPage(View v) {
-        Intent filterPageIntent = new Intent (this, FilterPage.class);
+        Intent filterPageIntent = new Intent (this, FilterPageActivity.class);
         startActivity (filterPageIntent);
     }
 
     public void openMenuPage(View v) {
-        Intent menuPageIntent = new Intent (this, com.example.FundigoApp.Customer.CustomerMenu.Menu.class);
+        Intent menuPageIntent = new Intent (this, MenuActivity.class);
         startActivity (menuPageIntent);
     }
 
     @Override
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Bundle b = new Bundle ();
-        Intent intent = new Intent (this, EventPage.class);
+        Intent intent = new Intent (this, EventPageActivity.class);
         StaticMethods.onEventItemClick (i, filtered_events_data, intent);
         intent.putExtras (b);
         startActivity (intent);
@@ -364,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         GlobalVariables.deepLink_params = referringParams.getString ("objectId");
                         for (int i = 0; i < filtered_events_data.size (); i++) {
                             if (GlobalVariables.deepLink_params.equals (filtered_events_data.get (i).getParseObjectId ())) {
-                                Intent intent = new Intent (context, EventPage.class);
+                                Intent intent = new Intent (context, EventPageActivity.class);
                                 Bundle b = new Bundle ();
                                 StaticMethods.onEventItemClick (i, GlobalVariables.ALL_EVENTS_DATA, intent);
                                 intent.putExtras (b);

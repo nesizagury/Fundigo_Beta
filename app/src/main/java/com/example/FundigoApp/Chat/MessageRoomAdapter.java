@@ -15,31 +15,31 @@ import java.util.List;
 
 public class MessageRoomAdapter extends BaseAdapter {
 
-    List<MessageRoomBean> list = new ArrayList<MessageRoomBean> ();
-    ArrayList<Bitmap> arr = new ArrayList<> ();
+    List<MessageRoomBean> listOfConversations = new ArrayList<MessageRoomBean> ();
+    ArrayList<Bitmap> listOfEventsImage = new ArrayList<> ();
     Context context;
     Boolean comeFromMessageProducer = false;
 
-    public MessageRoomAdapter(Context c, List list) {
+    public MessageRoomAdapter(Context c, List listOfConversations) {
         this.context = c;
-        this.list = list;
+        this.listOfConversations = listOfConversations;
     }
 
-    public MessageRoomAdapter(Context c, List list, ArrayList<Bitmap> arr) {
+    public MessageRoomAdapter(Context c, List listOfConversations, ArrayList<Bitmap> listOfEventsImage) {
         this.context = c;
-        this.list = list;
-        this.arr = arr;
+        this.listOfConversations = listOfConversations;
+        this.listOfEventsImage = listOfEventsImage;
         comeFromMessageProducer = true;
     }
 
     @Override
     public int getCount() {
-        return list.size ();
+        return listOfConversations.size ();
     }
 
     @Override
     public Object getItem(int i) {
-        return list.get (i);
+        return listOfConversations.get (i);
     }
 
     @Override
@@ -61,20 +61,20 @@ public class MessageRoomAdapter extends BaseAdapter {
         } else {
             holder = (MessageRoomItemHolder) row.getTag ();
         }
-        MessageRoomBean message_bean = list.get (i);
+        MessageRoomBean message_bean = listOfConversations.get (i);
         if (comeFromMessageProducer) {
-            holder.customerImage.setImageBitmap (arr.get (i));
+            holder.customerOrEventImage.setImageBitmap (listOfEventsImage.get (i));
         } else if (message_bean.getCustomerImageFacebookUrl () != null &&
                            !message_bean.getCustomerImageFacebookUrl ().isEmpty ()) {
-            Picasso.with (context).load (message_bean.getCustomerImageFacebookUrl ()).into (holder.customerImage);
+            Picasso.with (context).load (message_bean.getCustomerImageFacebookUrl ()).into (holder.customerOrEventImage);
         } else if (message_bean.getCustomerImage () != null) {
-            holder.customerImage.setImageBitmap (message_bean.getCustomerImage ());
+            holder.customerOrEventImage.setImageBitmap (message_bean.getCustomerImage ());
         }
-        holder.body.setText (message_bean.getLastMessage ());
-        holder.customer.setText (message_bean.getCustomer_id ());
-        holder.customerImage.setTag (message_bean);
-        holder.customer.setTag (message_bean);
-        holder.body.setTag (message_bean);
+        holder.messageBody.setText (message_bean.getLastMessage ());
+        holder.customerOrEventName.setText (message_bean.getCustomer_id ());
+        holder.customerOrEventImage.setTag (message_bean);
+        holder.customerOrEventName.setTag (message_bean);
+        holder.messageBody.setTag (message_bean);
 
         return row;
     }

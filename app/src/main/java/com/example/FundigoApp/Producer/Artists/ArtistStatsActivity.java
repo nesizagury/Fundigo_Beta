@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.FundigoApp.Events.EventInfo;
-import com.example.FundigoApp.Events.EventPage;
+import com.example.FundigoApp.Events.EventPageActivity;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.StaticMethods;
@@ -48,7 +48,7 @@ public class ArtistStatsActivity extends Activity implements GetEventsDataCallba
         upcomingTicketAvgTV = (TextView) findViewById (R.id.upcomingTicketAvgTV);
 
         if (GlobalVariables.ALL_EVENTS_DATA.size () == 0) {
-            Intent intent = new Intent (this, EventPage.class);
+            Intent intent = new Intent (this, EventPageActivity.class);
             StaticMethods.uploadEventsData (this, GlobalVariables.PRODUCER_PARSE_OBJECT_ID, this, intent);
         } else {
             calculateStates ();

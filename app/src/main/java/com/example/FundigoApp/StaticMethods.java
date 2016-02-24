@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -17,7 +19,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.ActivityCompat;
@@ -32,7 +36,6 @@ import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.Events.EventsListAdapter;
 import com.example.FundigoApp.MyLocation.CityMenu;
 import com.example.FundigoApp.Producer.Artists.Artist;
-import com.example.FundigoApp.Verifications.LoginActivity;
 import com.example.FundigoApp.Verifications.Numbers;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
@@ -44,6 +47,7 @@ import com.parse.ParseQuery;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +59,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class StaticMethods {
+    //in millis
     private static final int GPS_UPDATE_TIME_INTERVAL = 10000;
 
     private static LocationManager locationManager;
@@ -117,17 +122,16 @@ public class StaticMethods {
                     GlobalVariables.ALL_EVENTS_DATA.addAll (tempEventsList);
 
                     GlobalVariables.cityMenuInstance = new CityMenu (tempEventsList, context);
-                    GlobalVariables.namesCity = GlobalVariables.cityMenuInstance.getCityNames();
-                    if(!LoginActivity.x.equals("") || LoginActivity.x != "")
-                    {
-                        for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size(); i++) {
-                            if(LoginActivity.x.equals(GlobalVariables.ALL_EVENTS_DATA.get(i).getParseObjectId ())) {
+                    GlobalVariables.namesCity = GlobalVariables.cityMenuInstance.getCityNames ();
+                    if (!GlobalVariables.deepLinkEventObjID.equals ("") || GlobalVariables.deepLinkEventObjID != "") {
+                        for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size (); i++) {
+                            if (GlobalVariables.deepLinkEventObjID.equals (GlobalVariables.ALL_EVENTS_DATA.get (i).getParseObjectId ())) {
                                 ic.eventDataCallback ();
                                 Bundle b = new Bundle ();
                                 onEventItemClick (i, GlobalVariables.ALL_EVENTS_DATA, intent);
                                 intent.putExtras (b);
                                 context.startActivity (intent);
-                                Toast.makeText(context.getApplicationContext(), "found", Toast.LENGTH_SHORT).show();
+                                Toast.makeText (context.getApplicationContext (), "found", Toast.LENGTH_SHORT).show ();
                                 return;
                             }
                         }
@@ -365,37 +369,47 @@ public class StaticMethods {
         return tempEventsList;
     }
 
-    public static CustomerDetails getUserDetailsFromParse(String customerPhoneNum) {
+    public static CustomerDetails getUserDetailsFromParseInMainThread(String customerPhoneNum) {
         String faceBookId = null;
         String picUrl = null;
-        Bitmap bmp = null;
+        String customerName = null;
+        Bitmap customerImage = null;
         ParseQuery<Numbers> query = ParseQuery.getQuery (Numbers.class);
         query.whereEqualTo ("number", customerPhoneNum);
         List<Numbers> numbers = null;
         try {
             numbers = query.find ();
-            if (numbers.size () > 0) {
-                Numbers number = numbers.get (0);
-                faceBookId = number.getFbId ();
-                picUrl = number.getFbUrl ();
-                if (picUrl == null || picUrl.isEmpty ()) {
-                    ParseFile imageFile;
-                    byte[] data = null;
-                    imageFile = (ParseFile) number.getImageFile ();
-                    if (imageFile != null) {
-                        try {
-                            data = imageFile.getData ();
-                        } catch (ParseException e1) {
-                            e1.printStackTrace ();
-                        }
-                        bmp = BitmapFactory.decodeByteArray (data, 0, data.length);
-                    }
-                }
-            }
+            return getUserDetails (numbers);
         } catch (ParseException e) {
             e.printStackTrace ();
         }
-        return new CustomerDetails (faceBookId, picUrl, bmp);
+        //all null
+        return new CustomerDetails (faceBookId, picUrl, customerImage, customerName);
+    }
+
+    public static CustomerDetails getUserDetails(List<Numbers> numbers) {
+        String faceBookId = null;
+        String customerPicFacebookUrl = null;
+        Bitmap customerImage = null;
+        String customerName = null;
+        if (numbers.size () > 0) {
+            Numbers number = numbers.get (0);
+            faceBookId = number.getFbId ();
+            customerPicFacebookUrl = number.getFbUrl ();
+            customerName = number.getName ();
+            ParseFile imageFile;
+            byte[] data = null;
+            imageFile = (ParseFile) number.getImageFile ();
+            if (imageFile != null) {
+                try {
+                    data = imageFile.getData ();
+                } catch (ParseException e1) {
+                    e1.printStackTrace ();
+                }
+                customerImage = BitmapFactory.decodeByteArray (data, 0, data.length);
+            }
+        }
+        return new CustomerDetails (faceBookId, customerPicFacebookUrl, customerImage, customerName);
     }
 
     public static void filterEventsByArtist(String artistName, List<EventInfo> eventsListFiltered) {
@@ -447,8 +461,8 @@ public class StaticMethods {
         intent.putExtra ("capacity", eventsList.get (positionViewItem).getCapacity ());
         intent.putExtra ("atm", eventsList.get (positionViewItem).getAtm ());
         intent.putExtra ("index", eventsList.get (positionViewItem).getIndexInFullList ());
-        intent.putExtra("i",String.valueOf (positionViewItem));
-        intent.putExtra("artist",eventsList.get(positionViewItem).getArtist());
+        intent.putExtra ("i", String.valueOf (positionViewItem));
+        intent.putExtra ("artist", eventsList.get (positionViewItem).getArtist ());
     }
 
     public static void onActivityResult(final int requestCode, final Intent data, Activity activity) {
@@ -546,5 +560,48 @@ public class StaticMethods {
         if (GlobalVariables.SAVED_ACTIVITY_RUNNING) {
             SavedEventActivity.getSavedEventsFromJavaList ();
         }
+    }
+
+    public static Bitmap getImageFromDevice(Intent data, Context context) {
+        Uri selectedImage = data.getData ();
+        ParcelFileDescriptor parcelFileDescriptor =
+                null;
+        try {
+            parcelFileDescriptor = context.getContentResolver ().openFileDescriptor (selectedImage, "r");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace ();
+        }
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor ();
+        Bitmap image = BitmapFactory.decodeFileDescriptor (fileDescriptor);
+        try {
+            parcelFileDescriptor.close ();
+        } catch (IOException e) {
+            e.printStackTrace ();
+        }
+        Matrix matrix = new Matrix ();
+        int angleToRotate = getOrientation (selectedImage, context);
+        matrix.postRotate (angleToRotate);
+        Bitmap rotatedBitmap = Bitmap.createBitmap (image,
+                                                           0,
+                                                           0,
+                                                           image.getWidth (),
+                                                           image.getHeight (),
+                                                           matrix,
+                                                           true);
+        return rotatedBitmap;
+    }
+
+    private static int getOrientation(Uri selectedImage, Context context) {
+        int orientation = 0;
+        final String[] projection = new String[]{MediaStore.Images.Media.ORIENTATION};
+        final Cursor cursor = context.getContentResolver ().query (selectedImage, projection, null, null, null);
+        if (cursor != null) {
+            final int orientationColumnIndex = cursor.getColumnIndex (MediaStore.Images.Media.ORIENTATION);
+            if (cursor.moveToFirst ()) {
+                orientation = cursor.isNull (orientationColumnIndex) ? 0 : cursor.getInt (orientationColumnIndex);
+            }
+            cursor.close ();
+        }
+        return orientation;
     }
 }

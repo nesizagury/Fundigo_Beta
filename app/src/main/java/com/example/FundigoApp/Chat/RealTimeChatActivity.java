@@ -29,17 +29,17 @@ import java.util.List;
 
 public class RealTimeChatActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    private EditText etMessage;
-    private ListView lvChat;
-    private ArrayList<MessageChat> mMessageChats;
-    private ArrayList<MsgRealTime> mMessageRTChats;
+    private EditText editTextMessage;
+    private ListView listViewChat;
+    private ArrayList<MessageChat> chatMessagesList;
+    private ArrayList<MsgRealTime> messagesRealTimeList;
     private MessageAdapter mAdapter;
-    private boolean mFirstLoad;
+    private boolean messageFirstLoad;
     private Handler handler = new Handler ();
     private String eventObjectId;
     String current_user_id;
-    private Button btnSend;
-    private static String fbId;
+    private Button buttonSend;
+    private static String faceBookUserId;
     Button eventName;
     ImageView eventImage;
     EventInfo eventInfo;
@@ -50,7 +50,7 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
         setContentView (R.layout.activity_real_time_cahts);
         eventImage = (ImageView) findViewById (R.id.profileImage_rt_chat);
         eventName = (Button) findViewById (R.id.ProfileName_rt_chat);
-        btnSend = (Button)findViewById (R.id.btSend_rt_Chat);
+        buttonSend = (Button)findViewById (R.id.btSend_rt_Chat);
 
         Intent intent = getIntent ();
         eventObjectId = intent.getStringExtra ("eventObjectId");
@@ -62,25 +62,25 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
         } else if (GlobalVariables.IS_PRODUCER) {
             current_user_id = GlobalVariables.PRODUCER_PARSE_OBJECT_ID;
         }
-        etMessage = (EditText) findViewById (R.id.etMessage_rt_Chat);
-        lvChat = (ListView) findViewById (R.id.messageListview_rt_Chat);
-        mMessageChats = new ArrayList<MessageChat> ();
-        mMessageRTChats = new ArrayList<MsgRealTime> ();
+        editTextMessage = (EditText) findViewById (R.id.etMessage_rt_Chat);
+        listViewChat = (ListView) findViewById (R.id.messageListview_rt_Chat);
+        chatMessagesList = new ArrayList<MessageChat> ();
+        messagesRealTimeList = new ArrayList<MsgRealTime> ();
         // Automatically scroll to the bottom when a data set change notification is received and only if the last item is already visible on screen. Don't scroll to the bottom otherwise.
-        lvChat.setTranscriptMode (1);
-        mFirstLoad = true;
-        mAdapter = new MessageAdapter (this, mMessageChats, true);
+        listViewChat.setTranscriptMode (1);
+        messageFirstLoad = true;
+        mAdapter = new MessageAdapter (this, chatMessagesList, true);
 
-        lvChat.setAdapter (mAdapter);
+        listViewChat.setAdapter (mAdapter);
         setupMessagePosting ();
         handler.postDelayed (runnable, 0);
     }
 
     private void setupMessagePosting() {
-        btnSend.setOnClickListener (new View.OnClickListener () {
+        buttonSend.setOnClickListener (new View.OnClickListener () {
             @Override
             public void onClick(View v) {
-                String body = etMessage.getText ().toString ();
+                String body = editTextMessage.getText ().toString ();
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences (RealTimeChatActivity.this);
                 String name = sp.getString (GlobalVariables.FB_NAME, null);
                 String pic_url = sp.getString (GlobalVariables.FB_PIC_URL, null);
@@ -104,11 +104,11 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
                 } catch (ParseException e) {
                     e.printStackTrace ();
                 }
-                etMessage.setText ("");
+                editTextMessage.setText ("");
                 getAllMessagesInMainThread ();
             }
         });
-        lvChat.setOnItemClickListener (this);
+        listViewChat.setOnItemClickListener (this);
     }
 
     private Runnable runnable = new Runnable () {
@@ -148,9 +148,9 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
     }
 
     private void getMessagesData(List<MsgRealTime> messages) {
-        mMessageChats.clear ();
-        mMessageRTChats.clear ();
-        mMessageRTChats.addAll (messages);
+        chatMessagesList.clear ();
+        messagesRealTimeList.clear ();
+        messagesRealTimeList.addAll (messages);
         for (int i = 0; i < messages.size (); i++) {
             MsgRealTime msg = messages.get (i);
             String id = msg.getUserId ();
@@ -171,13 +171,10 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
                     idStringBuilder.append ("Customer # " + id);
                 }
             }
-            mMessageChats.add (new MessageChat (
+            chatMessagesList.add (new MessageChat (
                                                        MessageChat.MSG_TYPE_TEXT,
                                                        MessageChat.MSG_STATE_SUCCESS,
                                                        idStringBuilder.toString (),
-                                                       "avatar",
-                                                       "Jerry",
-                                                       "avatar",
                                                        msg.getBody (),
                                                        isMe,
                                                        true,
@@ -185,9 +182,9 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
         }
         mAdapter.notifyDataSetChanged (); // update adapter
         // Scroll to the bottom of the eventList on initial load
-        if (mFirstLoad) {
-            lvChat.setSelection (mAdapter.getCount () - 1);
-            mFirstLoad = false;
+        if (messageFirstLoad) {
+            listViewChat.setSelection (mAdapter.getCount () - 1);
+            messageFirstLoad = false;
         }
     }
 
@@ -205,7 +202,7 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        fbId = mMessageRTChats.get (position).getFbId ();
+        faceBookUserId = messagesRealTimeList.get (position).getFbId ();
         AlertDialog.Builder builder = new AlertDialog.Builder (this);
         builder.setTitle ("Visit user facebook page");
         builder.setIcon (R.mipmap.ic_mor_information);
@@ -222,7 +219,7 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    startActivity (getOpenFacebookIntent (fbId));
+                    startActivity (getOpenFacebookIntent (faceBookUserId));
                     break;
                 case DialogInterface.BUTTON_NEGATIVE:
                     dialog.dismiss ();
