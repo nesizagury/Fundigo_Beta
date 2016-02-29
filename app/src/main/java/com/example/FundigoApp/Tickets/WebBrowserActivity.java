@@ -8,9 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.example.FundigoApp.GlobalVariables;
+import com.parse.ParseException;
+
 public class WebBrowserActivity extends AppCompatActivity {
     private String amount;
-    static int orderId;
+    private String orderId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,10 +22,23 @@ public class WebBrowserActivity extends AppCompatActivity {
         MyWebView view = new MyWebView (this);
 
         Intent i = getIntent ();
-        amount = i.getStringExtra ("eventPrice");
-        amount = amount.substring (0, amount.length () - 1);
-
-        orderId++;
+        amount = i.getStringExtra ("eventPrice").replace ("$", "");
+        String isSeats = i.getStringExtra ("isChoose");
+        if (isSeats.equals ("no")) {
+            String eventObjectId = i.getStringExtra ("eventObjectId");
+            EventsSeats eventsSeats = new EventsSeats ();
+            eventsSeats.put ("price", Integer.parseInt (amount));
+            eventsSeats.put ("eventObjectId", eventObjectId);
+            eventsSeats.setCustomerPhone (GlobalVariables.CUSTOMER_PHONE_NUM);
+            try {
+                eventsSeats.save ();
+            } catch (ParseException e) {
+                e.printStackTrace ();
+            }
+            orderId = eventsSeats.getObjectId ();
+        } else {
+            orderId = i.getStringExtra ("seatParseObjId");
+        }
 
         view.getSettings ().setJavaScriptEnabled (true);
         view.getSettings ().setDomStorageEnabled (true);
@@ -41,28 +57,6 @@ public class WebBrowserActivity extends AppCompatActivity {
                                    "var y = document.getElementsByName('amount')[0].value='" + amount + "';" +
                                    "var x = document.getElementsByName('orderid')[0].value='" + orderId + "';");
 
-                String url1 = "https://www.pelepay.co.il/pay/defaults/success.aspx";
-                if (url.length () > 46) {
-                    if (url.substring (0, 46).equals (url1)) {
-                        Intent intentQR = new Intent (WebBrowserActivity.this, GetTicketQRCodeActivity.class);
-                        Bundle b = new Bundle ();
-                        Intent intentHere = getIntent ();
-                        intentQR.putExtra ("eventName", intentHere.getStringExtra ("eventName"));
-                        intentQR.putExtra ("eventPrice", intentHere.getStringExtra ("eventPrice"));
-                        intentQR.putExtra ("phone", intentHere.getStringExtra ("phone"));
-                        intentQR.putExtras (b);
-                    } else if (url.startsWith ("https://www.pelepay.co.il/pay/defaults/fail.aspx")) {
-                        try {
-                            wait (3000);
-                            finish ();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace ();
-                        }
-                    }
-                    if (url.startsWith ("https://www.pelepay.co.il/pay/defaults/cancel.aspx")) {
-                        finish ();
-                    }
-                }
             }
         });
         setContentView (view);

@@ -14,9 +14,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ public class SelectSeatActivity extends AppCompatActivity {
     private String eventObjectId;
     private ListView seatsList;
     private String customerPhone;
+    ArrayList<EventsSeats> seatsArray = new ArrayList<> ();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,84 +38,85 @@ public class SelectSeatActivity extends AppCompatActivity {
         Intent intentHere1 = getIntent ();
         eventObjectId = intentHere1.getStringExtra ("eventObjectId");
         customerPhone = intentHere1.getStringExtra ("phone");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery ("EventsSeats").whereMatches ("eventObjectId", eventObjectId).whereDoesNotExist ("QR_Code");
+        ParseQuery<EventsSeats> query = new ParseQuery ("EventsSeats");
+        query.whereMatches ("eventObjectId", eventObjectId).whereDoesNotExist ("sold");
 
-        ArrayList<ParseObject> seatsList = new ArrayList<> ();
+        seatsArray.clear ();
         try {
-            List<ParseObject> commentList = query.find ();
-            if(commentList.size () == 0){
-                for(int i = 1; i <= 4; i++){
+            List<EventsSeats> tempSeatsList = query.find ();
+            if (tempSeatsList.size () == 0) {
+                for (int i = 1; i <= 4; i++) {
                     EventsSeats eventsSeats = new EventsSeats ();
-                    eventsSeats.put("price", 200);
-                    eventsSeats.put("eventObjectId", eventObjectId);
-                    eventsSeats.put("seatNumber", "Floor " + i);
+                    eventsSeats.put ("price", 1);
+                    eventsSeats.put ("eventObjectId", eventObjectId);
+                    eventsSeats.put ("seatNumber", "Floor " + i);
                     eventsSeats.save ();
                 }
-                for(int i = 11; i <= 27; i++){
+                for (int i = 11; i <= 27; i++) {
                     EventsSeats eventsSeats = new EventsSeats ();
-                    eventsSeats.put("price", 175);
-                    eventsSeats.put("eventObjectId", eventObjectId);
+                    eventsSeats.put ("price", 175);
+                    eventsSeats.put ("eventObjectId", eventObjectId);
                     eventsSeats.put ("seatNumber", "Orange " + i);
                     eventsSeats.save ();
                 }
-                for(int i = 101; i <= 117; i++){
+                for (int i = 101; i <= 117; i++) {
                     EventsSeats eventsSeats = new EventsSeats ();
-                    eventsSeats.put("price", 150);
-                    eventsSeats.put("eventObjectId", eventObjectId);
-                    eventsSeats.put("seatNumber", "Pink " + i);
+                    eventsSeats.put ("price", 150);
+                    eventsSeats.put ("eventObjectId", eventObjectId);
+                    eventsSeats.put ("seatNumber", "Pink " + i);
                     eventsSeats.save ();
                 }
-                for(int i = 121; i <= 136; i++){
+                for (int i = 121; i <= 136; i++) {
                     EventsSeats eventsSeats = new EventsSeats ();
-                    eventsSeats.put("price", 150);
-                    eventsSeats.put("eventObjectId", eventObjectId);
-                    eventsSeats.put("seatNumber", "Pink " + i);
+                    eventsSeats.put ("price", 150);
+                    eventsSeats.put ("eventObjectId", eventObjectId);
+                    eventsSeats.put ("seatNumber", "Pink " + i);
                     eventsSeats.save ();
                 }
-                for(int i = 201; i <= 217; i++){
+                for (int i = 201; i <= 217; i++) {
                     EventsSeats eventsSeats = new EventsSeats ();
-                    eventsSeats.put("price", 125);
-                    eventsSeats.put("eventObjectId", eventObjectId);
-                    eventsSeats.put("seatNumber", "Yellow " + i);
+                    eventsSeats.put ("price", 125);
+                    eventsSeats.put ("eventObjectId", eventObjectId);
+                    eventsSeats.put ("seatNumber", "Yellow " + i);
                     eventsSeats.save ();
                 }
-                for(int i = 221; i <= 236; i++){
+                for (int i = 221; i <= 236; i++) {
                     EventsSeats eventsSeats = new EventsSeats ();
-                    eventsSeats.put("price", 125);
-                    eventsSeats.put("eventObjectId", eventObjectId);
-                    eventsSeats.put("seatNumber", "Yellow " + i);
+                    eventsSeats.put ("price", 125);
+                    eventsSeats.put ("eventObjectId", eventObjectId);
+                    eventsSeats.put ("seatNumber", "Yellow " + i);
                     eventsSeats.save ();
                 }
-                for(int i = 207; i <= 213; i++){
+                for (int i = 207; i <= 213; i++) {
                     EventsSeats eventsSeats = new EventsSeats ();
-                    eventsSeats.put("price", 100);
-                    eventsSeats.put("eventObjectId", eventObjectId);
-                    eventsSeats.put("seatNumber", "Green " + i);
+                    eventsSeats.put ("price", 100);
+                    eventsSeats.put ("eventObjectId", eventObjectId);
+                    eventsSeats.put ("seatNumber", "Green " + i);
                     eventsSeats.save ();
                 }
-                for(int i = 225; i <= 231; i++){
+                for (int i = 225; i <= 231; i++) {
                     EventsSeats eventsSeats = new EventsSeats ();
-                    eventsSeats.put("price", 100);
-                    eventsSeats.put("eventObjectId", eventObjectId);
-                    eventsSeats.put("seatNumber", "Green " + i);
+                    eventsSeats.put ("price", 100);
+                    eventsSeats.put ("eventObjectId", eventObjectId);
+                    eventsSeats.put ("seatNumber", "Green " + i);
                     eventsSeats.save ();
                 }
-                commentList = query.find ();
+                tempSeatsList = query.find ();
             }
-            seatsList.addAll (commentList);
+            seatsArray.addAll (tempSeatsList);
         } catch (ParseException e) {
             e.printStackTrace ();
         }
 
-        this.seatsList.setAdapter (new SelectSeatAdapter (this, seatsList));
+        seatsList.setAdapter (new SelectSeatAdapter (this, seatsArray));
     }
 
     class SelectSeatAdapter extends BaseAdapter {
         Context context;
-        ArrayList<ParseObject> seat;
+        ArrayList<EventsSeats> seat;
         ArrayList<SeatRow> seatList;
 
-        SelectSeatAdapter(Context c, ArrayList<ParseObject> seat) {
+        SelectSeatAdapter(Context c, ArrayList<EventsSeats> seat) {
             seatList = new ArrayList<SeatRow> ();
             this.seat = seat;
 
@@ -129,10 +131,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     price = seat.get (i).get ("price").toString () + "$";
                 }
                 seatList.add (new SeatRow (seat.get (i).getString ("seatNumber"), price, images, seat.get (i).getObjectId ()));
-
             }
-
-
         }
 
         @Override
@@ -152,8 +151,7 @@ public class SelectSeatActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
+        public View getView(final int position, View convertView, ViewGroup parent) {
             LayoutInflater layoutInfla = (LayoutInflater) context.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
             final View row = layoutInfla.inflate (R.layout.seat_row, parent, false);
             final TextView title = (TextView) row.findViewById (R.id.textView7);
@@ -185,9 +183,15 @@ public class SelectSeatActivity extends AppCompatActivity {
                     intentQr.putExtra ("seatNumber", temp.title);
                     intentQr.putExtra ("eventObjectId", eventObjectId);
                     intentQr.putExtra ("isChoose", "yes");
-                    intentQr.putExtra ("seatKey", temp.getSeatKey ());
+                    intentQr.putExtra ("seatParseObjId", temp.getParseObjId ());
                     intentQr.putExtra ("phone", customerPhone);
-                    intentQr.putExtra ("eventPrice",temp.description);
+                    intentQr.putExtra ("eventPrice", temp.description);
+                    seatsArray.get (position).setCustomerPhone (GlobalVariables.CUSTOMER_PHONE_NUM);
+                    try {
+                        seatsArray.get (position).save ();
+                    } catch (ParseException e) {
+                        e.printStackTrace ();
+                    }
                     startActivity (intentQr);
                 }
             });
@@ -199,17 +203,17 @@ public class SelectSeatActivity extends AppCompatActivity {
             String title;
             String description;
             int image;
-            String seatKey;
+            String seatParseObjId;
 
-            SeatRow(String title, String description, int image, String seatKey) {
+            SeatRow(String title, String description, int image, String seatParseObjId) {
                 this.title = title;
                 this.description = description;
                 this.image = image;
-                this.seatKey = seatKey;
+                this.seatParseObjId = seatParseObjId;
             }
 
-            public String getSeatKey() {
-                return seatKey;
+            public String getParseObjId() {
+                return seatParseObjId;
             }
         }
     }

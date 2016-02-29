@@ -36,7 +36,8 @@ import java.util.Date;
 
 
 public class GetTicketQRCodeActivity extends AppCompatActivity {
-    private String googleUrl = "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=";
+    public static final String googleUrl =
+            "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=";
     private Button qr_down_butt;
     private ImageView qr_image;
     private String eventObjectId = "";
@@ -85,7 +86,7 @@ public class GetTicketQRCodeActivity extends AppCompatActivity {
         });
     }
 
-    private class DownlandTask extends AsyncTask<String, Integer, String> {
+    public class DownlandTask extends AsyncTask<String, Integer, String> {
         ProgressDialog progressDialog;
         File myFile;
 
@@ -153,7 +154,7 @@ public class GetTicketQRCodeActivity extends AppCompatActivity {
             qr_image.setImageDrawable (Drawable.createFromPath (path));
             Intent myIntent = getIntent ();
             String isUserChooseSpecifSeat = myIntent.getStringExtra ("isChoose");
-            String seatKey = myIntent.getStringExtra ("seatKey");
+            String seatKey = myIntent.getStringExtra ("seatParseObjId");
             if (isUserChooseSpecifSeat != null) {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery ("EventsSeats");
                 // Retrieve the object by id
@@ -176,7 +177,7 @@ public class GetTicketQRCodeActivity extends AppCompatActivity {
                             Date myDate = new Date ();
                             updateData.put ("purchase_date", myDate);
                             updateData.saveInBackground ();
-                        } else{
+                        } else {
                             e.printStackTrace ();
                         }
                     }

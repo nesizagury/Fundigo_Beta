@@ -113,6 +113,7 @@ public class CustomerProfileUpdate extends AppCompatActivity {
         String currentUserName = customerDetails.getCustomerName ();
         if(customerName.getText ().toString ().isEmpty ()){
             customerName.setText (currentUserName);
+            customerName.setSelection (customerName.getText ().length ());
         }
         Bitmap userImage = customerDetails.getCustomerImage ();
         if(userImage != null && !IMAGE_SELECTED){

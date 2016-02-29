@@ -1,11 +1,13 @@
 package com.example.FundigoApp.Customer.CustomerMenu;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -30,16 +32,15 @@ import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 
 public class MenuActivity extends AppCompatActivity {
     LoginButton facebook_login_button;
@@ -57,6 +58,8 @@ public class MenuActivity extends AppCompatActivity {
     Context context;
     Button user_profile_update_button;
     Button user_evnets_tickets_button;
+    Button save_credit_card_button;
+    Button delete_credit_card_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +75,11 @@ public class MenuActivity extends AppCompatActivity {
         user_profile_update_button = (Button) findViewById (R.id.buttonUserProfileUpdate);
         user_evnets_tickets_button = (Button) findViewById (R.id.eventsTicketsButton);
         facebook_logout_button = (LoginButton) findViewById (R.id.logout_button11);
+        save_credit_card_button = (Button) findViewById (R.id.save_credit_card);
+        delete_credit_card_button = (Button) findViewById (R.id.delete_credit_card);
+        tableLayout = (TableLayout) findViewById (R.id.profileTable);
+        drawView = (ImageView) findViewById (R.id.profileImg);
+
         String number = GlobalVariables.CUSTOMER_PHONE_NUM;
         if (!number.equals ("GUEST")) {
             sms_login_button.setText ("You logged in as " + number);
@@ -158,45 +166,47 @@ public class MenuActivity extends AppCompatActivity {
             user_profile_button.setVisibility (View.VISIBLE);
             user_profile_update_button.setVisibility (View.VISIBLE);
             user_evnets_tickets_button.setVisibility (View.VISIBLE);
+            ParseQuery<CreditCard> query = new ParseQuery ("creditCards");
+            query.whereEqualTo ("IdCostumer", GlobalVariables.CUSTOMER_PHONE_NUM);
+            query.getFirstInBackground (new GetCallback<CreditCard> () {
+                public void done(CreditCard creditCard, ParseException e) {
+                    if (e == null) {
+                        save_credit_card_button.setVisibility (View.GONE);
+                        delete_credit_card_button.setVisibility (View.VISIBLE);
+                        String creditCardNumber = creditCard.getCreditCardNumber ();
+                        String last4Digits = creditCardNumber.substring (creditCardNumber.length () - 4, creditCardNumber.length ());
+                        delete_credit_card_button.setText ("Delete Credit Card XXXX-" + last4Digits);
+                    } else if (e.getCode () == ParseException.OBJECT_NOT_FOUND) {
+                        save_credit_card_button.setVisibility (View.VISIBLE);
+                        delete_credit_card_button.setVisibility (View.GONE);
+                    } else {
+                        e.printStackTrace ();
+                    }
+                }
+            });
         }
-        tableLayout = (TableLayout) findViewById (R.id.profileTable);
-        tableLayout.setVisibility (View.INVISIBLE);
-        drawView = (ImageView) findViewById (R.id.profileImg);
-        drawView.setVisibility (View.INVISIBLE);
+        tableLayout.setVisibility (View.GONE);
+        drawView.setVisibility (View.GONE);
     }
 
     public void getUserProfile(View view) { //get onclick event for pulling the user profile
         /// verify if not Guest and set the Button to visible done in Oncreate function
         phoneNum = GlobalVariables.CUSTOMER_PHONE_NUM;
-        CustomerDetails customerDetails = StaticMethods.getUserDetailsFromParseInMainThread(phoneNum);
+        CustomerDetails customerDetails = StaticMethods.getUserDetailsFromParseInMainThread (phoneNum);
         currentUserName = customerDetails.getCustomerName ();
         userImage = customerDetails.getCustomerImage ();
         userProfileDisplay ();
     }
 
     public void userProfileDisplay() {
-        tableLayout = (TableLayout) findViewById (R.id.profileTable);
         tableLayout.setVisibility (View.VISIBLE);
         TextView uRaw = (TextView) findViewById (R.id.userRow);
         TextView pRaw = (TextView) findViewById (R.id.phoneRow);
         uRaw.setText (currentUserName);
         pRaw.setText (phoneNum);
         if (userImage != null) {// for present User Picture
-            drawView = (ImageView) findViewById (R.id.profileImg);
             drawView.setVisibility (View.VISIBLE);
             drawView.setImageBitmap (userImage);
-        }
-    }
-
-    public void sendPush(View v) {
-        SimpleDateFormat sdf = new SimpleDateFormat ("dd/MM/yyyy_HH:mm:ss");
-        String currentDateandTime = sdf.format (new Date ());
-        ParsePush push = new ParsePush ();
-        push.setMessage ("Hey Come To See Events Near You (" + currentDateandTime + ")");
-        try {
-            push.send ();
-        } catch (ParseException e) {
-            e.printStackTrace ();
         }
     }
 
@@ -252,12 +262,52 @@ public class MenuActivity extends AppCompatActivity {
         }
     }
 
-    public void EventsTicketsDisplay(View v) {
+    public void EventsTicketsDisplay(View v) { //Assaf: open tickets for Registered user. for Guest present a Dialog box
+        if (!GlobalVariables.CUSTOMER_PHONE_NUM.equals ("GUEST")) {
+            try {
+                Intent I = new Intent (this, MyEventsTicketsActivity.class);
+                startActivity (I);
+            } catch (Exception e) {
+                e.printStackTrace ();
+            }
+        } else {
+            //show dialog in case  Guest want to see Tickets page. Tickets not saved for Guest
+            final AlertDialog.Builder builder = new AlertDialog.Builder (this);
+            builder.setMessage ("In Order To Save And View Tickets that Purchased You Have To Pass Registration First")
+                    .setCancelable (true)
+                    .setNeutralButton ("Register by SMS", new DialogInterface.OnClickListener () {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent smsRegister = new Intent (MenuActivity.this, SmsSignUpActivity.class);
+                            startActivity (smsRegister);
+                        }
+                    });
+
+            builder.setPositiveButton ("Cancel", new DialogInterface.OnClickListener () {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.cancel ();
+                }
+            });
+            AlertDialog smsAlert = builder.create ();
+            smsAlert.show ();
+        }
+    }
+
+    public void saveCreditCard(View v) {
+        Intent intent = new Intent (this, SaveCreditCard.class);
+        startActivity (intent);
+    }
+
+    public void deleteCreditCard(View v) {
+        ParseQuery<CreditCard> query = new ParseQuery ("creditCards");
+        query.whereEqualTo ("IdCostumer", GlobalVariables.CUSTOMER_PHONE_NUM);
+        CreditCard creditCard;
         try {
-            Intent I = new Intent (this, MyEventsTicketsActivity.class);
-            startActivity (I);
-        } catch (Exception e) {
-            Log.e (e.toString (), "error in events tickets flow");
+            creditCard = query.getFirst ();
+            creditCard.delete ();
+            save_credit_card_button.setVisibility (View.VISIBLE);
+            delete_credit_card_button.setVisibility (View.GONE);
+        } catch (ParseException e) {
+            e.printStackTrace ();
         }
     }
 }

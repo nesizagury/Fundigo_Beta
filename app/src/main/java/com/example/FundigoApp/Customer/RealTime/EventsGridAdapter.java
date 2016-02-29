@@ -2,7 +2,6 @@ package com.example.FundigoApp.Customer.RealTime;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,8 +32,6 @@ public class EventsGridAdapter extends BaseAdapter {
     List<EventInfo> eventList = new ArrayList<EventInfo> ();
     Context context;
     private ImageView iv_share;
-    static final int REQUEST_CODE_MY_PICK = 1;
-    Uri uri;
 
     public EventsGridAdapter(Context c, List<EventInfo> eventList) {
         this.context = c;
@@ -76,7 +73,7 @@ public class EventsGridAdapter extends BaseAdapter {
         eventGridHolder.name.setText (event.getName ());
         eventGridHolder.tags.setText (event.getTags ());
         eventGridHolder.price.setText (event.getPrice ());
-        eventGridHolder.place.setText (event.getDist () + " km away" );
+        eventGridHolder.place.setText (event.getDist () + " km away");
         checkIfChangeColorToSaveButtton (event, eventGridHolder.saveEvent);
         eventGridHolder.saveEvent.setOnClickListener (new View.OnClickListener () {
             @Override
@@ -144,7 +141,7 @@ public class EventsGridAdapter extends BaseAdapter {
                         }
                     });
                 }
-                if(GlobalVariables.SAVED_ACTIVITY_RUNNING) {
+                if (GlobalVariables.SAVED_ACTIVITY_RUNNING) {
                     SavedEventActivity.getSavedEventsFromJavaList ();
                 }
             }
@@ -156,13 +153,14 @@ public class EventsGridAdapter extends BaseAdapter {
             public void onClick(View v) {
                 switch (v.getId ()) {
                     case R.id.imageView2_grid:
-                        Intent intent = new Intent(context,DeepLinkActivity.class);
-                        intent.putExtra("name",eventGridHolder.name.getText().toString());
-                        intent.putExtra("date",eventGridHolder.date.getText().toString());
-                        intent.putExtra("place", eventGridHolder.place.getText().toString());
-                        intent.putExtra("objectId", event.getParseObjectId ());
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
+                        Intent intent = new Intent (context, DeepLinkActivity.class);
+                        intent.putExtra ("name", eventGridHolder.name.getText ().toString ());
+                        intent.putExtra ("date", eventGridHolder.date.getText ().toString ());
+                        intent.putExtra ("place", eventGridHolder.place.getText ().toString ());
+                        intent.putExtra ("objectId", event.getParseObjectId ());
+                        intent.putExtra ("fbUrl", event.getFbUrl ());
+                        intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity (intent);
                         break;
                 }
             }

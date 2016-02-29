@@ -57,27 +57,35 @@
         android:src="@drawable/ic_gov"/>
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/save_credit_card"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:onClick="saveCreditCard"
+        android:text="Save Crdit Card"
         android:layout_below="@+id/faebook_profile"
-        android:layout_marginTop="7dp"
-        android:background="#00b2ff"
-        android:onClick="sendPush"
-        android:text="Send PUSH"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/delete_credit_card"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="deleteCreditCard"
+        android:text="Delete Crdit Card XXXX-"
+        android:layout_below="@+id/save_credit_card"
+        android:textSize="20sp"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/button3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/button5"
+        android:layout_below="@+id/delete_credit_card"
         android:layout_marginTop="2dp"
         android:onClick="smsLogin"
         android:text="Sms Verification"
-        android:textSize="20dp"/>
+        android:textSize="20sp"/>
 
     <Button
         android:id="@+id/buttonUserProfile"
@@ -95,7 +103,7 @@
         android:layout_height="wrap_content"
         android:text="@string/updateProfile"
         android:id="@+id/buttonUserProfileUpdate"
-        android:layout_below="@+id/buttonUserProfile"
+        android:layout_below="@+id/profileImg"
         android:textSize="20dp"
         android:onClick="updateUserProfile"
         android:visibility="gone"
@@ -117,7 +125,7 @@
         android:id="@+id/profileTable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/eventsTicketsButton"
+        android:layout_below="@id/buttonUserProfile"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:visibility="gone">
@@ -156,7 +164,7 @@
         android:layout_below="@id/profileTable"
         android:layout_centerHorizontal="true"
         android:padding="5dp"
-        />
+        android:visibility="gone"/>
 
 </RelativeLayout>
 </ScrollView>
