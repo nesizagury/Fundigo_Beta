@@ -66,7 +66,7 @@ public class EventsListAdapter extends BaseAdapter {
         }
         index = i;
         eventListHolder.image.setImageBitmap (event.imageId);
-        eventListHolder.date.setText (event.getDate ());
+        eventListHolder.date.setText (event.getDateAsString ());
         eventListHolder.name.setText (event.getName ());
         eventListHolder.tags.setText (event.getTags ());
         eventListHolder.price.setText (event.getPrice ());

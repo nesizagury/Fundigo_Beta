@@ -52,7 +52,7 @@ public class ArtistAdapter extends BaseAdapter {
 
         Artist artist = (Artist) getItem(position);
         mViewHolder.tvTitle.setText(artist.getName());
-        mViewHolder.tvDesc.setText(artist.getTicketsSold() + " - Tickets sold");
+        mViewHolder.tvDesc.setText(" - Tickets sold");
 
         return convertView;
     }

@@ -13,7 +13,6 @@ import com.example.FundigoApp.R;
 import com.example.FundigoApp.StaticMethods;
 import com.example.FundigoApp.StaticMethods.GetEventsDataCallback;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -74,14 +73,14 @@ public class ArtistStatsActivity extends Activity implements GetEventsDataCallba
         for (int i = 0; i < eventsList.size (); i++) {
             EventInfo event = eventsList.get (i);
             eventDate = null;
-            try {
-                eventDate = dateFormat.parse (event.getDate ());
-            } catch (ParseException e) {
-                e.printStackTrace ();
-            }
+//            try {
+//                //eventDate = dateFormat.parse (event.getDate ());
+//            } catch (ParseException e) {
+//                e.printStackTrace ();
+//            }
             StringBuilder sb = new StringBuilder (event.getPrice ());
             sb.deleteCharAt (sb.length () - 1);
-            int ticketsLeft = Integer.parseInt (event.getTicketsLeft ());
+            //int ticketsLeft = Integer.parseInt (event.getNumOfTickets ());
             int price = Integer.parseInt (sb.toString ());
 
             if (eventDate.before (todayDate)) {
@@ -89,12 +88,12 @@ public class ArtistStatsActivity extends Activity implements GetEventsDataCallba
                 ticketAvg += price;
             } else {
                 upcomingEvents++;
-                allTickets += Integer.parseInt (event.getTicketsLeft ());
-                ticketsValue += price * ticketsLeft;
+                //allTickets += Integer.parseInt (event.getNumOfTickets ());
+                //ticketsValue += price * ticketsLeft;
                 upcomingTicketAvg += price;
             }
-            sumIncome += Integer.parseInt (event.getIncome ());
-            sumTickets += Integer.parseInt (event.getSold ());
+            //sumIncome += Integer.parseInt (event.getIncome ());
+            //sumTickets += Integer.parseInt (event.getSold ());
         }
         sumIncomeTV.setText (sumIncome + "");
         sumTicketsTV.setText (sumTickets + "");

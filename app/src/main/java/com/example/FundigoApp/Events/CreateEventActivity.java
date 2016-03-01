@@ -177,23 +177,20 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
         if (et_tags.getText ().length () != 0) {
             if (getIntent ().getStringExtra ("create").equals ("false")) {
                 deleteRow ();
-                event.setSold (sold);
-                event.setIncome (income);
+
             } else {
-                event.setSold ("0");
-                event.setIncome ("0");
+
             }
             event.setName (et_name.getText ().toString ());
             event.setDescription (et_description.getText ().toString ());
             event.setPrice (et_price.getText ().toString ());
-            event.setNumOfTicketsLeft (et_quantity.getText ().toString ());
             event.setAddress (valid_address);
             event.setCity (city);
             event.setX (lat);
             event.setY (lng);
             event.setTags (et_tags.getText ().toString ());
             event.setProducerId (GlobalVariables.PRODUCER_PARSE_OBJECT_ID);
-            event.setDate (date);
+            //event.setDate (date);
             event.setPlace (et_place.getText ().toString ());
             event.setArtist (et_artist.getText ().toString ());
             event.setEventToiletService (et_toilet.getText ().toString ());
@@ -319,12 +316,12 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
             for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size (); i++) {
                 EventInfo event = GlobalVariables.ALL_EVENTS_DATA.get (i);
                 if (event.getParseObjectId ().equals (getIntent ().getStringExtra ("eventObjectId"))) {
-                    income = event.getIncome ();
-                    sold = event.getSold ();
+                    //income = event.getIncome ();
+                    //sold = event.getSold ();
                     et_artist.setText (event.getArtist ());
                     et_description.setText (event.getInfo ());
                     et_price.setText (event.getPrice ());
-                    et_quantity.setText (event.getTicketsLeft ());
+                    et_quantity.setText (event.getNumOfTickets ());
                     et_address.setText (event.getPlace ());
                     pic.setImageBitmap (event.getImageBitmap ());
                     et_tags.setText (event.getTags ());

@@ -69,7 +69,7 @@ public class EventsGridAdapter extends BaseAdapter {
         final EventInfo event = eventList.get (i);
 
         eventGridHolder.image.setImageBitmap (event.getImageBitmap ());
-        eventGridHolder.date.setText (event.getDate ());
+        eventGridHolder.date.setText (event.getDateAsString ());
         eventGridHolder.name.setText (event.getName ());
         eventGridHolder.tags.setText (event.getTags ());
         eventGridHolder.price.setText (event.getPrice ());

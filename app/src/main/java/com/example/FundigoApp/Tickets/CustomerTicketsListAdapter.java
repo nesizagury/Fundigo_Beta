@@ -35,7 +35,7 @@ public class CustomerTicketsListAdapter extends ArrayAdapter<EventsSeatsInfo> {
 
                 String priceString = String.valueOf (eventsSeatsInfo.getPrice ());
                 eventName.setText (eventsSeatsInfo.getEventInfo ().getName ());
-                eventDate.setText (eventsSeatsInfo.getEventInfo ().getDate ());
+                eventDate.setText (eventsSeatsInfo.getEventInfo ().getDateAsString ());
                 price.setText (priceString);
                 listViewButton.setTag (position);
 

@@ -1,20 +1,20 @@
 package com.example.FundigoApp.Events;
 
 import android.graphics.Bitmap;
-import android.os.Parcel;
-import android.os.Parcelable;
 
-import java.io.Serializable;
+import java.util.Date;
 
-public class EventInfo implements Serializable, Parcelable {
+public class EventInfo {
 
     Bitmap imageId;
-    String date;
+    Date date;
+    String dateAsString;
     String name;
     String tags;
     String price;
     String info;
     String place;
+    String address;
     String city;
     String toilet;
     String parking;
@@ -28,81 +28,63 @@ public class EventInfo implements Serializable, Parcelable {
     double x;
     double y;
     String artist;
-    String sold;
-    String income;
-    String TicketsLeft;
+    int NumOfTickets;
     String parseObjectId;
     boolean isFutureEvent;
     String fbUrl;
+    boolean isStadium;
 
     public EventInfo(Bitmap imageId,
-                     String date,
+                     Date date,
+                     String dateAsString,
                      String name,
                      String tags,
                      String price,
                      String info,
                      String place,
+                     String address,
+                     String city,
                      String toilet,
                      String parking,
                      String capacity,
                      String atm,
-                     String city,
+                     String filterName,
+                     boolean isSaved,
+                     String producerId,
                      int indexInFullList,
+                     double x,
+                     double y,
+                     String artist,
+                     int numOfTickets,
+                     String parseObjectId,
                      String fbUrl,
-                     String filterName) {
+                     boolean isStadium) {
         this.imageId = imageId;
         this.date = date;
+        this.dateAsString = dateAsString;
         this.name = name;
         this.tags = tags;
         this.price = price;
         this.info = info;
         this.place = place;
+        this.address = address;
+        this.city = city;
         this.toilet = toilet;
         this.parking = parking;
         this.capacity = capacity;
         this.atm = atm;
-        this.city = city;
-        this.indexInFullList = indexInFullList;
         this.filterName = filterName;
+        this.isSaved = isSaved;
+        this.producerId = producerId;
+        this.indexInFullList = indexInFullList;
+        this.x = x;
+        this.y = y;
+        this.artist = artist;
+        NumOfTickets = numOfTickets;
+        this.parseObjectId = parseObjectId;
         this.fbUrl = fbUrl;
+        this.isStadium = isStadium;
     }
-
-    public EventInfo(Parcel in) {
-        String[] data = new String[11];
-        in.readStringArray (data);
-        this.date = data[0];
-        this.name = data[1];
-        this.tags = data[2];
-        this.price = data[3];
-        this.info = data[4];
-        this.place = data[5];
-        this.toilet = data[6];
-        this.parking = data[7];
-        this.capacity = data[8];
-        this.atm = data[9];
-        this.filterName = data[10];
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray (new String[]{
-                                                   this.date, this.name, this.tags, this.price, this.info, this.place,
-                                                   this.toilet, this.parking, this.capacity, this.atm, this.filterName});
-    }
-
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator () {
-        public EventInfo createFromParcel(Parcel in) {
-            return new EventInfo (in);
-        }
-        public EventInfo[] newArray(int size) {
-            return new EventInfo[size];
-        }
-    };
 
     public Bitmap getImageBitmap() {
         return imageId;
@@ -112,11 +94,11 @@ public class EventInfo implements Serializable, Parcelable {
         this.imageId = imageId;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -232,28 +214,12 @@ public class EventInfo implements Serializable, Parcelable {
         this.artist = artist;
     }
 
-    public String getSold() {
-        return sold;
+    public int getNumOfTickets() {
+        return NumOfTickets;
     }
 
-    public void setSold(String sold) {
-        this.sold = sold;
-    }
-
-    public String getIncome() {
-        return income;
-    }
-
-    public void setIncome(String income) {
-        this.income = income;
-    }
-
-    public String getTicketsLeft() {
-        return TicketsLeft;
-    }
-
-    public void setTicketsLeft(String ticketsLeft) {
-        TicketsLeft = ticketsLeft;
+    public void setNumOfTickets(int numOfTickets) {
+        NumOfTickets = numOfTickets;
     }
 
     public double getDist() {
@@ -296,8 +262,32 @@ public class EventInfo implements Serializable, Parcelable {
         this.isFutureEvent = isFutureEvent;
     }
 
-    public String getFbUrl () // return FB URL is Event Info
+    public String getFbUrl() // return FB URL is Event Info
     {
         return this.fbUrl;
+    }
+
+    public boolean isStadium() {
+        return isStadium;
+    }
+
+    public void setIsStadium(boolean isStadium) {
+        this.isStadium = isStadium;
+    }
+
+    public String getDateAsString() {
+        return dateAsString;
+    }
+
+    public void setDateAsString(String dateAsString) {
+        this.dateAsString = dateAsString;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

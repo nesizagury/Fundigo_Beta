@@ -44,7 +44,7 @@ public class NotificationAdapter extends BaseAdapter {
             mes = mes.substring (0, 12) + "...";
         }
         holder.message.setText (mes);
-        holder.date.setText (notificationsEventList.get(i).getDate ());
+        holder.date.setText (notificationsEventList.get(i).getDateAsString ());
         holder.eventName.setText (notificationsEventList.get(i).getName ());
         return row;
     }

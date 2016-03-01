@@ -1,20 +1,12 @@
 package com.example.FundigoApp.Events;
 
-import android.graphics.Bitmap;
-import android.location.Location;
-
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
+import java.util.Date;
+
 @ParseClassName("Event")
 public class Event extends ParseObject {
-
-    private Location loc = new Location ("");
-    private Bitmap b;
-
-    public Location getLocation() {
-        return loc;
-    }
 
     public String getName() {
         return getString ("Name");
@@ -32,12 +24,12 @@ public class Event extends ParseObject {
         put ("city", city);
     }
 
-    public String getNumOfTicketsLeft() {
-        return getString ("NumOfTicketsLeft");
+    public int getNumOfTickets() {
+        return getInt ("NumOfTickets");
     }
 
-    public void setNumOfTicketsLeft(String numOfTicketsLeft) {
-        put ("NumOfTicketsLeft", numOfTicketsLeft);
+    public void setNumOfTickets(int numOfTickets) {
+        put ("NumOfTickets", numOfTickets);
     }
 
     public String getPrice() {
@@ -96,20 +88,20 @@ public class Event extends ParseObject {
         put ("producerId", producerId);
     }
 
-    public String getDate() {
-        return getString ("date");
+    public Date getRealDate() {
+        return getDate ("realDate");
     }
 
-    public void setDate(String date) {
-        put ("date", date);
+    public void setRealDate(Date date) {
+        put ("realDate", date);
+    }
+
+    public String getPlace() {
+        return getString ("place");
     }
 
     public void setPlace(String place) {
         put ("place", place);
-    }
-
-    public void setBitmap(Bitmap b) {
-        this.b = b;
     }
 
     public String getEventToiletService() {
@@ -160,35 +152,15 @@ public class Event extends ParseObject {
         put ("artist", artist);
     }
 
-    public String getIncome() {
-        return getString ("income");
+    public String getFbUrl() { //link saved in Parse for link to Even FB page
+        return getString ("FaceBookUrl");
     }
 
-    public void setIncome(String income) {
-        put ("income", income);
+    public void setIsStadium(boolean IsStadium) {
+        put ("isStadium", IsStadium);
     }
 
-    public String getSold() {
-        return getString ("sold");
-    }
-
-    public void setSold(String sold) {
-        put ("sold", sold);
-    }
-
-
-    public Bitmap getBitmap() {
-        return this.b;
-    }
-
-    @Override
-    public String toString() {
-        return getString ("Name") + "\n" +
-                       getString ("Price") + "$" + "\n" +
-                       getString ("NumOfTicketsLeft");
-    }
-
-    public String getFbUrl () { // Assaf added. link saved in Parse for link to Even FB page
-        return getString("FaceBookUrl");
+    public boolean getIsStadium() { //link saved in Parse for link to Even FB page
+        return getBoolean ("isStadium");
     }
 }

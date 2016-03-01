@@ -3,6 +3,7 @@ package com.example.FundigoApp.Tickets;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
@@ -20,14 +22,20 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.MINUTES;
+
 public class SelectSeatActivity extends AppCompatActivity {
+    long MAX_DURATION_TO_SAVE_TICKET = MILLISECONDS.convert (20, MINUTES);
 
     private String eventObjectId;
     private ListView seatsList;
     private String customerPhone;
     ArrayList<EventsSeats> seatsArray = new ArrayList<> ();
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +43,13 @@ public class SelectSeatActivity extends AppCompatActivity {
         setContentView (R.layout.activity_select_seat);
         seatsList = (ListView) findViewById (R.id.listView2);
 
+        context = this;
+
         Intent intentHere1 = getIntent ();
         eventObjectId = intentHere1.getStringExtra ("eventObjectId");
         customerPhone = intentHere1.getStringExtra ("phone");
         ParseQuery<EventsSeats> query = new ParseQuery ("EventsSeats");
-        query.whereMatches ("eventObjectId", eventObjectId).whereDoesNotExist ("sold");
+        query.whereMatches ("eventObjectId", eventObjectId).whereDoesNotExist ("Sold");
 
         seatsArray.clear ();
         try {
@@ -103,7 +113,19 @@ public class SelectSeatActivity extends AppCompatActivity {
                 }
                 tempSeatsList = query.find ();
             }
-            seatsArray.addAll (tempSeatsList);
+            for (EventsSeats eventsSeat : tempSeatsList) {
+                if (eventsSeat.getCustomerPhone () != null) {
+                    Date currentDate = new Date ();
+                    long duration = currentDate.getTime () - eventsSeat.getUpdatedAt ().getTime ();
+                    if (duration >= MAX_DURATION_TO_SAVE_TICKET) {
+                        eventsSeat.setCustomerPhone (null);
+                        eventsSeat.saveInBackground ();
+                        seatsArray.add (eventsSeat);
+                    }
+                } else {
+                    seatsArray.add (eventsSeat);
+                }
+            }
         } catch (ParseException e) {
             e.printStackTrace ();
         }
@@ -179,6 +201,17 @@ public class SelectSeatActivity extends AppCompatActivity {
             buyTicket.setOnClickListener (new View.OnClickListener () {
                 @Override
                 public void onClick(View v) {
+                    Handler handler = new Handler ();
+                    handler.postDelayed (new Runnable () {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < 5; i++) {
+                                Toast.makeText (getApplicationContext (),
+                                                       "You Have 20 Minutes to complete the purchase, Otherwise the ticket will be available to all again",
+                                                       Toast.LENGTH_SHORT).show ();
+                            }
+                        }
+                    }, 0);
                     Intent intentQr = new Intent (SelectSeatActivity.this, WebBrowserActivity.class);
                     intentQr.putExtra ("seatNumber", temp.title);
                     intentQr.putExtra ("eventObjectId", eventObjectId);

@@ -33,12 +33,9 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class MyEventsTicketsActivity extends AppCompatActivity {
     static List<EventInfo> my_tickets_events_list = new ArrayList<EventInfo> ();
@@ -102,8 +99,7 @@ public class MyEventsTicketsActivity extends AppCompatActivity {
                     }
                     EventInfo eventInfo = StaticMethods.getEventFromObjID (eventsSeats.getString ("eventObjectId"), GlobalVariables.ALL_EVENTS_DATA);
                     Date current_date = new Date ();
-                    DateFormat format = new SimpleDateFormat ("dd.MM.yy", Locale.getDefault ());
-                    Date event_date = format.parse (eventInfo.getDate ());
+                    Date event_date = eventInfo.getDate ();
                     eventInfo.setIsFutureEvent (event_date.after (current_date));
                     my_tickets_events_list.add (eventInfo);
                     my_tickets_list.add (new EventsSeatsInfo (eventsSeats.getSeatNumber (),

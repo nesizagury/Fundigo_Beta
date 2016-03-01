@@ -30,12 +30,12 @@ public class EventStatusActivity extends Activity {
         for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size (); i++) {
             EventInfo event = GlobalVariables.ALL_EVENTS_DATA.get (i);
             if (event.getParseObjectId ().equals (getIntent ().getStringExtra ("eventObjectId"))) {
-                soldTV.setText ("Tickets Sold: " + event.getSold ());
-                leftTV.setText ("Tickets Left: " + event.getTicketsLeft ());
-                incomeTV.setText ("Sum Income: " + event.getIncome ());
+                //soldTV.setText ("Tickets Sold: " + event.getSold ());
+                leftTV.setText ("Tickets Left: " + event.getNumOfTickets ());
+                //incomeTV.setText ("Sum Income: " + event.getIncome ());
                 StringBuilder sb = new StringBuilder (event.getPrice ());
                 sb.deleteCharAt (sb.length () - 1);
-                int ticketsLeft = Integer.parseInt (event.getTicketsLeft ());
+                int ticketsLeft = 5;
                 int price = Integer.parseInt (sb.toString ());
                 futureTV.setText ("Future Income: " + (price * ticketsLeft));
                 break;

@@ -41,10 +41,26 @@ public class EventServiceActivity extends Activity {
         String atm = myintent.getStringExtra ("atm");
         String driving = myintent.getStringExtra ("driving");
         String walking = myintent.getStringExtra ("walking");
+        String artist = myintent.getStringExtra ("artist");
         int walkValue = myintent.getIntExtra ("walkValue", -1);
 
+        String walkValueToSend;
+        if (walkValue == -1 || walkValue / 3600 > 1) {
+            walkValueToSend = null;
+        } else {
+            walkValueToSend = Integer.toString (walkValue);
+        }
+
         event_service_listView = (ListView) findViewById (R.id.event_service_listView);
-        event_service_listView.setAdapter (new CostumeAdapter (this, driving, walking, toilet, parking, capacity, atm, walkValue));
+        event_service_listView.setAdapter (new CostumeAdapter (this,
+                                                                      driving,
+                                                                      walking,
+                                                                      toilet,
+                                                                      parking,
+                                                                      capacity,
+                                                                      atm,
+                                                                      walkValueToSend,
+                                                                      artist));
     }
 }
 
@@ -58,27 +74,39 @@ class SignelRow {
         this.description = description;
         this.image = image;
     }
-    
 }
 
 class CostumeAdapter extends BaseAdapter {
-    Context c;
     String driving;
     String walking;
     String toilet;
     String parking;
     String capacety;
     String atm;
+    String artist;
     Context context;
-    int walkValue;
+    String walkValue;
     ArrayList<SignelRow> list;
     
-    CostumeAdapter(Context c, String driving, String walking, String toilet, String parking, String capacety, String atm, int walkValue) {
+    CostumeAdapter(Context c,
+                   String driving,
+                   String walking,
+                   String toilet,
+                   String parking,
+                   String capacety,
+                   String atm,
+                   String walkValue,
+                   String artist) {
+
         list = new ArrayList<SignelRow> ();
-        
         String[] titles = c.getResources ().getStringArray (R.array.eventServiceTitles);
-        
-        int[] images = new int[]{R.drawable.driving_ldpi, R.drawable.walking_ldpi, R.drawable.toilet_ldpi, R.drawable.parking_ldpi, R.drawable.crowd_ldpi, R.drawable.atm_icon_ldpi};
+        int[] images = new int[]{R.drawable.microphone,
+                                        R.drawable.driving_ldpi,
+                                        R.drawable.walking_ldpi,
+                                        R.drawable.toilet_ldpi,
+                                        R.drawable.parking_ldpi,
+                                        R.drawable.crowd_ldpi,
+                                        R.drawable.atm_icon_ldpi};
         this.driving = driving;
         this.walking = walking;
         this.toilet = toilet;
@@ -87,22 +115,25 @@ class CostumeAdapter extends BaseAdapter {
         this.atm = atm;
         this.context = c;
         this.walkValue = walkValue;
+        this.artist = artist;
 
-        list.add (new SignelRow (titles[0], driving, images[0]));
-        list.add (new SignelRow (titles[1], walking, images[1]));
-        list.add (new SignelRow (titles[2], toilet, images[2]));
-        list.add (new SignelRow (titles[3], parking, images[3]));
-        list.add (new SignelRow (titles[4], capacety, images[4]));
-        list.add (new SignelRow (titles[5], atm, images[5]));
-        
-        if (walkValue == -1 || walkValue / 3600 > 1) {
-            list.remove (1);
-        }
+        list.add (new SignelRow (titles[0], artist, images[0]));
+        list.add (new SignelRow (titles[1], driving, images[1]));
+        list.add (new SignelRow (titles[2], walking, images[2]));
+        list.add (new SignelRow (titles[3], toilet, images[3]));
+        list.add (new SignelRow (titles[4], parking, images[4]));
+        list.add (new SignelRow (titles[5], capacety, images[5]));
+        list.add (new SignelRow (titles[6], atm, images[6]));
+
+        ArrayList<SignelRow> tempList = new ArrayList<SignelRow> ();
         for (int i = 0; i < list.size (); i++) {
-            if (list.get (i).description == null || list.get (i).description == "" || list.get (i).description == " ") {
-                list.remove (i);
+            if (list.get (i).description != null && !list.get (i).description.isEmpty ()) {
+                tempList.add (list.get (i));
             }
         }
+
+        list.clear ();
+        list.addAll (tempList);
     }
     
     @Override

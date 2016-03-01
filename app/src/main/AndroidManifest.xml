@@ -67,8 +67,6 @@
         </activity>
         <activity android:name="com.example.FundigoApp.Events.CreateEventActivity">
         </activity>
-        <activity android:name=".Verifications.VerifyCardActivity">
-        </activity>
         <activity android:name=".Customer.CustomerMenu.SaveCreditCard"/>
         <activity android:name=".Verifications.LoginActivity">
             <intent-filter>

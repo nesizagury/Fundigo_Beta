@@ -34,6 +34,7 @@
     </string-array>
 
     <string-array name="eventServiceTitles">
+        <item>Artist</item>
         <item>Driving</item>
         <item>Walking</item>
         <item>Toilet</item>

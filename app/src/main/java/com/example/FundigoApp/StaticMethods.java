@@ -55,6 +55,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -93,30 +95,33 @@ public class StaticMethods {
                         } else {
                             bmp = null;
                         }
-                        tempEventsList.add (new EventInfo (
-                                                                  bmp,
-                                                                  eventParse.get (i).getDate (),
-                                                                  eventParse.get (i).getName (),
-                                                                  eventParse.get (i).getTags (),
-                                                                  eventParse.get (i).getPrice (),
-                                                                  eventParse.get (i).getDescription (),
-                                                                  eventParse.get (i).getAddress (),
-                                                                  eventParse.get (i).getEventToiletService (),
-                                                                  eventParse.get (i).getEventParkingService (),
-                                                                  eventParse.get (i).getEventCapacityService (),
-                                                                  eventParse.get (i).getEventATMService (),
-                                                                  eventParse.get (i).getCity (),
+                        Event event = eventParse.get (i);
+                        tempEventsList.add (new EventInfo (bmp,
+                                                                  event.getRealDate (),
+                                                                  getEventDateAsString (event.getRealDate ()),
+                                                                  event.getName (),
+                                                                  event.getTags (),
+                                                                  event.getPrice (),
+                                                                  event.getDescription (),
+                                                                  event.getPlace (),
+                                                                  event.getAddress (),
+                                                                  event.getCity (),
+                                                                  event.getEventToiletService (),
+                                                                  event.getEventParkingService (),
+                                                                  event.getEventCapacityService (),
+                                                                  event.getEventATMService (),
+                                                                  event.getFilterName (),
+                                                                  false,
+                                                                  event.getProducerId (),
                                                                   i,
-                                                                  eventParse.get (i).getFbUrl (),
-                                                                  eventParse.get (i).getFilterName ()));
-                        tempEventsList.get (i).setProducerId (eventParse.get (i).getProducerId ());
-                        tempEventsList.get (i).setX (eventParse.get (i).getX ());
-                        tempEventsList.get (i).setY (eventParse.get (i).getY ());
-                        tempEventsList.get (i).setArtist (eventParse.get (i).getArtist ());
-                        tempEventsList.get (i).setIncome (eventParse.get (i).getIncome ());
-                        tempEventsList.get (i).setSold (eventParse.get (i).getSold ());
-                        tempEventsList.get (i).setTicketsLeft (eventParse.get (i).getNumOfTicketsLeft ());
-                        tempEventsList.get (i).setParseObjectId (eventParse.get (i).getObjectId ());
+                                                                  event.getX (),
+                                                                  event.getY (),
+                                                                  event.getArtist (),
+                                                                  event.getNumOfTickets (),
+                                                                  event.getObjectId (),
+                                                                  event.getFbUrl (),
+                                                                  event.getIsStadium ()
+                        ));
                     }
                     updateSavedEvents (tempEventsList, context);
                     GlobalVariables.ALL_EVENTS_DATA.clear ();
@@ -433,10 +438,10 @@ public class StaticMethods {
             EventInfo eventInfo = GlobalVariables.ALL_EVENTS_DATA.get (i);
             if (!eventInfo.getArtist ().equals ("") && !temp_artist_list.contains (eventInfo.getArtist ())) {
                 temp_artist_list.add (eventInfo.getArtist ());
-                artist_list.add (new Artist (eventInfo.getArtist (), eventInfo.getSold ()));
+                artist_list.add (new Artist (eventInfo.getArtist ()));
             }
         }
-        artist_list.add (new Artist (GlobalVariables.All_Events, "50"));
+        artist_list.add (new Artist (GlobalVariables.All_Events));
     }
 
     public static void onEventItemClick(int positionViewItem,
@@ -464,7 +469,7 @@ public class StaticMethods {
         intent.putExtra ("index", eventsList.get (positionViewItem).getIndexInFullList ());
         intent.putExtra ("i", String.valueOf (positionViewItem));
         intent.putExtra ("artist", eventsList.get (positionViewItem).getArtist ());
-        intent.putExtra("fbUrl",eventsList.get(positionViewItem).getFbUrl());
+        intent.putExtra ("fbUrl", eventsList.get (positionViewItem).getFbUrl ());
     }
 
     public static void onActivityResult(final int requestCode, final Intent data, Activity activity) {
@@ -605,5 +610,90 @@ public class StaticMethods {
             cursor.close ();
         }
         return orientation;
+    }
+
+    private static String getEventDateAsString(Date eventDate){
+        long time = eventDate.getTime ();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
+        String dayOfWeek = null;
+        switch (calendar.get(Calendar.DAY_OF_WEEK)) {
+            case 1:
+                dayOfWeek = "SUN";
+                break;
+            case 2:
+                dayOfWeek = "MON";
+                break;
+            case 3:
+                dayOfWeek = "TUE";
+                break;
+            case 4:
+                dayOfWeek = "WED";
+                break;
+            case 5:
+                dayOfWeek = "THU";
+                break;
+            case 6:
+                dayOfWeek = "FRI";
+                break;
+            case 7:
+                dayOfWeek = "SAT";
+                break;
+        }
+        String month = null;
+        switch (calendar.get(Calendar.MONTH)) {
+            case 0:
+                month = "JAN";
+                break;
+            case 1:
+                month = "FEB";
+                break;
+            case 2:
+                month = "MAR";
+                break;
+            case 3:
+                month = "APR";
+                break;
+            case 4:
+                month = "MAY";
+                break;
+            case 5:
+                month = "JUN";
+                break;
+            case 6:
+                month = "JUL";
+                break;
+            case 7:
+                month = "AUG";
+                break;
+            case 8:
+                month = "SEP";
+                break;
+            case 9:
+                month = "OCT";
+                break;
+            case 10:
+                month = "NOV";
+                break;
+            case 11:
+                month = "DEC";
+                break;
+        }
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        String ampm = null;
+        if (calendar.get(Calendar.AM_PM) == Calendar.AM)
+            ampm = "AM";
+        else if (calendar.get(Calendar.AM_PM) == Calendar.PM)
+            ampm = "PM";
+
+        String min;
+        if (minute < 10) {
+            min = "0" + minute;
+        } else {
+            min = "" + minute;
+        }
+        return dayOfWeek + ", " + month + " " + day + ", " + hour + ":" + min + " " + ampm;
     }
 }

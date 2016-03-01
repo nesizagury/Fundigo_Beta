@@ -16,7 +16,6 @@ import com.example.FundigoApp.R;
 import com.example.FundigoApp.StaticMethods;
 import com.example.FundigoApp.StaticMethods.GetEventsDataCallback;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -73,27 +72,27 @@ public class AllEventsStats extends Fragment implements GetEventsDataCallback {
         Date todayDate = Calendar.getInstance ().getTime ();
         for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size (); i++) {
             EventInfo event = GlobalVariables.ALL_EVENTS_DATA.get (i);
-            if (!event.getSold ().equals (""))
-                ticketsSold += Integer.parseInt (event.getSold ());
+//            if (!event.getSold ().equals (""))
+//                ticketsSold += Integer.parseInt (event.getSold ());
 
-            tickets += Integer.parseInt (event.getTicketsLeft ());
+            tickets += Integer.parseInt ("4");
 
-            if (!event.getIncome ().equals (""))
-                soFarIntSum += Integer.parseInt (event.getIncome ());
+//            if (!event.getIncome ().equals (""))
+//                soFarIntSum += Integer.parseInt (event.getIncome ());
 
             eventDate = null;
-            try {
-                eventDate = dateFormat.parse (event.getDate ());
-            } catch (ParseException e) {
-                e.printStackTrace ();
-            }
+//            try {
+//               // eventDate = dateFormat.parse (event.getDate ());
+//            } catch (ParseException e) {
+//                e.printStackTrace ();
+//            }
 
             if (eventDate.after (todayDate) && !event.getPrice ().contains ("-")) {
                 StringBuilder sb = new StringBuilder (event.getPrice ());
                 sb.deleteCharAt (sb.length () - 1);
-                int ticketsLeft = Integer.parseInt (event.getTicketsLeft ());
+                int ticketsLeft = 5;
                 int price = Integer.parseInt (sb.toString ());
-                ticketsForsale += Integer.parseInt (event.getTicketsLeft ());
+                ticketsForsale += Integer.parseInt ("5");
                 forSaleIntValue += (price * ticketsLeft);
             }
         }
