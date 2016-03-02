@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -7,179 +10,189 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Adir Miler"
-        android:id="@+id/eventTV"
+        android:id="@+id/artistTitle"
         android:textSize="28sp"
         android:visibility="visible"
         android:gravity="center_horizontal"
         android:layout_marginTop="10dp" />
 
     <TextView
+        android:id="@+id/incomeSoFarTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sum Income:"
-        android:id="@+id/ticketsSoldTV"
-        android:textSize="23sp"
-        android:layout_below="@+id/eventTV"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="40dp" />
+        android:layout_marginTop="40dp"
+        android:text="Income so far"
+        android:textSize="23sp"/>
 
     <TextView
+        android:id="@+id/incomeSoFar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
         android:text="0"
-        android:id="@+id/sumIncomeTv"
         android:textSize="23sp"
-        android:layout_marginLeft="10dp"
-        android:layout_alignTop="@+id/ticketsSoldTV"
-        android:layout_toEndOf="@+id/ticketsSoldTV" />
+        android:textColor="#000000"
+        android:layout_below="@+id/artistTitle"
+        android:layout_toEndOf="@+id/upcomingTicketPriceAvgTv"/>
 
     <TextView
+        android:id="@+id/numberTicketsSoldTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sum Tickets:"
-        android:id="@+id/ticketsLeftTV"
-        android:textSize="23sp"
-        android:layout_marginLeft="10dp"
-        android:layout_below="@+id/ticketsSoldTV"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Past Events:"
-        android:id="@+id/textView11"
-        android:textSize="23sp"
+        android:layout_below="@+id/incomeSoFarTV"
         android:layout_marginLeft="10dp"
-        android:layout_below="@+id/ticketsLeftTV"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:text="Number Tickets Sold"
+        android:textSize="23sp"/>
 
     <TextView
+        android:id="@+id/numberOfPastEventsTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upcoming Events:"
-        android:id="@+id/textView12"
-        android:textSize="23sp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/numberTicketsSoldTV"
         android:layout_marginLeft="10dp"
-        android:layout_below="@+id/textView11"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:text="Number Of Past Events"
+        android:textSize="23sp"/>
 
     <TextView
+        android:id="@+id/soldTicketPriceAvgTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="all Tickets:"
-        android:id="@+id/textView13"
-        android:textSize="23sp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/numberOfPastEventsTV"
         android:layout_marginLeft="10dp"
-        android:layout_below="@+id/textView12"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:text="Sold Ticket Price avg"
+        android:textSize="23sp"/>
 
     <TextView
+        android:id="@+id/incomeUpcomingTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="All Tickets Value:"
-        android:id="@+id/textView14"
-        android:textSize="23sp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/soldTicketPriceAvgTV"
         android:layout_marginLeft="10dp"
-        android:layout_below="@+id/textView13"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:text="Total Tickets \nPotantial Income"
+        android:textSize="23sp"/>
 
     <TextView
+        android:id="@+id/numberTicketsUpcomingTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ticket Price avg: "
-        android:id="@+id/textView15"
-        android:textSize="23sp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/incomeUpcomingTV"
         android:layout_marginLeft="10dp"
-        android:layout_below="@+id/textView14"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:text="Number Of Tickets\nAvailable"
+        android:textSize="23sp"/>
 
     <TextView
+        android:id="@+id/numberOfUpcomingEventsTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upcoming Tickets Price avg:"
-        android:id="@+id/textView16"
-        android:textSize="23sp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/numberTicketsUpcomingTV"
         android:layout_marginLeft="10dp"
-        android:layout_below="@+id/textView15"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:text="Number Of\nUpcoming Events"
+        android:textSize="23sp"/>
 
     <TextView
+        android:id="@+id/upcomingTicketPriceAvgTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/numberOfUpcomingEventsTV"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:text="Upcoming Tickets\nPrice avg"
+        android:textSize="23sp"/>
+
+    <TextView
+        android:id="@+id/numberTicketsSold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
         android:text="0"
-        android:id="@+id/soldTV"
         android:textSize="23sp"
-        android:layout_marginLeft="10dp"
-        android:layout_alignTop="@+id/ticketsLeftTV"
-        android:layout_toEndOf="@+id/ticketsSoldTV" />
+        android:textColor="#000000"
+        android:layout_alignTop="@+id/numberTicketsSoldTV"
+        android:layout_toEndOf="@+id/numberOfPastEventsTV"/>
 
     <TextView
+        android:id="@+id/numberOfPastEvents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
-        android:id="@+id/pastEventsTV"
-        android:textSize="23sp"
+        android:layout_above="@+id/soldTicketPriceAvgTV"
         android:layout_marginLeft="4dp"
-        android:layout_alignTop="@+id/textView11"
-        android:layout_toEndOf="@+id/ticketsSoldTV"/>
+        android:layout_toEndOf="@+id/numberTicketsSold"
+        android:text="0"
+        android:textSize="23sp"
+        android:textColor="#000000"/>
 
     <TextView
+        android:id="@+id/soldTicketPriceAvg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
-        android:id="@+id/upcomingEventsTV"
-        android:textSize="23sp"
         android:layout_marginLeft="10dp"
-        android:layout_above="@+id/textView13"
-        android:layout_toEndOf="@+id/textView12" />
+        android:text="0"
+        android:textSize="23sp"
+        android:textColor="#000000"
+        android:layout_alignTop="@+id/soldTicketPriceAvgTV"
+        android:layout_alignStart="@+id/numberTicketsSold"/>
 
     <TextView
+        android:id="@+id/incomeUpcoming"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
-        android:id="@+id/alTicketsTV"
-        android:textSize="23sp"
         android:layout_marginLeft="10dp"
-        android:layout_alignTop="@+id/textView13"
-        android:layout_toEndOf="@+id/textView13" />
+        android:text="0"
+        android:textSize="23sp"
+        android:layout_alignBottom="@+id/incomeUpcomingTV"
+        android:layout_alignStart="@+id/numberOfUpcomingEvents"
+        android:layout_marginBottom="10dp"
+        android:textColor="#000000"/>
 
     <TextView
+        android:id="@+id/numberTicketsUpcoming"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
-        android:id="@+id/allTicketsValueTV"
-        android:textSize="23sp"
         android:layout_marginLeft="10dp"
-        android:layout_above="@+id/textView15"
-        android:layout_toEndOf="@+id/textView14" />
+        android:text="0"
+        android:textSize="23sp"
+        android:layout_alignBottom="@+id/numberTicketsUpcomingTV"
+        android:layout_toEndOf="@+id/numberOfUpcomingEvents"
+        android:layout_marginBottom="15dp"
+        android:textColor="#000000"/>
 
     <TextView
+        android:id="@+id/numberOfUpcomingEvents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
-        android:id="@+id/ticketAvgTV"
-        android:textSize="23sp"
         android:layout_marginLeft="10dp"
-        android:layout_above="@+id/textView16"
-        android:layout_centerHorizontal="true"/>
+        android:text="0"
+        android:textSize="23sp"
+        android:textColor="#000000"
+        android:layout_above="@+id/upcomingTicketPriceAvgTv"
+        android:layout_toEndOf="@+id/numberOfPastEventsTV"/>
 
     <TextView
+        android:id="@+id/upcomingTicketPriceAvg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
-        android:id="@+id/upcomingTicketAvgTV"
-        android:textSize="23sp"
         android:layout_marginLeft="10dp"
-        android:layout_alignTop="@+id/textView16"
-        android:layout_toEndOf="@+id/textView16" />
+        android:text="0"
+        android:textSize="23sp"
+        android:layout_alignTop="@+id/upcomingTicketPriceAvgTv"
+        android:layout_toStartOf="@+id/numberTicketsUpcoming"
+        android:textColor="#000000"
+        android:layout_marginTop="15dp"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -187,7 +200,8 @@
         android:text="Events"
         android:id="@+id/button6"
         android:onClick="goToEvents"
-        android:layout_below="@+id/textView16"
-        android:layout_toEndOf="@+id/ticketsSoldTV"
+        android:layout_below="@+id/upcomingTicketPriceAvgTv"
+        android:layout_toEndOf="@+id/incomeSoFarTV"
         android:layout_marginTop="30dp" />
 </RelativeLayout>
+</ScrollView>

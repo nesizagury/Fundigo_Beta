@@ -7,7 +7,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Mipo Party Real Time"
-        android:id="@+id/eventTV"
+        android:id="@+id/artistTitle"
         android:textColor="#480101"
         android:layout_marginTop="96dp"
         android:textStyle="bold"

@@ -97,11 +97,14 @@
         <activity android:name=".Customer.CustomerMenu.CustomerTicketsMoreDetailesActivity"></activity>
         <activity android:name=".SearchActivity">
         </activity>
+        <activity android:name=".Tickets.TicketsPriceActivity" />
         <activity android:name=".Customer.CustomerMenu.CustomerProfileUpdate"/>
         <activity android:name=".Customer.CustomerMenu.MyEventsTicketsActivity"></activity>
         <activity android:name=".Events.EventStatusActivity"></activity>
         <activity android:name=".Producer.Artists.ArtistEventsActivity"></activity>
         <activity android:name=".Producer.Artists.ArtistStatsActivity"></activity>
+        <activity android:name=".Events.EditEventActivity" />
+        <activity android:name=".Events.EventDetailsActivity"></activity>
         <activity
             android:name=".Events.EventServiceActivity"
             android:theme="@style/AppTheme.PopupServiceEvent"></activity>

@@ -123,4 +123,45 @@
     <string name="ticketLinkEvent"><a href="">Press the link to view the event</a></string>
     />
 
+    <string-array name="filters">
+        <item>Sports</item>
+        <item>Travel</item>
+        <item>Drink</item>
+        <item>Business</item>
+        <item>Fashion</item>
+        <item>Education</item>
+        <item>Government</item>
+        <item>Home&amp;Lifestyle</item>
+        <item>Music</item>
+    </string-array>
+
+    <string-array name="atms">
+        <item>Yes</item>
+        <item>No</item>
+        <item>Unknown</item>
+    </string-array>
+
+    <string-array name="toilets">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10 or more</item>
+    </string-array>
+
+    <string-array name="colors">
+        <item>Yellow</item>
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Pink</item>
+        <item>Orange</item>
+
+    </string-array>
+
 </resources>

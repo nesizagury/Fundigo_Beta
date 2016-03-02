@@ -2,7 +2,10 @@ package com.example.FundigoApp.Events;
 
 import android.graphics.Bitmap;
 
+import com.example.FundigoApp.Tickets.EventsSeats;
+
 import java.util.Date;
+import java.util.List;
 
 public class EventInfo {
 
@@ -33,6 +36,7 @@ public class EventInfo {
     boolean isFutureEvent;
     String fbUrl;
     boolean isStadium;
+    List<EventsSeats> eventsSeatsList;
 
     public EventInfo(Bitmap imageId,
                      Date date,
@@ -90,7 +94,7 @@ public class EventInfo {
         return imageId;
     }
 
-    public void setImageId(Bitmap imageId) {
+    public void setBitmap(Bitmap imageId) {
         this.imageId = imageId;
     }
 
@@ -130,7 +134,7 @@ public class EventInfo {
         return info;
     }
 
-    public void setInfo(String info) {
+    public void setDescription(String info) {
         this.info = info;
     }
 
@@ -289,5 +293,13 @@ public class EventInfo {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public List<EventsSeats> getEventsSeatsList() {
+        return eventsSeatsList;
+    }
+
+    public void setEventsSeatsList(List<EventsSeats> eventsSeatsList) {
+        this.eventsSeatsList = eventsSeatsList;
     }
 }

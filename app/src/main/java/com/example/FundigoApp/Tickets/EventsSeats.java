@@ -8,8 +8,8 @@ import java.util.Date;
 
 @ParseClassName("EventsSeats")
 public class EventsSeats extends ParseObject {
-    public String getPrice() {
-        return getString ("price");
+    public int getPrice() {
+        return getInt ("price");
     }
 
     public void setPrice(int price) {
@@ -66,6 +66,14 @@ public class EventsSeats extends ParseObject {
 
     public void setSoldTicketsPointer(ParseObject soldTicketsPointer) {
         put ("soldTicketsPointer", soldTicketsPointer);
+    }
+
+    public boolean getIsSold() {
+        return getBoolean ("sold");
+    }
+
+    public void setIsSold(boolean isSold) {
+        put ("sold", isSold);
     }
 }
 

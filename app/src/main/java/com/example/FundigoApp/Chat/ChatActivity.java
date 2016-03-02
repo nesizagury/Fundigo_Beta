@@ -45,6 +45,7 @@ public class ChatActivity extends Activity {
     String eventName;
     String customerPhone;
     EventInfo eventInfo;
+    Room room;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class ChatActivity extends Activity {
         customerPhone = intent.getStringExtra ("customer_phone");
 
         eventInfo = GlobalVariables.ALL_EVENTS_DATA.get (eventIndex);
+        room = getRoomObject ();
         eventName = eventInfo.getName ();
         if (GlobalVariables.IS_PRODUCER) {
             profileName.setText (customerPhone);
@@ -199,13 +201,13 @@ public class ChatActivity extends Activity {
                 }
             }
             mMessageChatsList.add (new MessageChat (
-                                                       MessageChat.MSG_TYPE_TEXT,
-                                                       MessageChat.MSG_STATE_SUCCESS,
-                                                       id,
-                                                       msg.getBody (),
-                                                       isMe,
-                                                       true,
-                                                       msg.getCreatedAt ()));
+                                                           MessageChat.MSG_TYPE_TEXT,
+                                                           MessageChat.MSG_STATE_SUCCESS,
+                                                           id,
+                                                           msg.getBody (),
+                                                           isMe,
+                                                           true,
+                                                           msg.getCreatedAt ()));
         }
         mAdapter.notifyDataSetChanged (); // update adapter
         // Scroll to the bottom of the eventList on initial load
@@ -223,37 +225,11 @@ public class ChatActivity extends Activity {
             senderType = "Producer : ";
         }
         final String senderTypeFinal = senderType;
-        ParseQuery<Room> query = ParseQuery.getQuery ("Room");
-        query.whereEqualTo ("producer_id", eventInfo.getProducerId ());
-        query.whereEqualTo ("customer_id", customerPhone);
-        query.whereEqualTo ("eventObjId", message.getEventObjectId ());
-        query.orderByDescending ("createdAt");
-        query.findInBackground (new FindCallback<Room> () {
-            public void done(List<Room> list, ParseException e) {
-                if (e == null) {
-                    if (list.size () == 0) {
-                        Room room = new Room ();
-                        ParseACL parseACL = new ParseACL ();
-                        parseACL.setPublicWriteAccess (true);
-                        parseACL.setPublicReadAccess (true);
-                        room.setACL (parseACL);
-                        saveRoomData (room, senderTypeFinal, message);
-                    } else {
-                        Room room = list.get (0);
-                        saveRoomData (room, senderTypeFinal, message);
-                    }
-                } else {
-                    e.printStackTrace ();
-                }
-            }
-        });
+        saveRoomData (room, senderTypeFinal, message);
     }
 
     private void saveRoomData(Room room, String senderTypeFinal, Message message) {
-        room.setCustomer_id (customerPhone);
-        room.setProducer_id (eventInfo.getProducerId ());
         room.setLastMessage (senderTypeFinal + message.getBody ());
-        room.setEventObjId (message.getEventObjectId ());
         room.saveInBackground ();
     }
 
@@ -281,5 +257,33 @@ public class ChatActivity extends Activity {
         } catch (Exception e) {
             return new Intent (Intent.ACTION_VIEW, Uri.parse ("https://www.facebook.com/app_scoped_user_id/" + faceBookId));
         }
+    }
+
+    private Room getRoomObject() {
+        ParseQuery<Room> query = ParseQuery.getQuery ("Room");
+        query.whereEqualTo ("producer_id", eventInfo.getProducerId ());
+        query.whereEqualTo ("customer_id", customerPhone);
+        query.whereEqualTo ("eventObjId", eventInfo.getParseObjectId ());
+        query.orderByDescending ("createdAt");
+        try {
+            List<Room> roomList = query.find ();
+            if (roomList.size () == 0) {
+                Room room = new Room ();
+                ParseACL parseACL = new ParseACL ();
+                parseACL.setPublicWriteAccess (true);
+                parseACL.setPublicReadAccess (true);
+                room.setACL (parseACL);
+                room.setCustomer_id (customerPhone);
+                room.setProducer_id (eventInfo.getProducerId ());
+                room.setEventObjId (eventInfo.getParseObjectId ());
+                return room;
+            } else {
+                Room room = roomList.get (0);
+                return room;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace ();
+        }
+        return null;
     }
 }

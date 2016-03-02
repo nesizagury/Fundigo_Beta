@@ -421,8 +421,8 @@ public class StaticMethods {
     public static void filterEventsByArtist(String artistName, List<EventInfo> eventsListFiltered) {
         eventsListFiltered.clear ();
         for (EventInfo eventInfo : GlobalVariables.ALL_EVENTS_DATA) {
-            if (artistName == null || artistName.isEmpty ()) {
-                if (artistName == null) {
+            if (eventInfo.getArtist () == null || eventInfo.getArtist ().isEmpty ()) {
+                if (artistName.equals (GlobalVariables.No_Artist_Events)) {
                     eventsListFiltered.add (eventInfo);
                 }
             } else if (eventInfo.getArtist ().equals (artistName)) {
@@ -436,12 +436,14 @@ public class StaticMethods {
         List<String> temp_artist_list = new ArrayList<String> ();
         for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size (); i++) {
             EventInfo eventInfo = GlobalVariables.ALL_EVENTS_DATA.get (i);
-            if (!eventInfo.getArtist ().equals ("") && !temp_artist_list.contains (eventInfo.getArtist ())) {
+            if (eventInfo.getArtist () != null &&
+                        !eventInfo.getArtist ().equals ("") &&
+                        !temp_artist_list.contains (eventInfo.getArtist ())) {
                 temp_artist_list.add (eventInfo.getArtist ());
                 artist_list.add (new Artist (eventInfo.getArtist ()));
             }
         }
-        artist_list.add (new Artist (GlobalVariables.All_Events));
+        artist_list.add (new Artist (GlobalVariables.No_Artist_Events));
     }
 
     public static void onEventItemClick(int positionViewItem,
@@ -612,12 +614,12 @@ public class StaticMethods {
         return orientation;
     }
 
-    private static String getEventDateAsString(Date eventDate){
+    private static String getEventDateAsString(Date eventDate) {
         long time = eventDate.getTime ();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(time);
+        Calendar calendar = Calendar.getInstance ();
+        calendar.setTimeInMillis (time);
         String dayOfWeek = null;
-        switch (calendar.get(Calendar.DAY_OF_WEEK)) {
+        switch (calendar.get (Calendar.DAY_OF_WEEK)) {
             case 1:
                 dayOfWeek = "SUN";
                 break;
@@ -641,7 +643,7 @@ public class StaticMethods {
                 break;
         }
         String month = null;
-        switch (calendar.get(Calendar.MONTH)) {
+        switch (calendar.get (Calendar.MONTH)) {
             case 0:
                 month = "JAN";
                 break;
@@ -679,13 +681,13 @@ public class StaticMethods {
                 month = "DEC";
                 break;
         }
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
+        int day = calendar.get (Calendar.DAY_OF_MONTH);
+        int hour = calendar.get (Calendar.HOUR_OF_DAY);
+        int minute = calendar.get (Calendar.MINUTE);
         String ampm = null;
-        if (calendar.get(Calendar.AM_PM) == Calendar.AM)
+        if (calendar.get (Calendar.AM_PM) == Calendar.AM)
             ampm = "AM";
-        else if (calendar.get(Calendar.AM_PM) == Calendar.PM)
+        else if (calendar.get (Calendar.AM_PM) == Calendar.PM)
             ampm = "PM";
 
         String min;
@@ -695,5 +697,57 @@ public class StaticMethods {
             min = "" + minute;
         }
         return dayOfWeek + ", " + month + " " + day + ", " + hour + ":" + min + " " + ampm;
+    }
+
+    public static String getDisplayedEventPrice(String eventPrice) {
+        if (eventPrice.contains ("-")) {
+            String[] prices = eventPrice.split ("-");
+            return prices[0] + "₪-" + prices[1] + "₪";
+        } else if (!eventPrice.equals ("FREE")) {
+            return eventPrice + "₪";
+        } else {
+            return eventPrice;
+        }
+    }
+
+    public static void updateEventInfoDromParseEvent(EventInfo eventInfo,
+                                                     Event event){
+        eventInfo.setPrice (event.getPrice ());
+        eventInfo.setAddress (event.getAddress ());
+        eventInfo.setIsStadium (event.getIsStadium ());
+        eventInfo.setParseObjectId (event.getObjectId ());
+        Date currentDate = new Date();
+        eventInfo.setIsFutureEvent (event.getRealDate ().after (currentDate));
+        eventInfo.setArtist (event.getArtist ());
+        eventInfo.setAtm (event.getEventATMService ());
+        eventInfo.setCapacity (event.getEventCapacityService ());
+        eventInfo.setDate (event.getRealDate ());
+        eventInfo.setDateAsString (StaticMethods.getEventDateAsString (event.getRealDate ()));
+        eventInfo.setFilterName (event.getFilterName ());
+        ParseFile imageFile;
+        byte[] data = null;
+        Bitmap bmp;
+        imageFile = (ParseFile) event.get ("ImageFile");
+        if (imageFile != null) {
+            try {
+                data = imageFile.getData ();
+            } catch (ParseException e1) {
+                e1.printStackTrace ();
+            }
+            bmp = BitmapFactory.decodeByteArray (data, 0, data.length);
+        } else {
+            bmp = null;
+        }
+        eventInfo.setBitmap (bmp);
+        eventInfo.setDescription (event.getDescription ());
+        eventInfo.setName (event.getName ());
+        eventInfo.setNumOfTickets (event.getNumOfTickets ());
+        eventInfo.setPlace (event.getPlace ());
+        eventInfo.setProducerId (event.getProducerId ());
+        eventInfo.setParking (event.getEventParkingService ());
+        eventInfo.setTags (event.getTags ());
+        eventInfo.setToilet (event.getEventToiletService ());
+        eventInfo.setX (event.getX ());
+        eventInfo.setY (event.getY ());
     }
 }

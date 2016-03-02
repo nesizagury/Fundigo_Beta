@@ -24,7 +24,7 @@ public class ProducerMainActivity extends Fragment implements GetEventsDataCallb
 
     static List<Artist> artist_list = new ArrayList<Artist> ();
     ListView artistListView;
-    ArtistAdapter artistAdapter;
+    public static ArtistAdapter artistAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,5 +53,15 @@ public class ProducerMainActivity extends Fragment implements GetEventsDataCallb
     public void eventDataCallback() {
         StaticMethods.uploadArtistData (artist_list);
         artistAdapter.notifyDataSetChanged ();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume ();
+        if(GlobalVariables.refreshArtistsList){
+            GlobalVariables.refreshArtistsList = false;
+            Intent intent = new Intent (this.getActivity (), EventPageActivity.class);
+            StaticMethods.uploadEventsData (this, GlobalVariables.PRODUCER_PARSE_OBJECT_ID, this.getContext (), intent);
+        }
     }
 }

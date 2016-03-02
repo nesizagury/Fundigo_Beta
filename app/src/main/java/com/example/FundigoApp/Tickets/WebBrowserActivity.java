@@ -22,7 +22,7 @@ public class WebBrowserActivity extends AppCompatActivity {
         MyWebView view = new MyWebView (this);
 
         Intent i = getIntent ();
-        amount = i.getStringExtra ("eventPrice").replace ("$", "");
+        amount = i.getStringExtra ("eventPrice");
         String isSeats = i.getStringExtra ("isChoose");
         if (isSeats.equals ("no")) {
             String eventObjectId = i.getStringExtra ("eventObjectId");
@@ -30,6 +30,7 @@ public class WebBrowserActivity extends AppCompatActivity {
             eventsSeats.put ("price", Integer.parseInt (amount));
             eventsSeats.put ("eventObjectId", eventObjectId);
             eventsSeats.setCustomerPhone (GlobalVariables.CUSTOMER_PHONE_NUM);
+            eventsSeats.setIsSold (false);
             try {
                 eventsSeats.save ();
             } catch (ParseException e) {

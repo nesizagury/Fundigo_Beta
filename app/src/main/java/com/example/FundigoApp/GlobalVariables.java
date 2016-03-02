@@ -10,10 +10,19 @@ import java.util.HashMap;
 import java.util.List;
 
 public class GlobalVariables {
+    public static final String QR = "qr";
+    public static final String YELLOW = "yellow";
+    public static final String GREEN = "green";
+    public static final String BLUE = "blue";
+    public static final String PINK = "pink";
+    public static final String ORANGE = "orange";
+    public static final String SEATS = "seats";
+    public static final String OBJECTID = "objectId";
+
     public static final String FB_PIC_URL = "fb_pic_url";
     public static final String FB_NAME = "fb_name";
     public static final String FB_ID = "fb_id";
-    public static final String All_Events = "NoArtist Events";
+    public static final String No_Artist_Events = "NoArtist Events";
     public static final int REQUEST_CODE_MY_PICK = 1;
     public static final int SELECT_PICTURE = 1;
     public static final String GEO_API_ADDRESS = "https://maps.googleapis.com/maps/api/geocode/json?";
@@ -40,4 +49,6 @@ public class GlobalVariables {
     public static int indexCityChosen = 0;
     public static String deepLink_params = "";
     public static String deepLinkEventObjID = "";
+
+    public static boolean refreshArtistsList = false;
 }

@@ -50,7 +50,7 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
         setContentView (R.layout.activity_real_time_cahts);
         eventImage = (ImageView) findViewById (R.id.profileImage_rt_chat);
         eventName = (Button) findViewById (R.id.ProfileName_rt_chat);
-        buttonSend = (Button)findViewById (R.id.btSend_rt_Chat);
+        buttonSend = (Button) findViewById (R.id.btSend_rt_Chat);
 
         Intent intent = getIntent ();
         eventObjectId = intent.getStringExtra ("eventObjectId");
@@ -159,26 +159,26 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
             if (!GlobalVariables.IS_PRODUCER) {
                 if (id.equals (GlobalVariables.CUSTOMER_PHONE_NUM)) {
                     isMe = true;
-                } else if(id.equals (eventInfo.getProducerId ())) {
+                } else if (id.equals (eventInfo.getProducerId ())) {
                     idStringBuilder.append ("Producer # " + id);
-                } else{
+                } else {
                     idStringBuilder.append ("Customer # " + id);
                 }
             } else {
                 if (id.equals (GlobalVariables.PRODUCER_PARSE_OBJECT_ID)) {
                     isMe = true;
-                } else{
+                } else {
                     idStringBuilder.append ("Customer # " + id);
                 }
             }
             chatMessagesList.add (new MessageChat (
-                                                       MessageChat.MSG_TYPE_TEXT,
-                                                       MessageChat.MSG_STATE_SUCCESS,
-                                                       idStringBuilder.toString (),
-                                                       msg.getBody (),
-                                                       isMe,
-                                                       true,
-                                                       msg.getCreatedAt ()));
+                                                          MessageChat.MSG_TYPE_TEXT,
+                                                          MessageChat.MSG_STATE_SUCCESS,
+                                                          idStringBuilder.toString (),
+                                                          msg.getBody (),
+                                                          isMe,
+                                                          true,
+                                                          msg.getCreatedAt ()));
         }
         mAdapter.notifyDataSetChanged (); // update adapter
         // Scroll to the bottom of the eventList on initial load

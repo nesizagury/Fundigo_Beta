@@ -69,7 +69,7 @@ public class EventsListAdapter extends BaseAdapter {
         eventListHolder.date.setText (event.getDateAsString ());
         eventListHolder.name.setText (event.getName ());
         eventListHolder.tags.setText (event.getTags ());
-        eventListHolder.price.setText (event.getPrice ());
+        eventListHolder.price.setText (StaticMethods.getDisplayedEventPrice (event.getPrice ()));
         eventListHolder.place.setText (event.getPlace ());
         checkIfChangeColorToSaveButtton (event, eventListHolder.saveEvent);
         eventListHolder.saveEvent.setOnClickListener (new View.OnClickListener () {

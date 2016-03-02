@@ -35,10 +35,6 @@ import com.example.FundigoApp.Tickets.EventsSeats;
 import com.example.FundigoApp.Tickets.SelectSeatActivity;
 import com.example.FundigoApp.Tickets.WebBrowserActivity;
 import com.example.FundigoApp.Verifications.SmsSignUpActivity;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.parse.FindCallback;
@@ -83,11 +79,6 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
     Bitmap bitmap;
     EventInfo eventInfo;
     Button realTimeButton;
-    String x;
-    private GoogleApiClient mClient;
-    private Uri mUrl;
-    private String mTitle;
-    private String mDescription;
     String i = "";
     private ImageView ivQrScan;
     private String faceBookUrl;
@@ -120,8 +111,6 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
             if (!eventInfo.getPrice ().equals ("FREE")) {
                 getTicketsButton.setText ("Tickets Status");
             }
-            editEvent = (Button) findViewById (R.id.priceEventPage);
-            editEvent.setText ("Edit Event");
             realTimeButton = (Button) findViewById (R.id.realTime);
             realTimeButton.setVisibility (View.VISIBLE);
             ivQrScan.setOnClickListener (this);
@@ -134,11 +123,6 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
                 checkIfTicketsLeft ();
             }
         }
-
-        mClient = new GoogleApiClient.Builder (this).addApi (AppIndex.API).build ();
-        mUrl = Uri.parse ("http://examplepetstore.com/dogs/standard-poodle");
-        mTitle = "Standard Poodle";
-        mDescription = "The Standard Poodle stands at least 18 inches at the withers";
 
         faceBookUrl = intent.getStringExtra ("fbUrl");//get link from the Intent
         GlobalVariables.deepLinkEventObjID = "";
@@ -160,21 +144,18 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
         TextView event_tags = (TextView) findViewById (R.id.eventPage_tags);
         event_tags.setText (eventTags);
         String eventPrice = intent.getStringExtra ("eventPrice");
-        if (GlobalVariables.IS_PRODUCER) {
-            TextView event_price = (TextView) findViewById (R.id.priceEventPage);
-            event_price.setText (eventPrice);
-        }
-        ;
         TextView event_price = (TextView) findViewById (R.id.priceEventPage);
-        event_price.setText (eventPrice);
-
+        if(GlobalVariables.IS_PRODUCER){
+            event_price.setText ("Edit Event");
+        } else{
+            event_price.setText (StaticMethods.getDisplayedEventPrice (eventPrice));
+        }
         String eventDescription = intent.getStringExtra ("eventInfo");
         TextView event_info = (TextView) findViewById (R.id.eventInfoEventPage);
         event_info.setText (eventDescription);
         eventPlace = intent.getStringExtra ("eventPlace");
         TextView event_place = (TextView) findViewById (R.id.eventPage_location);
-        event_place.setText (eventPlace);
-        Bundle b = getIntent ().getExtras ();
+        event_place.setText (eventPlace + ", " + eventInfo.getAddress ());
         iv_share = (ImageView) findViewById (R.id.imageEvenetPageView2);
         iv_share.setOnClickListener (this);
         iv_chat = (ImageView) findViewById (R.id.imageEvenetPageView5);
@@ -241,7 +222,7 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
                     handler.postDelayed (new Runnable () {
                         @Override
                         public void run() {
-                            for (int i = 0; i < 5; i++) {
+                            for (int i = 0; i < 3; i++) {
                                 Toast.makeText (getApplicationContext (),
                                                        "You Have 20 Minutes to complete the purchase, Otherwise the ticket will be available to all again",
                                                        Toast.LENGTH_SHORT).show ();
@@ -523,26 +504,6 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
 
     }
 
-    public Action getAction() {
-        Thing object = new Thing.Builder ()
-                               .setName (mTitle)
-                               .setDescription (mDescription)
-                               .setUrl (mUrl)
-                               .build ();
-
-        return new Action.Builder (Action.TYPE_VIEW)
-                       .setObject (object)
-                       .setActionStatus (Action.STATUS_TYPE_COMPLETED)
-                       .build ();
-    }
-
-    @Override
-    public void onStop() {
-        AppIndex.AppIndexApi.end (mClient, getAction ());
-        mClient.disconnect ();
-        super.onStop ();
-    }
-
     public void shareDeepLink() {
         BranchUniversalObject branchUniversalObject = new BranchUniversalObject ()
                                                               .setCanonicalIdentifier ("item/1234")
@@ -607,10 +568,9 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
 
     public void editEvent(View view) {
         if (GlobalVariables.IS_PRODUCER) {
-            Intent intent = new Intent (EventPageActivity.this, CreateEventActivity.class);
-            intent.putExtra ("name", getIntent ().getStringExtra ("eventName"));
-            intent.putExtra ("create", "false");
-            startActivity (intent);
+            Intent intent = new Intent(this, EditEventActivity.class);
+            intent.putExtra(GlobalVariables.OBJECTID, eventInfo.getParseObjectId());
+            startActivity(intent);
         }
     }
 

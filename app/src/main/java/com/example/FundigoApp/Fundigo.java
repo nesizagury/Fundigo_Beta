@@ -24,7 +24,7 @@ import org.acra.annotation.ReportsCrashes;
 
 import io.branch.referral.Branch;
 
-@ReportsCrashes(formUri = "https://collector.tracepot.com/99efad05")
+@ReportsCrashes(formUri = "https://collector.tracepot.com/b30094f1")
 public class Fundigo extends Application {
     @Override
     public void onCreate() {

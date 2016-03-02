@@ -52,17 +52,15 @@ public class ArtistAdapter extends BaseAdapter {
 
         Artist artist = (Artist) getItem(position);
         mViewHolder.tvTitle.setText(artist.getName());
-        mViewHolder.tvDesc.setText(" - Tickets sold");
 
         return convertView;
     }
 
     private class MyViewHolder {
-        TextView tvTitle, tvDesc;
+        TextView tvTitle;
 
         public MyViewHolder(View item) {
             tvTitle = (TextView) item.findViewById(R.id.artistName);
-            tvDesc = (TextView) item.findViewById(R.id.artist_tickets_sold);
         }
     }
 }

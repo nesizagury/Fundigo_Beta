@@ -12,39 +12,49 @@ import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.StaticMethods;
 import com.example.FundigoApp.StaticMethods.GetEventsDataCallback;
+import com.example.FundigoApp.Tickets.EventsSeats;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
-import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class ArtistStatsActivity extends Activity implements GetEventsDataCallback {
     TextView artistTV;
     TextView sumIncomeTV;
-    TextView sumTicketsTV;
-    TextView pastEventsTV;
-    TextView upcomingEventsTV;
-    TextView allTicketsTV;
-    TextView allTicketValueTV;
-    TextView ticketAvgTV;
-    TextView upcomingTicketAvgTV;
+    TextView numOfPastEventsTV;
+    TextView numOfTicketsSoldTV;
+    TextView soldTicketsPriceAvgTv;
+    TextView sumIncomeUpcomingTV;
+    TextView numOfUpcomingEventsTV;
+    TextView numOfTicketsUpcomingTV;
+    TextView upcomingTicketsPriceAvgTv;
     List<EventInfo> eventsList = new ArrayList<EventInfo> ();
+
+    int sumIncomeSold = 0;
+    int numTicketsSold = 0;
+    int numOfPastEvents = 0;
+
+    int sumIncomeUpcoming = 0;
+    int numTicketsUpcoming = 0;
+    int numOfUpcomingEvents = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.artist_stats);
 
-        artistTV = (TextView) findViewById (R.id.eventTV);
-        sumIncomeTV = (TextView) findViewById (R.id.sumIncomeTv);
-        sumTicketsTV = (TextView) findViewById (R.id.soldTV);
-        pastEventsTV = (TextView) findViewById (R.id.pastEventsTV);
-        upcomingEventsTV = (TextView) findViewById (R.id.upcomingEventsTV);
-        allTicketsTV = (TextView) findViewById (R.id.alTicketsTV);
-        allTicketValueTV = (TextView) findViewById (R.id.allTicketsValueTV);
-        ticketAvgTV = (TextView) findViewById (R.id.ticketAvgTV);
-        upcomingTicketAvgTV = (TextView) findViewById (R.id.upcomingTicketAvgTV);
+        artistTV = (TextView) findViewById (R.id.artistTitle);
+        sumIncomeTV = (TextView) findViewById (R.id.incomeSoFar);
+        numOfTicketsSoldTV = (TextView) findViewById (R.id.numberTicketsSold);
+        numOfPastEventsTV = (TextView) findViewById (R.id.numberOfPastEvents);
+        soldTicketsPriceAvgTv = (TextView) findViewById (R.id.soldTicketPriceAvg);
+        sumIncomeUpcomingTV = (TextView) findViewById (R.id.incomeUpcoming);
+        numOfUpcomingEventsTV = (TextView) findViewById (R.id.numberOfUpcomingEvents);
+        numOfTicketsUpcomingTV = (TextView) findViewById (R.id.numberTicketsUpcoming);
+        upcomingTicketsPriceAvgTv = (TextView) findViewById (R.id.upcomingTicketPriceAvg);
 
         if (GlobalVariables.ALL_EVENTS_DATA.size () == 0) {
             Intent intent = new Intent (this, EventPageActivity.class);
@@ -55,58 +65,28 @@ public class ArtistStatsActivity extends Activity implements GetEventsDataCallba
     }
 
     private void calculateStates() {
-        int sumIncome = 0;
-        int sumTickets = 0;
-        int pastEvents = 0;
-        int upcomingEvents = 0;
-        int allTickets = 0;
-        int ticketsValue = 0;
-        int ticketAvg = 0;
-        int upcomingTicketAvg = 0;
-        Date eventDate;
-        SimpleDateFormat dateFormat = new SimpleDateFormat ("dd.MM.yy");
-        Date todayDate = Calendar.getInstance ().getTime ();
         String artistName = getIntent ().getStringExtra ("artist_name");
         artistTV.setText (artistName);
         StaticMethods.filterEventsByArtist (artistName,
                                                    eventsList);
-        for (int i = 0; i < eventsList.size (); i++) {
-            EventInfo event = eventsList.get (i);
-            eventDate = null;
-//            try {
-//                //eventDate = dateFormat.parse (event.getDate ());
-//            } catch (ParseException e) {
-//                e.printStackTrace ();
-//            }
-            StringBuilder sb = new StringBuilder (event.getPrice ());
-            sb.deleteCharAt (sb.length () - 1);
-            //int ticketsLeft = Integer.parseInt (event.getNumOfTickets ());
-            int price = Integer.parseInt (sb.toString ());
+        updateEventsSeatsLists (eventsList);
+        getCalculatedData (eventsList);
+        sumIncomeTV.setText (sumIncomeSold + "₪");
+        numOfTicketsSoldTV.setText (numTicketsSold + "");
+        numOfPastEventsTV.setText (numOfPastEvents + "");
+        double sumIncomeSoldDouble = (double) sumIncomeSold / (double) numTicketsSold;
+        DecimalFormat df = new DecimalFormat ("#.##");
+        String dx = df.format (sumIncomeSoldDouble);
+        soldTicketsPriceAvgTv.setText (dx + "₪");
 
-            if (eventDate.before (todayDate)) {
-                pastEvents++;
-                ticketAvg += price;
-            } else {
-                upcomingEvents++;
-                //allTickets += Integer.parseInt (event.getNumOfTickets ());
-                //ticketsValue += price * ticketsLeft;
-                upcomingTicketAvg += price;
-            }
-            //sumIncome += Integer.parseInt (event.getIncome ());
-            //sumTickets += Integer.parseInt (event.getSold ());
-        }
-        sumIncomeTV.setText (sumIncome + "");
-        sumTicketsTV.setText (sumTickets + "");
-        pastEventsTV.setText (pastEvents + "");
-        upcomingEventsTV.setText (upcomingEvents + "");
-        allTicketsTV.setText (allTickets + "");
-        allTicketValueTV.setText (ticketsValue + "");
-        if (pastEvents > 0) {
-            ticketAvgTV.setText ((ticketAvg / pastEvents) + "");
-        }
-        if (upcomingEvents > 0) {
-            upcomingTicketAvgTV.setText ((upcomingTicketAvg / upcomingEvents) + "");
-        }
+        sumIncomeUpcomingTV.setText (sumIncomeUpcoming + "₪");
+        numOfTicketsUpcomingTV.setText (numTicketsUpcoming + "");
+        numOfUpcomingEventsTV.setText (numOfUpcomingEvents + "");
+        double sumIncomeUpcomingDouble = (double) sumIncomeUpcoming / (double) numTicketsUpcoming;
+        DecimalFormat df2 = new DecimalFormat ("#.##");
+        String dx2 = df2.format (sumIncomeUpcomingDouble);
+        upcomingTicketsPriceAvgTv.setText (dx2 + "₪");
+
     }
 
     @Override
@@ -118,5 +98,55 @@ public class ArtistStatsActivity extends Activity implements GetEventsDataCallba
         Intent intent = new Intent (this, ArtistEventsActivity.class);
         intent.putExtra ("artist_name", getIntent ().getStringExtra ("artist_name"));
         startActivity (intent);
+    }
+
+    void updateEventsSeatsLists(List<EventInfo> eventsList) {
+        for (EventInfo eventInfo : eventsList) {
+            getListOfEventsTickets (eventInfo);
+        }
+    }
+
+    public void getListOfEventsTickets(EventInfo eventInfo) {
+        List<EventsSeats> list;
+        try {
+            ParseQuery<EventsSeats> query = ParseQuery.getQuery ("EventsSeats");
+            query.whereEqualTo ("eventObjectId", eventInfo.getParseObjectId ());
+            list = query.find ();
+            eventInfo.setEventsSeatsList (list);
+            Date currentDate = new Date ();
+            Date eventDate = eventInfo.getDate ();
+            eventInfo.setIsFutureEvent (eventDate.after (currentDate));
+        } catch (ParseException e) {
+            e.printStackTrace ();
+        } catch (Exception e) {
+            e.printStackTrace ();
+        }
+    }
+
+    void getCalculatedData(List<EventInfo> eventsList) {
+        for (EventInfo eventInfo : eventsList) {
+            int thisEventSoldTicketsNum = 0;
+            if (eventInfo.isFutureEvent ()) {
+                numOfUpcomingEvents++;
+            } else {
+                numOfPastEvents++;
+            }
+            List<EventsSeats> eventsSeatsList = eventInfo.getEventsSeatsList ();
+            for (EventsSeats eventsSeat : eventsSeatsList) {
+                if (!eventsSeat.getIsSold () && eventInfo.isStadium () && eventInfo.isFutureEvent ()) {
+                    sumIncomeUpcoming += eventsSeat.getPrice ();
+                    numTicketsUpcoming++;
+                } else if (eventsSeat.getIsSold ()) {
+                    thisEventSoldTicketsNum++;
+                    numTicketsSold++;
+                    sumIncomeSold += eventsSeat.getPrice ();
+                }
+            }
+            if (eventInfo.isFutureEvent () && !eventInfo.isStadium () && !eventInfo.getPrice ().equals ("FREE")) {
+                int thisEventNumTicketsUpcoming = eventInfo.getNumOfTickets () - thisEventSoldTicketsNum;
+                numTicketsUpcoming += thisEventNumTicketsUpcoming;
+                sumIncomeUpcoming += thisEventNumTicketsUpcoming * Integer.parseInt (eventInfo.getPrice ());
+            }
+        }
     }
 }

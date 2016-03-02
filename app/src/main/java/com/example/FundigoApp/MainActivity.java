@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         tabLayout.addTab (tabLayout.newTab ().setText ("Artists"));
         tabLayout.addTab (tabLayout.newTab ().setText ("Stats"));
         tabLayout.setTabGravity (TabLayout.GRAVITY_FILL);
-
         final ViewPager viewPager = (ViewPager) findViewById (R.id.pager);
         final TabPagerAdapter adapter = new TabPagerAdapter
                                                 (getSupportFragmentManager (), tabLayout.getTabCount ());

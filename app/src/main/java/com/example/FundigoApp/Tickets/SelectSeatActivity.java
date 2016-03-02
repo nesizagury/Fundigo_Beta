@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +59,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     eventsSeats.put ("price", 1);
                     eventsSeats.put ("eventObjectId", eventObjectId);
                     eventsSeats.put ("seatNumber", "Floor " + i);
+                    eventsSeats.setIsSold (false);
                     eventsSeats.save ();
                 }
                 for (int i = 11; i <= 27; i++) {
@@ -67,6 +67,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     eventsSeats.put ("price", 175);
                     eventsSeats.put ("eventObjectId", eventObjectId);
                     eventsSeats.put ("seatNumber", "Orange " + i);
+                    eventsSeats.setIsSold (false);
                     eventsSeats.save ();
                 }
                 for (int i = 101; i <= 117; i++) {
@@ -74,6 +75,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     eventsSeats.put ("price", 150);
                     eventsSeats.put ("eventObjectId", eventObjectId);
                     eventsSeats.put ("seatNumber", "Pink " + i);
+                    eventsSeats.setIsSold (false);
                     eventsSeats.save ();
                 }
                 for (int i = 121; i <= 136; i++) {
@@ -81,6 +83,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     eventsSeats.put ("price", 150);
                     eventsSeats.put ("eventObjectId", eventObjectId);
                     eventsSeats.put ("seatNumber", "Pink " + i);
+                    eventsSeats.setIsSold (false);
                     eventsSeats.save ();
                 }
                 for (int i = 201; i <= 217; i++) {
@@ -88,6 +91,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     eventsSeats.put ("price", 125);
                     eventsSeats.put ("eventObjectId", eventObjectId);
                     eventsSeats.put ("seatNumber", "Yellow " + i);
+                    eventsSeats.setIsSold (false);
                     eventsSeats.save ();
                 }
                 for (int i = 221; i <= 236; i++) {
@@ -95,6 +99,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     eventsSeats.put ("price", 125);
                     eventsSeats.put ("eventObjectId", eventObjectId);
                     eventsSeats.put ("seatNumber", "Yellow " + i);
+                    eventsSeats.setIsSold (false);
                     eventsSeats.save ();
                 }
                 for (int i = 207; i <= 213; i++) {
@@ -102,6 +107,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     eventsSeats.put ("price", 100);
                     eventsSeats.put ("eventObjectId", eventObjectId);
                     eventsSeats.put ("seatNumber", "Green " + i);
+                    eventsSeats.setIsSold (false);
                     eventsSeats.save ();
                 }
                 for (int i = 225; i <= 231; i++) {
@@ -109,16 +115,17 @@ public class SelectSeatActivity extends AppCompatActivity {
                     eventsSeats.put ("price", 100);
                     eventsSeats.put ("eventObjectId", eventObjectId);
                     eventsSeats.put ("seatNumber", "Green " + i);
+                    eventsSeats.setIsSold (false);
                     eventsSeats.save ();
                 }
                 tempSeatsList = query.find ();
             }
             for (EventsSeats eventsSeat : tempSeatsList) {
-                if (eventsSeat.getCustomerPhone () != null) {
+                if (eventsSeat.getCustomerPhone () != null && !eventsSeat.getCustomerPhone ().isEmpty ()) {
                     Date currentDate = new Date ();
                     long duration = currentDate.getTime () - eventsSeat.getUpdatedAt ().getTime ();
                     if (duration >= MAX_DURATION_TO_SAVE_TICKET) {
-                        eventsSeat.setCustomerPhone (null);
+                        eventsSeat.setCustomerPhone ("");
                         eventsSeat.saveInBackground ();
                         seatsArray.add (eventsSeat);
                     }
@@ -138,21 +145,17 @@ public class SelectSeatActivity extends AppCompatActivity {
         ArrayList<EventsSeats> seat;
         ArrayList<SeatRow> seatList;
 
-        SelectSeatAdapter(Context c, ArrayList<EventsSeats> seat) {
-            seatList = new ArrayList<SeatRow> ();
-            this.seat = seat;
+        SelectSeatAdapter(Context c, ArrayList<EventsSeats> seatList) {
+            this.seatList = new ArrayList<SeatRow> ();
+            this.seat = seatList;
 
             this.context = c;
             int images = R.drawable.seat_ldpi;
-            Log.d ("xxx", " SelectSeatAdapter(Context c,ArrayL...");
-            for (int i = 0; i < seat.size (); i++) {
-                String price;
-                if (seat.get (i).get ("price") == null || seat.get (i).get ("price") == "") {
-                    price = "Free";
-                } else {
-                    price = seat.get (i).get ("price").toString () + "$";
-                }
-                seatList.add (new SeatRow (seat.get (i).getString ("seatNumber"), price, images, seat.get (i).getObjectId ()));
+            for (int i = 0; i < seatList.size (); i++) {
+                this.seatList.add (new SeatRow (seatList.get (i).getString ("seatNumber"),
+                                                       seatList.get (i).getPrice (),
+                                                       images,
+                                                       seatList.get (i).getObjectId ()));
             }
         }
 
@@ -177,7 +180,7 @@ public class SelectSeatActivity extends AppCompatActivity {
             LayoutInflater layoutInfla = (LayoutInflater) context.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
             final View row = layoutInfla.inflate (R.layout.seat_row, parent, false);
             final TextView title = (TextView) row.findViewById (R.id.textView7);
-            TextView description = (TextView) row.findViewById (R.id.textView8);
+            TextView priceTicket = (TextView) row.findViewById (R.id.textView8);
             ImageView image = (ImageView) row.findViewById (R.id.imageView6);
             Button buyTicket = (Button) row.findViewById (R.id.button3);
             buyTicket.setText ("Buy Ticket");
@@ -196,7 +199,7 @@ public class SelectSeatActivity extends AppCompatActivity {
             });
             final SeatRow temp = seatList.get (position);
             title.setText (temp.title);
-            description.setText ("Price: " + temp.description);
+            priceTicket.setText ("Price: " + temp.ticketPrice + "₪");
             image.setImageResource (temp.image);
             buyTicket.setOnClickListener (new View.OnClickListener () {
                 @Override
@@ -205,7 +208,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     handler.postDelayed (new Runnable () {
                         @Override
                         public void run() {
-                            for (int i = 0; i < 5; i++) {
+                            for (int i = 0; i < 3; i++) {
                                 Toast.makeText (getApplicationContext (),
                                                        "You Have 20 Minutes to complete the purchase, Otherwise the ticket will be available to all again",
                                                        Toast.LENGTH_SHORT).show ();
@@ -218,7 +221,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     intentQr.putExtra ("isChoose", "yes");
                     intentQr.putExtra ("seatParseObjId", temp.getParseObjId ());
                     intentQr.putExtra ("phone", customerPhone);
-                    intentQr.putExtra ("eventPrice", temp.description);
+                    intentQr.putExtra ("eventPrice", Integer.toString (temp.ticketPrice));
                     seatsArray.get (position).setCustomerPhone (GlobalVariables.CUSTOMER_PHONE_NUM);
                     try {
                         seatsArray.get (position).save ();
@@ -234,13 +237,13 @@ public class SelectSeatActivity extends AppCompatActivity {
 
         class SeatRow {
             String title;
-            String description;
+            int ticketPrice;
             int image;
             String seatParseObjId;
 
-            SeatRow(String title, String description, int image, String seatParseObjId) {
+            SeatRow(String title, int ticketPrice, int image, String seatParseObjId) {
                 this.title = title;
-                this.description = description;
+                this.ticketPrice = ticketPrice;
                 this.image = image;
                 this.seatParseObjId = seatParseObjId;
             }

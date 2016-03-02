@@ -16,17 +16,4 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ytjghjghj g fgh fhyu fghjgfj"
-        android:id="@+id/artist_tickets_sold"
-        android:textSize="17sp"
-        android:textColor="#000000"
-        android:layout_marginLeft="7dp"
-        android:layout_below="@+id/artistName"
-        android:layout_alignParentEnd="false"
-        android:foregroundGravity="fill_horizontal"
-        android:gravity="fill_horizontal"/>
-
 </RelativeLayout>

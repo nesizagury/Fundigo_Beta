@@ -15,6 +15,7 @@ import com.example.FundigoApp.DeepLinkActivity;
 import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
+import com.example.FundigoApp.StaticMethods;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -72,7 +73,7 @@ public class EventsGridAdapter extends BaseAdapter {
         eventGridHolder.date.setText (event.getDateAsString ());
         eventGridHolder.name.setText (event.getName ());
         eventGridHolder.tags.setText (event.getTags ());
-        eventGridHolder.price.setText (event.getPrice ());
+        eventGridHolder.price.setText (StaticMethods.getDisplayedEventPrice (event.getPrice ()));
         eventGridHolder.place.setText (event.getDist () + " km away");
         checkIfChangeColorToSaveButtton (event, eventGridHolder.saveEvent);
         eventGridHolder.saveEvent.setOnClickListener (new View.OnClickListener () {

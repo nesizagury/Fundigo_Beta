@@ -30,7 +30,7 @@ public class EventOnRealtimeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_event_on_realtime);
-        eventNameTV = (TextView) findViewById (R.id.eventTV);
+        eventNameTV = (TextView) findViewById (R.id.artistTitle);
         enteredTV = (TextView) findViewById (R.id.sumGuestTV);
         event_name = getIntent ().getStringExtra ("eventName");
         event_date = getIntent ().getStringExtra ("eventDate");
