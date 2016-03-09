@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="Menu"
+        android:text="@string/menu"
         android:textColor="#000000"
         android:textSize="30dp"/>
 
@@ -44,7 +44,7 @@
         android:layout_below="@+id/logout_button11"
         android:freezesText="true"
         android:gravity="center"
-        android:text="no_user"
+        android:text="@string/no_user"
         android:textSize="20sp"/>
 
     <ImageView
@@ -84,7 +84,7 @@
         android:layout_below="@+id/delete_credit_card"
         android:layout_marginTop="2dp"
         android:onClick="smsLogin"
-        android:text="Sms Verification"
+        android:text="@string/sms_verification"
         android:textSize="20sp"/>
 
     <Button
@@ -135,7 +135,7 @@
             <TextView
                 android:layout_column="1"
                 android:padding="5dp"
-                android:text="User Name:"/>
+                android:text="@string/user_name"/>
 
             <TextView
                 android:id="@+id/userRow"
@@ -148,7 +148,7 @@
             <TextView
                 android:layout_column="1"
                 android:padding="5dp"
-                android:text="Phone Number:"/>
+                android:text="@string/phone_number"/>
 
             <TextView
                 android:id="@+id/phoneRow"

@@ -10,10 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.FundigoApp.Customer.Social.MipoProfile;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.MainActivity;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.StaticMethods;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -28,8 +30,6 @@ import io.branch.referral.Branch;
 import io.branch.referral.BranchError;
 
 public class LoginActivity extends Activity {
-    final static String TRIAL_GUEST_PHONE = "GUEST";
-
     Button producer_loginButton;
     String producer_username;
     String producer_password;
@@ -51,7 +51,7 @@ public class LoginActivity extends Activity {
 
         GlobalVariables.CUSTOMER_PHONE_NUM = StaticMethods.getCustomerPhoneNumFromFile (this);
         if (GlobalVariables.CUSTOMER_PHONE_NUM == null || GlobalVariables.CUSTOMER_PHONE_NUM.equals ("")) {
-            customer_loginButton.setText ("GUEST LOGIN");
+            customer_loginButton.setText (R.string.guest_login);
         }
     }
 
@@ -82,11 +82,11 @@ public class LoginActivity extends Activity {
             try {
                 ParseUser.logIn (producer_username, producer_password);
                 if (!emailVerified) {
-                    Toast.makeText (getApplicationContext (), "verify email", Toast.LENGTH_SHORT).show ();
+                    Toast.makeText (getApplicationContext (), R.string.verify_email, Toast.LENGTH_SHORT).show ();
                     ParseUser.logOut ();
                     return;
                 }
-                Toast.makeText (getApplicationContext (), "Successfully Logged in as producer", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (getApplicationContext (), R.string.successfully_logged_in_as_producer, Toast.LENGTH_SHORT).show ();
                 GlobalVariables.IS_PRODUCER = true;
                 GlobalVariables.IS_CUSTOMER_REGISTERED_USER = false;
                 GlobalVariables.IS_CUSTOMER_GUEST = false;
@@ -98,27 +98,38 @@ public class LoginActivity extends Activity {
                 finish ();
             } catch (ParseException e1) {
                 e1.printStackTrace ();
-                Toast.makeText (getApplicationContext (), "Wrong Password, try again :)", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (getApplicationContext (), R.string.wrong_password_try_again, Toast.LENGTH_SHORT).show ();
             }
         } else {
-            Toast.makeText (getApplicationContext (), "This user does not exist, try again :)", Toast.LENGTH_SHORT).show ();
+            Toast.makeText (getApplicationContext (), R.string.this_user_does_not_exist_try_again, Toast.LENGTH_SHORT).show ();
         }
     }
 
     public void customerLogin(View v) {
-        Toast.makeText (this, "Successfully Logged in as customer", Toast.LENGTH_SHORT).show ();
+        Toast.makeText (this, R.string.successfully_logged_in_as_customer, Toast.LENGTH_SHORT).show ();
         Intent intent = new Intent (this, MainActivity.class);
         if (GlobalVariables.CUSTOMER_PHONE_NUM == null || GlobalVariables.CUSTOMER_PHONE_NUM.equals ("")) {
-            //at the moment we make all guest user with a trial phone num
-            //for the presentation purpose
-            //in the future guest will not be able to send msg
-            //or save tickets etc.
-            GlobalVariables.IS_CUSTOMER_REGISTERED_USER = true;//TODO
-            GlobalVariables.IS_CUSTOMER_GUEST = false;//TODO
-            GlobalVariables.CUSTOMER_PHONE_NUM = TRIAL_GUEST_PHONE;
+            GlobalVariables.IS_CUSTOMER_REGISTERED_USER = false;
+            GlobalVariables.IS_CUSTOMER_GUEST = true;
+            GlobalVariables.CUSTOMER_PHONE_NUM = "";
         } else {
             GlobalVariables.IS_CUSTOMER_GUEST = false;
             GlobalVariables.IS_CUSTOMER_REGISTERED_USER = true;
+            ParseQuery<MipoProfile> query = ParseQuery.getQuery ("Profile");
+            query.whereEqualTo ("number", GlobalVariables.CUSTOMER_PHONE_NUM);
+            query.findInBackground (new FindCallback<MipoProfile> () {
+                @Override
+                public void done(List<MipoProfile> objects, ParseException e) {
+                    if (e == null) {
+                        if(objects.get (0).getChanels () != null){
+                            GlobalVariables.userChanels.addAll (objects.get (0).getChanels ());
+                        }
+                    } else{
+                        e.printStackTrace ();
+                    }
+                }
+
+            });
         }
         GlobalVariables.IS_PRODUCER = false;
         GlobalVariables.PRODUCER_PARSE_OBJECT_ID = null;

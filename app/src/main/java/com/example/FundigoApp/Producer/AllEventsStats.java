@@ -20,9 +20,11 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AllEventsStats extends Fragment implements GetEventsDataCallback {
     public static List<Artist> artist_list = new ArrayList<Artist> ();
@@ -81,7 +83,9 @@ public class AllEventsStats extends Fragment implements GetEventsDataCallback {
         numOfTicketsSoldTV.setText (numTicketsSold + "");
         numOfPastEventsTV.setText (numOfPastEvents + "");
         double sumIncomeSoldDouble = (double) sumIncomeSold / (double) numTicketsSold;
-        DecimalFormat df = new DecimalFormat ("#.##");
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+        DecimalFormat df = (DecimalFormat)nf;
+        df = new DecimalFormat ("#.##", df.getDecimalFormatSymbols ());
         String dx = df.format (sumIncomeSoldDouble);
         soldTicketsPriceAvgTv.setText (dx + "₪");
 
@@ -89,8 +93,7 @@ public class AllEventsStats extends Fragment implements GetEventsDataCallback {
         numOfTicketsUpcomingTV.setText (numTicketsUpcoming + "");
         numOfUpcomingEventsTV.setText (numOfUpcomingEvents + "");
         double sumIncomeUpcomingDouble = (double) sumIncomeUpcoming / (double) numTicketsUpcoming;
-        DecimalFormat df2 = new DecimalFormat ("#.##");
-        String dx2 = df2.format (sumIncomeUpcomingDouble);
+        String dx2 = df.format (sumIncomeUpcomingDouble);
         upcomingTicketsPriceAvgTv.setText (dx2 + "₪");
     }
 

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.events.MyNotification">
+    tools:context="com.example.FundigoApp.Customer.Social.MipoActivity">
 
     <LinearLayout
         android:id="@+id/toolbar_up"
@@ -12,6 +12,7 @@
         android:background="#71B7E6"
         android:orientation="horizontal"
         android:weightSum="300.0"
+
 
         >
 
@@ -46,6 +47,14 @@
 
     </LinearLayout>
 
+    <GridView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gridViewMipo"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:numColumns="3"
+        android:layout_below="@+id/toolbar_up" />
 
 
 </RelativeLayout>

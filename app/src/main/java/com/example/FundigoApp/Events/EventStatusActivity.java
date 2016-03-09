@@ -35,11 +35,16 @@ public class EventStatusActivity extends Activity implements AdapterView.OnItemC
     TextView numOfTicketsUpcomingTV;
     TextView upcomingTicketsPriceAvgTv;
 
+    TextView numberGuestsEnterTV;
+    int numberFoGust;
+    TextView enter_gusst_value;
+
+
     ListView lv_tickets;
     TextView tv_price;
     TextView tv_ticket;
     ImageView imageView;
-    private TicketAdapter adapter;
+    TicketAdapter adapter;
 
     int sumIncomeSold = 0;
     int numTicketsSold = 0;
@@ -47,14 +52,14 @@ public class EventStatusActivity extends Activity implements AdapterView.OnItemC
     int sumIncomeUpcoming = 0;
     int numTicketsUpcoming = 0;
 
-    final List<EventsSeats> list = new ArrayList<> ();
-
+    List<EventsSeats> list = new ArrayList<> ();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_event_status);
-
+        numberGuestsEnterTV = (TextView) findViewById (R.id.numberGuestsEnterTV);
+        enter_gusst_value = (TextView) findViewById (R.id.enter_gusst_value);
         eventNameTV = (TextView) findViewById (R.id.eventNameTV);
         eventNameTV.setText ("" + getIntent ().getStringExtra ("name"));
 
@@ -79,8 +84,8 @@ public class EventStatusActivity extends Activity implements AdapterView.OnItemC
         tv_price = (TextView) findViewById (R.id.ticketItem_tv_price);
         tv_ticket = (TextView) findViewById (R.id.ticketItem_tv_ticket);
         imageView = (ImageView) findViewById (R.id.iv_arena);
-        if(eventInfo.isStadium) {
-            imageView.setVisibility (View.VISIBLE);
+        if (!eventInfo.isStadium) {
+            imageView.setVisibility (View.GONE);
         }
 
         sumIncomeTV.setText (sumIncomeSold + "₪");
@@ -103,6 +108,9 @@ public class EventStatusActivity extends Activity implements AdapterView.OnItemC
         try {
             ParseQuery<EventsSeats> query = ParseQuery.getQuery ("EventsSeats");
             query.whereEqualTo ("eventObjectId", eventInfo.getParseObjectId ());
+            if(!eventInfo.isStadium){
+                query.whereEqualTo ("sold", true);
+            }
             list = query.find ();
             eventInfo.setEventsSeatsList (list);
             Date currentDate = new Date ();
@@ -116,10 +124,15 @@ public class EventStatusActivity extends Activity implements AdapterView.OnItemC
     }
 
     void getCalculatedData(EventInfo eventInfo) {
+        List<EventsSeats> soldList = new ArrayList<> ();
+        List<EventsSeats> availableList = new ArrayList<> ();
         list.clear ();
         int thisEventSoldTicketsNum = 0;
         List<EventsSeats> eventsSeatsList = eventInfo.getEventsSeatsList ();
         for (EventsSeats eventsSeat : eventsSeatsList) {
+            if (eventsSeat.getBoolean ("CustomerEnter")) {
+                numberFoGust++;
+            }
             if (!eventsSeat.getIsSold () && eventInfo.isStadium () && eventInfo.isFutureEvent ()) {
                 sumIncomeUpcoming += eventsSeat.getPrice ();
                 numTicketsUpcoming++;
@@ -128,13 +141,20 @@ public class EventStatusActivity extends Activity implements AdapterView.OnItemC
                 numTicketsSold++;
                 sumIncomeSold += eventsSeat.getPrice ();
             }
+            if (eventsSeat.getIsSold ()) {
+                soldList.add (eventsSeat);
+            } else {
+                availableList.add (eventsSeat);
+            }
         }
         if (eventInfo.isFutureEvent () && !eventInfo.isStadium () && !eventInfo.getPrice ().equals ("FREE")) {
             int thisEventNumTicketsUpcoming = eventInfo.getNumOfTickets () - thisEventSoldTicketsNum;
             numTicketsUpcoming += thisEventNumTicketsUpcoming;
             sumIncomeUpcoming += thisEventNumTicketsUpcoming * Integer.parseInt (eventInfo.getPrice ());
         }
-        list.addAll (eventsSeatsList);
+        enter_gusst_value.setText (numberFoGust + "/" + (numTicketsSold));
+        list.addAll (soldList);
+        list.addAll (availableList);
         adapter.notifyDataSetChanged ();
     }
 

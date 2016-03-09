@@ -1,7 +1,6 @@
 package com.example.FundigoApp.Customer.Social;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +31,7 @@ public class CustomerMessageConversationsListActivity extends AppCompatActivity 
     ListView listView;
     String customer_id;
     List<MessageRoomBean> listOfConversationsBeans = new ArrayList<> ();
-    ArrayList<Bitmap> eventsImageList = new ArrayList<> ();
+    ArrayList<String> eventsImageList = new ArrayList<> ();
     List<EventInfo> event_info_list = new ArrayList<EventInfo> ();
     private Handler handler = new Handler ();
     MessageRoomAdapter messageRoomAdapter;
@@ -60,11 +59,11 @@ public class CustomerMessageConversationsListActivity extends AppCompatActivity 
     @Override
     public void onClick(View v) {
         if (v.getId () == R.id.notification_MassageProducer) {
-            Intent MessageIntent = new Intent (CustomerMessageConversationsListActivity.this, MyNotificationsActivity.class);
-            startActivity (MessageIntent);
+            finish();
         } else if (v.getId () == R.id.mipo_MassageProducer) {
             Intent mipoIntent = new Intent (CustomerMessageConversationsListActivity.this, MipoActivity.class);
             startActivity (mipoIntent);
+            finish();
         }
     }
 
@@ -98,16 +97,18 @@ public class CustomerMessageConversationsListActivity extends AppCompatActivity 
 
     private void updateLists(List<Room> listOfConversationWithProducer) {
         List<MessageRoomBean> tempConversationsList = new ArrayList<> ();
-        ArrayList<Bitmap> eventImageListTemp = new ArrayList<> ();
+        ArrayList<String> eventImageListTemp = new ArrayList<> ();
         List<EventInfo> event_info_list_temp = new ArrayList<EventInfo> ();
         for (int i = 0; i < listOfConversationWithProducer.size (); i++) {
             Room room = listOfConversationWithProducer.get (i);
             EventInfo eventInfo = StaticMethods.getEventFromObjID (room.getEventObjId (), GlobalVariables.ALL_EVENTS_DATA);
-            eventImageListTemp.add (eventInfo.getImageBitmap ());
-            event_info_list_temp.add (eventInfo);
-            tempConversationsList.add (new MessageRoomBean (room.getLastMessage (),
-                                                 eventInfo.getName (),
-                                                 room.getProducer_id ()));
+            if(eventInfo != null) {
+                eventImageListTemp.add (eventInfo.getPicUrl ());
+                event_info_list_temp.add (eventInfo);
+                tempConversationsList.add (new MessageRoomBean (room.getLastMessage (),
+                                                                       eventInfo.getName (),
+                                                                       room.getProducer_id ()));
+            }
         }
         listOfConversationsBeans.clear ();
         listOfConversationsBeans.addAll (tempConversationsList);

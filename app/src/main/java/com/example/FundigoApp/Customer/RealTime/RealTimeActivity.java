@@ -10,16 +10,19 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.FundigoApp.Customer.CustomerMenu.MenuActivity;
 import com.example.FundigoApp.Customer.SavedEvents.SavedEventActivity;
+import com.example.FundigoApp.Customer.Social.MyNotificationsActivity;
 import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.Events.EventPageActivity;
 import com.example.FundigoApp.FilterPageActivity;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.MainActivity;
 import com.example.FundigoApp.R;
+import com.example.FundigoApp.SearchActivity;
 import com.example.FundigoApp.StaticMethods;
 import com.example.FundigoApp.StaticMethods.GetEventsDataCallback;
 import com.example.FundigoApp.StaticMethods.GpsICallback;
@@ -38,6 +41,7 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
     private static List<EventInfo> events_sorted_by_dist_data = new ArrayList<EventInfo> ();
     private static List<EventInfo> events_data_filtered = new ArrayList<EventInfo> ();
     EventsGridAdapter eventsGridAdapter;
+    ImageView search, notification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,10 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         Event.setOnClickListener (this);
         SavedEvent.setOnClickListener (this);
         RealTime.setOnClickListener (this);
+        notification = (ImageView) findViewById (R.id.notification_item);
+        notification.setOnClickListener (this);
+        search = (ImageView) findViewById (R.id.search);
+        search.setOnClickListener (this);
 
         RealTime.setTextColor (Color.WHITE);
         if (GlobalVariables.MY_LOCATION == null && !StaticMethods.isLocationEnabled (this)) {
@@ -93,6 +101,7 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
             events_data_filtered.addAll (tempFilteredList);
             eventsGridAdapter.notifyDataSetChanged ();
         }
+        turnOnGPS.setVisibility (View.GONE);
     }
 
     @Override
@@ -104,6 +113,7 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
             events_data_filtered.clear ();
             events_data_filtered.addAll (tempFilteredList);
             eventsGridAdapter.notifyDataSetChanged ();
+            turnOnGPS.setVisibility (View.GONE);
         } else {
             StaticMethods.updateDeviceLocationGPS (this.getApplicationContext (), this);
         }
@@ -143,10 +153,17 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         Intent newIntent = null;
         if (vId == Event.getId ()) {
             newIntent = new Intent (this, MainActivity.class);
+            startActivity (newIntent);
+            finish ();
         } else if (vId == SavedEvent.getId ()) {
             newIntent = new Intent (this, SavedEventActivity.class);
-        }
-        if (vId != RealTime.getId ()) {
+            startActivity (newIntent);
+            finish();
+        } else if (v.getId () == search.getId ()) {
+            newIntent = new Intent (this, SearchActivity.class);
+            startActivity (newIntent);
+        } else if (v.getId () == notification.getId ()) {
+            newIntent = new Intent (this, MyNotificationsActivity.class);
             startActivity (newIntent);
         }
     }

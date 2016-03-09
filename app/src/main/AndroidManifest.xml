@@ -32,6 +32,7 @@
     <application
         android:name="com.example.FundigoApp.Fundigo"
         android:allowBackup="true"
+        android:supportsRtl="true"
         android:icon="@mipmap/ic_launcher"
         android:label="Fundigo"
         android:theme="@style/AppTheme">
@@ -59,6 +60,8 @@
         <activity android:name=".Producer.ProducerSendPuchActivity"/>
         <activity android:name=".Customer.Social.CustomerMessageConversationsListActivity"/>
         <activity android:name=".Customer.Social.MipoActivity"></activity>
+        <activity android:name=".Producer.Artists.QR_producer" >
+        </activity>
         <activity android:name=".FilterPageActivity">
         </activity>
         <activity android:name=".Tickets.WebBrowserActivity">
@@ -86,8 +89,6 @@
         <activity android:name=".Customer.CustomerMenu.MenuActivity">
         </activity>
         <activity android:name=".Verifications.CreateNewProducerActivity"></activity>
-        <activity android:name=".Producer.EventOnRealtimeActivity"></activity>
-        <activity android:name=".Producer.RealTimeGuestAdditionActivity"></activity>
         <activity
             android:name=".DeepLinkActivity"
             android:theme="@android:style/Theme.Holo.Dialog">
@@ -172,8 +173,6 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAO_BADR0qgh5i6oirplDXw0wCCxCZoLe8"/>
-        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>

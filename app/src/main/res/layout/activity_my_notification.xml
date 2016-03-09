@@ -48,7 +48,8 @@ tools:context="com.example.events.MyNotification">
         android:layout_weight="100"
         android:background="#71B7E6"
         android:padding="2dp"
-        android:src="@drawable/crowd_ldpi"/>
+        android:src="@drawable/friends"
+        android:scaleType="fitCenter"/>
 
 
     <!--<Button

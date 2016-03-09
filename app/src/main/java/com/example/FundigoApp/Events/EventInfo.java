@@ -37,8 +37,9 @@ public class EventInfo {
     String fbUrl;
     boolean isStadium;
     List<EventsSeats> eventsSeatsList;
+    String picUrl;
 
-    public EventInfo(Bitmap imageId,
+    public EventInfo(String picUrl,
                      Date date,
                      String dateAsString,
                      String name,
@@ -63,7 +64,7 @@ public class EventInfo {
                      String parseObjectId,
                      String fbUrl,
                      boolean isStadium) {
-        this.imageId = imageId;
+        this.picUrl = picUrl;
         this.date = date;
         this.dateAsString = dateAsString;
         this.name = name;
@@ -88,14 +89,6 @@ public class EventInfo {
         this.parseObjectId = parseObjectId;
         this.fbUrl = fbUrl;
         this.isStadium = isStadium;
-    }
-
-    public Bitmap getImageBitmap() {
-        return imageId;
-    }
-
-    public void setBitmap(Bitmap imageId) {
-        this.imageId = imageId;
     }
 
     public Date getDate() {
@@ -302,4 +295,13 @@ public class EventInfo {
     public void setEventsSeatsList(List<EventsSeats> eventsSeatsList) {
         this.eventsSeatsList = eventsSeatsList;
     }
+
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
+    }
+
 }

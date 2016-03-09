@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -30,15 +31,19 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.FundigoApp.Customer.CustomerDetails;
-import com.example.FundigoApp.Customer.SavedEvents.SavedEventActivity;
+import com.example.FundigoApp.Customer.Social.MipoProfile;
 import com.example.FundigoApp.Events.Event;
 import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.Events.EventsListAdapter;
 import com.example.FundigoApp.MyLocation.CityMenu;
 import com.example.FundigoApp.Producer.Artists.Artist;
-import com.example.FundigoApp.Verifications.Numbers;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -46,8 +51,10 @@ import com.parse.ParseQuery;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,23 +87,9 @@ public class StaticMethods {
         query.findInBackground (new FindCallback<Event> () {
             public void done(List<Event> eventParse, ParseException e) {
                 if (e == null) {
-                    ParseFile imageFile;
-                    byte[] data = null;
-                    Bitmap bmp;
                     for (int i = 0; i < eventParse.size (); i++) {
-                        imageFile = (ParseFile) eventParse.get (i).get ("ImageFile");
-                        if (imageFile != null) {
-                            try {
-                                data = imageFile.getData ();
-                            } catch (ParseException e1) {
-                                e1.printStackTrace ();
-                            }
-                            bmp = BitmapFactory.decodeByteArray (data, 0, data.length);
-                        } else {
-                            bmp = null;
-                        }
                         Event event = eventParse.get (i);
-                        tempEventsList.add (new EventInfo (bmp,
+                        tempEventsList.add (new EventInfo (event.getPic().getUrl(),
                                                                   event.getRealDate (),
                                                                   getEventDateAsString (event.getRealDate ()),
                                                                   event.getName (),
@@ -294,24 +287,34 @@ public class StaticMethods {
     }
 
     public static String getCustomerPhoneNumFromFile(Context context) {
-        String phone_number = "";
+        String number = "";
+        String myData = "";
         try {
-            InputStream inputStream = context.openFileInput ("verify.txt");
-            if (inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader (inputStream);
-                BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
-                String receiveString = "";
-                while ((receiveString = bufferedReader.readLine ()) != null) {
-                    phone_number = receiveString;
-                }
-                inputStream.close ();
+            File myExternalFile = new File(Environment.getExternalStoragePublicDirectory (Environment.DIRECTORY_DOWNLOADS), "verify.txt");
+            FileInputStream fis = new FileInputStream(myExternalFile);
+            DataInputStream in = new DataInputStream(fis);
+            BufferedReader br =
+                    new BufferedReader(new InputStreamReader(in));
+            String strLine;
+            while ((strLine = br.readLine()) != null) {
+                myData = myData + strLine;
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace ();
+            in.close();
         } catch (IOException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
-        return phone_number;
+
+        if(myData != null) {
+            if(myData.contains("isFundigo")) {
+                String[] parts = myData.split(" ");
+                number = parts[0];
+            }
+            else
+                number = myData;
+
+        }
+
+        return number;
     }
 
     public static void filterListsAndUpdateListAdapter(List<EventInfo> eventsListToFilter,
@@ -379,13 +382,13 @@ public class StaticMethods {
         String faceBookId = null;
         String picUrl = null;
         String customerName = null;
-        Bitmap customerImage = null;
-        ParseQuery<Numbers> query = ParseQuery.getQuery (Numbers.class);
+        String customerImage = null;
+        ParseQuery<MipoProfile> query = ParseQuery.getQuery (MipoProfile.class);
         query.whereEqualTo ("number", customerPhoneNum);
-        List<Numbers> numbers = null;
+        List<MipoProfile> profile = null;
         try {
-            numbers = query.find ();
-            return getUserDetails (numbers);
+            profile = query.find ();
+            return getUserDetails (profile);
         } catch (ParseException e) {
             e.printStackTrace ();
         }
@@ -393,19 +396,34 @@ public class StaticMethods {
         return new CustomerDetails (faceBookId, picUrl, customerImage, customerName);
     }
 
-    public static CustomerDetails getUserDetails(List<Numbers> numbers) {
+    public static CustomerDetails getUserDetails(List<MipoProfile> profiles) {
+        String faceBookId = null;
+        String customerPicFacebookUrl = null;
+        String customerImage = null;
+        String customerName = null;
+        if (profiles.size () > 0) {
+            MipoProfile profile = profiles.get (0);
+            faceBookId = profile.getFbId ();
+            customerPicFacebookUrl = profile.getFbUrl ();
+            customerName = profile.getName ();
+            customerImage = profile.getPic().getUrl ();
+        }
+        return new CustomerDetails (faceBookId, customerPicFacebookUrl, customerImage, customerName);
+    }
+
+    public static CustomerDetails getUserDetailsWithBitmap(List<MipoProfile> numbers) {
         String faceBookId = null;
         String customerPicFacebookUrl = null;
         Bitmap customerImage = null;
         String customerName = null;
         if (numbers.size () > 0) {
-            Numbers number = numbers.get (0);
+            MipoProfile number = numbers.get (0);
             faceBookId = number.getFbId ();
             customerPicFacebookUrl = number.getFbUrl ();
             customerName = number.getName ();
             ParseFile imageFile;
             byte[] data = null;
-            imageFile = (ParseFile) number.getImageFile ();
+            imageFile = (ParseFile) number.getPic ();
             if (imageFile != null) {
                 try {
                     data = imageFile.getData ();
@@ -415,7 +433,30 @@ public class StaticMethods {
                 customerImage = BitmapFactory.decodeByteArray (data, 0, data.length);
             }
         }
-        return new CustomerDetails (faceBookId, customerPicFacebookUrl, customerImage, customerName);
+        CustomerDetails customerDetails = new CustomerDetails (faceBookId,
+                                                                      customerPicFacebookUrl,
+                                                                      null,
+                                                                      customerName);
+        customerDetails.setBitmap (customerImage);
+        return customerDetails;
+    }
+
+    public static CustomerDetails getUserDetailsFromParseInMainThreadWithBitmap(String customerPhoneNum) {
+        String faceBookId = null;
+        String picUrl = null;
+        String customerName = null;
+        String customerImage = null;
+        ParseQuery<MipoProfile> query = ParseQuery.getQuery (MipoProfile.class);
+        query.whereEqualTo ("number", customerPhoneNum);
+        List<MipoProfile> numbers = null;
+        try {
+            numbers = query.find ();
+            return getUserDetailsWithBitmap (numbers);
+        } catch (ParseException e) {
+            e.printStackTrace ();
+        }
+        //all null
+        return new CustomerDetails (faceBookId, picUrl, customerImage, customerName);
     }
 
     public static void filterEventsByArtist(String artistName, List<EventInfo> eventsListFiltered) {
@@ -449,15 +490,6 @@ public class StaticMethods {
     public static void onEventItemClick(int positionViewItem,
                                         List<EventInfo> eventsList,
                                         Intent intent) {
-        if (eventsList.get (positionViewItem).getImageBitmap () != null) {
-            Bitmap bmp = eventsList.get (positionViewItem).getImageBitmap ();
-            ByteArrayOutputStream stream = new ByteArrayOutputStream ();
-            bmp.compress (Bitmap.CompressFormat.JPEG, 100, stream);
-            byte[] byteArray = stream.toByteArray ();
-            intent.putExtra ("eventImage", byteArray);
-        } else {
-            intent.putExtra ("eventImage", "");
-        }
         intent.putExtra ("eventDate", eventsList.get (positionViewItem).getDate ());
         intent.putExtra ("eventName", eventsList.get (positionViewItem).getName ());
         intent.putExtra ("eventTags", eventsList.get (positionViewItem).getTags ());
@@ -506,7 +538,7 @@ public class StaticMethods {
         if (event.getIsSaved ()) {
             event.setIsSaved (false);
             save.setImageResource (unsavedImageId);
-            Toast.makeText (context, "You unSaved this event", Toast.LENGTH_SHORT).show ();
+            Toast.makeText (context, R.string.you_unsaved_this_event, Toast.LENGTH_SHORT).show ();
             AsyncTask.execute (new Runnable () {
                 @Override
                 public void run() {
@@ -551,7 +583,7 @@ public class StaticMethods {
         } else {
             event.setIsSaved (true);
             save.setImageResource (savedImageId);
-            Toast.makeText (context, "You Saved this event", Toast.LENGTH_SHORT).show ();
+            Toast.makeText (context, R.string.you_saved_this_event, Toast.LENGTH_SHORT).show ();
             AsyncTask.execute (new Runnable () {
                 @Override
                 public void run() {
@@ -565,9 +597,6 @@ public class StaticMethods {
                     }
                 }
             });
-        }
-        if (GlobalVariables.SAVED_ACTIVITY_RUNNING) {
-            SavedEventActivity.getSavedEventsFromJavaList ();
         }
     }
 
@@ -724,21 +753,6 @@ public class StaticMethods {
         eventInfo.setDate (event.getRealDate ());
         eventInfo.setDateAsString (StaticMethods.getEventDateAsString (event.getRealDate ()));
         eventInfo.setFilterName (event.getFilterName ());
-        ParseFile imageFile;
-        byte[] data = null;
-        Bitmap bmp;
-        imageFile = (ParseFile) event.get ("ImageFile");
-        if (imageFile != null) {
-            try {
-                data = imageFile.getData ();
-            } catch (ParseException e1) {
-                e1.printStackTrace ();
-            }
-            bmp = BitmapFactory.decodeByteArray (data, 0, data.length);
-        } else {
-            bmp = null;
-        }
-        eventInfo.setBitmap (bmp);
         eventInfo.setDescription (event.getDescription ());
         eventInfo.setName (event.getName ());
         eventInfo.setNumOfTickets (event.getNumOfTickets ());
@@ -749,5 +763,29 @@ public class StaticMethods {
         eventInfo.setToilet (event.getEventToiletService ());
         eventInfo.setX (event.getX ());
         eventInfo.setY (event.getY ());
+    }
+    public static ImageLoader getImageLoader(Context context) {
+
+        ImageLoader imageLoader = null;
+        DisplayImageOptions options = null;
+
+        options = new DisplayImageOptions.Builder ()
+                .cacheOnDisk (true)
+                .cacheInMemory (true)
+                .bitmapConfig (Bitmap.Config.RGB_565)
+                .imageScaleType (ImageScaleType.EXACTLY)
+                .resetViewBeforeLoading (true)
+                .build ();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder (context)
+                .defaultDisplayImageOptions (options)
+                .threadPriority (Thread.MAX_PRIORITY)
+                .threadPoolSize (4)
+                .memoryCache (new WeakMemoryCache ())
+                .denyCacheImageMultipleSizesInMemory()
+                .build();
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.init (config);
+
+        return imageLoader;
     }
 }

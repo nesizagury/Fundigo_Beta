@@ -40,15 +40,14 @@ public class EventServiceActivity extends Activity {
         String capacity = myintent.getStringExtra ("capacity");
         String atm = myintent.getStringExtra ("atm");
         String driving = myintent.getStringExtra ("driving");
-        String walking = myintent.getStringExtra ("walking");
         String artist = myintent.getStringExtra ("artist");
         int walkValue = myintent.getIntExtra ("walkValue", -1);
+        String walking;
 
-        String walkValueToSend;
         if (walkValue == -1 || walkValue / 3600 > 1) {
-            walkValueToSend = null;
+            walking = null;
         } else {
-            walkValueToSend = Integer.toString (walkValue);
+            walking = myintent.getStringExtra ("walking");
         }
 
         event_service_listView = (ListView) findViewById (R.id.event_service_listView);
@@ -59,7 +58,6 @@ public class EventServiceActivity extends Activity {
                                                                       parking,
                                                                       capacity,
                                                                       atm,
-                                                                      walkValueToSend,
                                                                       artist));
     }
 }
@@ -85,7 +83,6 @@ class CostumeAdapter extends BaseAdapter {
     String atm;
     String artist;
     Context context;
-    String walkValue;
     ArrayList<SignelRow> list;
     
     CostumeAdapter(Context c,
@@ -95,7 +92,6 @@ class CostumeAdapter extends BaseAdapter {
                    String parking,
                    String capacety,
                    String atm,
-                   String walkValue,
                    String artist) {
 
         list = new ArrayList<SignelRow> ();
@@ -114,7 +110,6 @@ class CostumeAdapter extends BaseAdapter {
         this.capacety = capacety;
         this.atm = atm;
         this.context = c;
-        this.walkValue = walkValue;
         this.artist = artist;
 
         list.add (new SignelRow (titles[0], artist, images[0]));

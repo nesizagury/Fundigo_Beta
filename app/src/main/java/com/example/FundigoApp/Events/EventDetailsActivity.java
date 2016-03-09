@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,8 +24,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class EventDetailsActivity extends AppCompatActivity {
-
-    private static final String TAG = "EventDetailsActivity";
     ImageView iv_qr;
     TextView tv_buyer;
     TextView tv_date;
@@ -36,88 +33,81 @@ public class EventDetailsActivity extends AppCompatActivity {
     Bitmap bmp;
     private ProgressDialog dialog;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_details);
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("Loading...");
-        dialog.show();
+        super.onCreate (savedInstanceState);
+        setContentView (R.layout.activity_event_details);
+        dialog = new ProgressDialog (this);
+        dialog.setMessage ("Loading...");
+        dialog.show ();
 
-        iv_qr = (ImageView) findViewById(R.id.iv_qr_details);
-        tv_buyer = (TextView) findViewById(R.id.buyer_details);
-        tv_date = (TextView) findViewById(R.id.date_details);
-        tv_price = (TextView) findViewById(R.id.price_details);
-        tv_ticket_name_details = (TextView) findViewById(R.id.ticket_name_details);
-        Intent callingIntent = getIntent();
+        iv_qr = (ImageView) findViewById (R.id.iv_qr_details);
+        tv_buyer = (TextView) findViewById (R.id.buyer_details);
+        tv_date = (TextView) findViewById (R.id.date_details);
+        tv_price = (TextView) findViewById (R.id.price_details);
+        tv_ticket_name_details = (TextView) findViewById (R.id.ticket_name_details);
+        Intent callingIntent = getIntent ();
 
-        getData(callingIntent.getStringExtra(GlobalVariables.OBJECTID));
-
+        getData (callingIntent.getStringExtra (GlobalVariables.OBJECTID));
     }
 
     private void setAll() {
-        tv_ticket_name_details.setText(eventsSeats.getSeatNumber());
+        tv_ticket_name_details.setText (eventsSeats.getSeatNumber ());
         if (eventsSeats.getCustomerPhone () != null) {
-            tv_buyer.setText(eventsSeats.getCustomerPhone ());
+            tv_buyer.setText (eventsSeats.getCustomerPhone ());
         }
-        if (eventsSeats.getPurchaseDate() != null) {
-            Date date = eventsSeats.getPurchaseDate();
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            tv_date.setText(format.format(cal.getTime()));
+        if (eventsSeats.getPurchaseDate () != null) {
+            Date date = eventsSeats.getPurchaseDate ();
+            SimpleDateFormat format = new SimpleDateFormat ("dd/MM/yyyy");
+            Calendar cal = Calendar.getInstance ();
+            cal.setTime (date);
+            tv_date.setText (format.format (cal.getTime ()));
         }
-        tv_price.setText(eventsSeats.getPrice() + "₪");
+        tv_price.setText (eventsSeats.getPrice () + "₪");
 
-        dialog.dismiss();
-
-
+        dialog.dismiss ();
     }
 
     private void getData(String id) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("EventsSeats");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery ("EventsSeats");
 
-        query.getInBackground(id, new GetCallback<ParseObject>() {
+        query.getInBackground (id, new GetCallback<ParseObject> () {
             public void done(ParseObject object, ParseException e) {
                 if (e == null) {
                     eventsSeats = (EventsSeats) object;
-                    ParseFile file = (ParseFile) object.get("QR_Code");
+                    ParseFile file = (ParseFile) object.get ("QR_Code");
                     if (file == null) {
-                        Log.e(TAG, "a" );
-                        tv_price.setText(eventsSeats.getPrice() + "₪");
-                        if(dialog.isShowing()){
-                            dialog.dismiss();
+                        tv_price.setText (eventsSeats.getPrice () + "₪");
+                        if (dialog.isShowing ()) {
+                            dialog.dismiss ();
                         }
                         return;
                     }
-                    file.getDataInBackground(new GetDataCallback() {
+                    file.getDataInBackground (new GetDataCallback () {
                         @Override
                         public void done(byte[] data, ParseException e) {
                             if (e == null) {
                                 if (data.length != 0) {
-                                    bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                    iv_qr.setImageBitmap(bmp);
+                                    bmp = BitmapFactory.decodeByteArray (data, 0, data.length);
+                                    iv_qr.setImageBitmap (bmp);
                                 } else {
-                                    Log.e(TAG, "b");
-                                    tv_price.setText(eventsSeats.getPrice() + "₪");
-                                    if(dialog.isShowing()){
-                                        dialog.dismiss();
+                                    tv_price.setText (eventsSeats.getPrice () + "₪");
+                                    if (dialog.isShowing ()) {
+                                        dialog.dismiss ();
                                     }
                                     return;
                                 }
-                                setAll();
+                                setAll ();
                             } else {
-                                Log.e(TAG, "problem " + e.toString());
+                                e.printStackTrace ();
                             }
                         }
                     });
                 } else {
-                    Log.e(TAG, "problem " + e.toString());
+                    e.printStackTrace ();
                 }
             }
         });
     }
-
 
 }

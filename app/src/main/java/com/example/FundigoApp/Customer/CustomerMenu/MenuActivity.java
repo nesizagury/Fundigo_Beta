@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
@@ -32,6 +31,7 @@ import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -50,7 +50,7 @@ public class MenuActivity extends AppCompatActivity {
     LoginButton facebook_logout_button;
     String currentUserName;
     String phoneNum;
-    Bitmap userImage;
+    String userImage;
     TableLayout tableLayout; //table to prsent profile
     ImageView drawView; // profile picture
     TextView facebookUserNameView;
@@ -60,6 +60,7 @@ public class MenuActivity extends AppCompatActivity {
     Button user_evnets_tickets_button;
     Button save_credit_card_button;
     Button delete_credit_card_button;
+    ImageLoader loader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +81,8 @@ public class MenuActivity extends AppCompatActivity {
         tableLayout = (TableLayout) findViewById (R.id.profileTable);
         drawView = (ImageView) findViewById (R.id.profileImg);
 
-        String number = GlobalVariables.CUSTOMER_PHONE_NUM;
-        if (!number.equals ("GUEST")) {
-            sms_login_button.setText ("You logged in as " + number);
+        if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
+            sms_login_button.setText (this.getString (R.string.you_logged_in_as) + " " + GlobalVariables.CUSTOMER_PHONE_NUM);
             sms_login_button.setOnClickListener (null);
             user_profile_button.setVisibility (View.VISIBLE);//if already registered then button is visible
             user_profile_update_button.setVisibility (View.VISIBLE);
@@ -133,13 +133,13 @@ public class MenuActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Toast.makeText (context, "Canceled logging facebook", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (context, R.string.canceled_logging_facebook, Toast.LENGTH_SHORT).show ();
 
             }
 
             @Override
             public void onError(FacebookException exception) {
-                Toast.makeText (context, "Error logging facebook", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (context, R.string.error_logging_facebook, Toast.LENGTH_SHORT).show ();
                 exception.printStackTrace ();
             }
         });
@@ -159,9 +159,8 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume ();
-        String number = GlobalVariables.CUSTOMER_PHONE_NUM;
-        if (!number.equals ("GUEST")) {
-            sms_login_button.setText ("You logged in as " + number);
+        if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
+            sms_login_button.setText (this.getString (R.string.you_logged_in_as) + GlobalVariables.CUSTOMER_PHONE_NUM);
             sms_login_button.setOnClickListener (null);
             user_profile_button.setVisibility (View.VISIBLE);
             user_profile_update_button.setVisibility (View.VISIBLE);
@@ -206,7 +205,8 @@ public class MenuActivity extends AppCompatActivity {
         pRaw.setText (phoneNum);
         if (userImage != null) {// for present User Picture
             drawView.setVisibility (View.VISIBLE);
-            drawView.setImageBitmap (userImage);
+            loader = StaticMethods.getImageLoader (this);
+            loader.displayImage (userImage, drawView);
         }
     }
 
@@ -244,7 +244,7 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onCompleted(GraphResponse graphResponse) {
                 LoginManager.getInstance ().logOut ();
-                Toast.makeText (context, "Loged Out of facebook", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (context, R.string.loged_out_of_facebook, Toast.LENGTH_SHORT).show ();
                 facebook_login_button.setVisibility (View.VISIBLE);
                 facebook_logout_button.setVisibility (View.GONE);
                 profileFacebookPictureView.setVisibility (View.GONE);
@@ -263,7 +263,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void EventsTicketsDisplay(View v) { //Assaf: open tickets for Registered user. for Guest present a Dialog box
-        if (!GlobalVariables.CUSTOMER_PHONE_NUM.equals ("GUEST")) {
+        if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
             try {
                 Intent I = new Intent (this, MyEventsTicketsActivity.class);
                 startActivity (I);

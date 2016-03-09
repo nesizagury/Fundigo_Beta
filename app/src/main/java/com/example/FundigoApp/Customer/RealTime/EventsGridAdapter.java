@@ -10,12 +10,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.FundigoApp.Customer.SavedEvents.SavedEventActivity;
 import com.example.FundigoApp.DeepLinkActivity;
 import com.example.FundigoApp.Events.EventInfo;
-import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.StaticMethods;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -33,10 +32,12 @@ public class EventsGridAdapter extends BaseAdapter {
     List<EventInfo> eventList = new ArrayList<EventInfo> ();
     Context context;
     private ImageView iv_share;
+    ImageLoader loader;
 
     public EventsGridAdapter(Context c, List<EventInfo> eventList) {
         this.context = c;
         this.eventList = eventList;
+        loader = StaticMethods.getImageLoader(c);
     }
 
     @Override
@@ -55,7 +56,7 @@ public class EventsGridAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, ViewGroup viewGroup) {
         View row = view;
         final EventGridHolder eventGridHolder;
 
@@ -69,12 +70,14 @@ public class EventsGridAdapter extends BaseAdapter {
         }
         final EventInfo event = eventList.get (i);
 
-        eventGridHolder.image.setImageBitmap (event.getImageBitmap ());
-        eventGridHolder.date.setText (event.getDateAsString ());
+        if(event.getPicUrl() != null)
+            loader.displayImage(event.getPicUrl(),eventGridHolder.image);
+        else
+            eventGridHolder.image.setImageResource(R.drawable.pic0);        eventGridHolder.date.setText (event.getDateAsString ());
         eventGridHolder.name.setText (event.getName ());
         eventGridHolder.tags.setText (event.getTags ());
         eventGridHolder.price.setText (StaticMethods.getDisplayedEventPrice (event.getPrice ()));
-        eventGridHolder.place.setText (event.getDist () + " km away");
+        eventGridHolder.place.setText (event.getDist () + " " + context.getResources ().getString (R.string.km_away));
         checkIfChangeColorToSaveButtton (event, eventGridHolder.saveEvent);
         eventGridHolder.saveEvent.setOnClickListener (new View.OnClickListener () {
             @Override
@@ -83,7 +86,7 @@ public class EventsGridAdapter extends BaseAdapter {
                 if (event.getIsSaved ()) {
                     event.setIsSaved (false);
                     eventGridHolder.saveEvent.setImageResource (R.mipmap.whh);
-                    Toast.makeText (context, "You unSaved this event", Toast.LENGTH_SHORT).show ();
+                    Toast.makeText (context, R.string.you_unsaved_this_event, Toast.LENGTH_SHORT).show ();
                     AsyncTask.execute (new Runnable () {
                         @Override
                         public void run() {
@@ -141,9 +144,6 @@ public class EventsGridAdapter extends BaseAdapter {
                             }
                         }
                     });
-                }
-                if (GlobalVariables.SAVED_ACTIVITY_RUNNING) {
-                    SavedEventActivity.getSavedEventsFromJavaList ();
                 }
             }
         });

@@ -172,7 +172,7 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
                     if (address_ok) {
                         showThirdStage ();
                     } else {
-                        Toast.makeText (CreateEventActivity.this, "Please enter valid address", Toast.LENGTH_SHORT).show ();
+                        Toast.makeText (CreateEventActivity.this, R.string.please_enter_valid_address, Toast.LENGTH_SHORT).show ();
                     }
                 }
                 Log.e (TAG, "seats " + seats);
@@ -181,7 +181,7 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
                     if (address_ok) {
                         showThirdStage ();
                     } else {
-                        Toast.makeText (CreateEventActivity.this, "Please enter valid address", Toast.LENGTH_SHORT).show ();
+                        Toast.makeText (CreateEventActivity.this, R.string.please_enter_valid_address, Toast.LENGTH_SHORT).show ();
                     }
                 } else {
                     Log.e (TAG, "seats3 " + seats);
@@ -363,7 +363,7 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
             btn_next.setVisibility (View.GONE);
             create_event2.setVisibility (View.VISIBLE);
         } else {
-            Toast.makeText (CreateEventActivity.this, "Please fill empty forms", Toast.LENGTH_SHORT).show ();
+            Toast.makeText (CreateEventActivity.this, R.string.please_fill_empty_forms, Toast.LENGTH_SHORT).show ();
         }
     }
 
@@ -382,14 +382,14 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
                 create_event2.setVisibility (View.GONE);
                 create_event3.setVisibility (View.VISIBLE);
             } else {
-                Toast.makeText (CreateEventActivity.this, "Please fill empty forms", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (CreateEventActivity.this, R.string.please_fill_empty_forms, Toast.LENGTH_SHORT).show ();
             }
         } else {
             if (et_quantity.length () != 0 && et_price.length () != 0 && address_ok && et_place.length () != 0) {
                 create_event2.setVisibility (View.GONE);
                 create_event3.setVisibility (View.VISIBLE);
             } else {
-                Toast.makeText (CreateEventActivity.this, "Please fill empty forms", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (CreateEventActivity.this, R.string.please_fill_empty_forms, Toast.LENGTH_SHORT).show ();
             }
         }
     }
@@ -551,7 +551,7 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
                 }, 3000);
             }
             GlobalVariables.refreshArtistsList = true;
-            Toast.makeText (this,"Event Created Successfully!!", Toast.LENGTH_LONG);//TODO
+            Toast.makeText (this,R.string.event_has_created_successfully, Toast.LENGTH_LONG);//TODO
             finish ();
         } catch (ParseException e) {
             e.printStackTrace ();
@@ -611,38 +611,18 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
         finish ();
     }
 
-    public void deleteRow() {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery ("Event");
-        query.whereEqualTo ("objectId", getIntent ().getStringExtra ("eventObjectId"));
-        query.orderByDescending ("createdAt");
-        query.getFirstInBackground (new GetCallback<ParseObject> () {
-            public void done(ParseObject object, ParseException e) {
-                if (e == null) {
-                    try {
-
-                        object.delete ();
-                    } catch (ParseException e1) {
-                        e1.printStackTrace ();
-                    }
-                    object.saveInBackground ();
-                }
-            }
-        });
-
-    }
-
     @Override
     public void onBackPressed() {
-        if (timePickerDialog.isShowing ()) {
+        if (timePickerDialog != null && timePickerDialog.isShowing ()) {
             timePickerDialog.dismiss ();
         }
-        if (datePickerDialog.isShowing ()) {
+        if (datePickerDialog != null && datePickerDialog.isShowing ()) {
             datePickerDialog.dismiss ();
         }
 
         if (et_name.getVisibility () == View.VISIBLE) {
             AlertDialog.Builder builder = new AlertDialog.Builder (this);
-            builder.setMessage ("Are you sure you want to exit?")
+            builder.setMessage (R.string.are_you_sure_you_want_to_exit)
                     .setCancelable (false)
                     .setPositiveButton ("Yes", new DialogInterface.OnClickListener () {
                         public void onClick(DialogInterface dialog, int id) {
@@ -976,7 +956,7 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
         @Override
         protected void onPreExecute() {
             dialog = new ProgressDialog (CreateEventActivity.this);
-            dialog.setMessage ("Validating...");
+            dialog.setMessage (""+R.string.validating);
             dialog.show ();
         }
 
@@ -1002,7 +982,7 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
         protected void onPostExecute(String s) {
 
             if (s == null) {
-                Toast.makeText (CreateEventActivity.this, "Something went wrong, plese try again", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (CreateEventActivity.this, R.string.something_went_wrong_plese_try_again, Toast.LENGTH_SHORT).show ();
                 iv_val_add.setImageResource (R.drawable.x);
                 iv_val_add.setVisibility (View.VISIBLE);
 
@@ -1025,7 +1005,7 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
                     address_ok = false;
                     iv_val_add.setImageResource (R.drawable.x);
                     iv_val_add.setVisibility (View.VISIBLE);
-                    Toast.makeText (CreateEventActivity.this, "Problem is " + result.getStatus (), Toast.LENGTH_SHORT).show ();
+                    Toast.makeText (CreateEventActivity.this, R.string.problem_is + result.getStatus (), Toast.LENGTH_SHORT).show ();
                 }
 
             }

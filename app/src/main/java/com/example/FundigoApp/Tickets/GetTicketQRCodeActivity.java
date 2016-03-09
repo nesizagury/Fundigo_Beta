@@ -34,7 +34,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 
-
+//not in use, only we use a specific method here in another activity
 public class GetTicketQRCodeActivity extends AppCompatActivity {
     public static final String googleUrl =
             "https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=";
@@ -94,7 +94,7 @@ public class GetTicketQRCodeActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute ();
             progressDialog = new ProgressDialog (GetTicketQRCodeActivity.this);
-            progressDialog.setTitle ("Downland In Progress...");
+            progressDialog.setTitle (R.string.downland_in_progress);
             progressDialog.setProgressStyle (ProgressDialog.STYLE_HORIZONTAL);
             progressDialog.setMax (100);
             progressDialog.setProgress (0);

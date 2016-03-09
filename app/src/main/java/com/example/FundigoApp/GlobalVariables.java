@@ -51,4 +51,5 @@ public class GlobalVariables {
     public static String deepLinkEventObjID = "";
 
     public static boolean refreshArtistsList = false;
+    public static ArrayList<String> userChanels = new ArrayList<> ();
 }

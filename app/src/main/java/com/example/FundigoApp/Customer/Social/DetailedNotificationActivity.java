@@ -30,10 +30,10 @@ public class DetailedNotificationActivity extends AppCompatActivity {
         goToEvent = (Button) findViewById (R.id.Button_pushPage);
 
         message.setText (intent.getExtras ().getString ("Message"));
-        date.setText (intent.getExtras ().getString ("Date"));
         final EventInfo eventInfo = StaticMethods.getEventFromObjID (intent.getExtras ().getString ("EvendId"),
                                                                             GlobalVariables.ALL_EVENTS_DATA);
         eventObjectId.setText (eventInfo.getName ());
+        date.setText (eventInfo.getDateAsString ());
         final Intent intent = new Intent (this, EventPageActivity.class);
         goToEvent.setOnClickListener (new View.OnClickListener () {
             @Override

@@ -45,7 +45,7 @@ public class CustomerProfileUpdate extends AppCompatActivity {
             String _userPhoneNumber = GlobalVariables.CUSTOMER_PHONE_NUM;
             if (!_userPhoneNumber.isEmpty ()) {
                 try {
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery ("Numbers");
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery ("Profile");
                     query.whereEqualTo ("number", _userPhoneNumber);
                     list = query.find ();
                     for (ParseObject obj : list) {
@@ -53,7 +53,7 @@ public class CustomerProfileUpdate extends AppCompatActivity {
                         if (IMAGE_SELECTED) {
                             imageToUpdate = imageUpdate ();
                             ParseFile picFile = new ParseFile (imageToUpdate);
-                            obj.put ("ImageFile", picFile);
+                            obj.put ("pic", picFile);
                         }
                         obj.save ();
                         finish ();
@@ -62,14 +62,22 @@ public class CustomerProfileUpdate extends AppCompatActivity {
                     Log.e ("Exception catch", e.toString ());
                 }
             } else {
-                Toast.makeText (getApplicationContext (), "User may not Registered or not Exist", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (getApplicationContext (),
+                                       R.string.user_may_not_registered_or_not_exist,
+                                       Toast.LENGTH_SHORT).show ();
             }
             if (!customer.isEmpty ())
-                Toast.makeText (getApplicationContext (), "User updated and now it is: " + customer, Toast.LENGTH_SHORT).show ();
+                Toast.makeText (getApplicationContext (),
+                                       R.string.user_updated_and_now_it_is,
+                                       Toast.LENGTH_SHORT).show ();
             else
-                Toast.makeText (getApplicationContext (), "Picture updated", Toast.LENGTH_SHORT).show ();
+                Toast.makeText (getApplicationContext (),
+                                       R.string.picture_updated,
+                                       Toast.LENGTH_SHORT).show ();
         } else
-            Toast.makeText (getApplicationContext (), "Nothing Selected to Update", Toast.LENGTH_SHORT).show ();
+            Toast.makeText (getApplicationContext (),
+                                   R.string.nothing_selected_to_update,
+                                   Toast.LENGTH_SHORT).show ();
     }
 
     public void imageUpload(View view) {
@@ -109,13 +117,13 @@ public class CustomerProfileUpdate extends AppCompatActivity {
 
     public void getCurrentUserProfile() {
         String phoneNum = GlobalVariables.CUSTOMER_PHONE_NUM;
-        CustomerDetails customerDetails = StaticMethods.getUserDetailsFromParseInMainThread (phoneNum);
+        CustomerDetails customerDetails = StaticMethods.getUserDetailsFromParseInMainThreadWithBitmap (phoneNum);
         String currentUserName = customerDetails.getCustomerName ();
         if(customerName.getText ().toString ().isEmpty ()){
             customerName.setText (currentUserName);
             customerName.setSelection (customerName.getText ().length ());
         }
-        Bitmap userImage = customerDetails.getCustomerImage ();
+        Bitmap userImage = customerDetails.getBitmap ();
         if(userImage != null && !IMAGE_SELECTED){
             customerImg.setImageBitmap (userImage);
             customerImg.setVisibility (View.VISIBLE);

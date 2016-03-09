@@ -37,7 +37,7 @@ public class SaveCreditCard extends AppCompatActivity implements View.OnClickLis
         @Override
         public void cardValid(CreditCard card) {
             saveCardButton.setVisibility (View.VISIBLE);
-            Toast.makeText (SaveCreditCard.this, "Card valid and complete", Toast.LENGTH_SHORT).show ();
+            Toast.makeText (SaveCreditCard.this, R.string.card_valid_and_complete, Toast.LENGTH_SHORT).show ();
         }
     };
 

@@ -163,6 +163,47 @@ public class ArtistEventsActivity extends Activity implements AdapterView.OnItem
                 }
             }
         });
+        ParseQuery<ParseObject> queryMessages = new ParseQuery("Message");
+        queryMessages.whereEqualTo("eventObjectId",objectId);
+        queryMessages.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+
+                if (objects.size() != 0) {
+                    ParseObject.deleteAllInBackground(objects);
+                }
+            }
+        });
+        ParseQuery<ParseObject> queryRoom = new ParseQuery("Room");
+        queryRoom.whereEqualTo("eventObjId", objectId);
+        queryRoom.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (objects.size() != 0) {
+                    ParseObject.deleteAllInBackground(objects);
+                }
+            }
+        });
+        ParseQuery<ParseObject> queryMsgRealTime = new ParseQuery("MsgRealTime");
+        queryMsgRealTime.whereEqualTo("eventObjectId", objectId);
+        queryMsgRealTime.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (objects.size() != 0) {
+                    ParseObject.deleteAllInBackground(objects);
+                }
+            }
+        });
+        ParseQuery<ParseObject> queryPush = new ParseQuery("Push");
+        queryPush.whereEqualTo("EventId", objectId);
+        queryPush.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (objects.size() != 0) {
+                    ParseObject.deleteAllInBackground(objects);
+                }
+            }
+        });
         finish ();
     }
 }

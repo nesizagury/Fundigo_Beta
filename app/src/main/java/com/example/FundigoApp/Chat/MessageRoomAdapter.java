@@ -1,13 +1,14 @@
 package com.example.FundigoApp.Chat;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.example.FundigoApp.R;
+import com.example.FundigoApp.StaticMethods;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -16,20 +17,23 @@ import java.util.List;
 public class MessageRoomAdapter extends BaseAdapter {
 
     List<MessageRoomBean> listOfConversations = new ArrayList<MessageRoomBean> ();
-    ArrayList<Bitmap> listOfEventsImage = new ArrayList<> ();
+    ArrayList<String> listOfEventsImage = new ArrayList<> ();
     Context context;
-    Boolean comeFromMessageProducer = false;
+    Boolean isCustomer = false;
+    ImageLoader loader;
 
     public MessageRoomAdapter(Context c, List listOfConversations) {
         this.context = c;
         this.listOfConversations = listOfConversations;
+        loader = StaticMethods.getImageLoader (c);
     }
 
-    public MessageRoomAdapter(Context c, List listOfConversations, ArrayList<Bitmap> listOfEventsImage) {
+    public MessageRoomAdapter(Context c, List listOfConversations, ArrayList<String> listOfEventsImage) {
         this.context = c;
         this.listOfConversations = listOfConversations;
         this.listOfEventsImage = listOfEventsImage;
-        comeFromMessageProducer = true;
+        isCustomer = true;
+        loader = StaticMethods.getImageLoader (c);
     }
 
     @Override
@@ -62,13 +66,13 @@ public class MessageRoomAdapter extends BaseAdapter {
             holder = (MessageRoomItemHolder) row.getTag ();
         }
         MessageRoomBean message_bean = listOfConversations.get (i);
-        if (comeFromMessageProducer) {
-            holder.customerOrEventImage.setImageBitmap (listOfEventsImage.get (i));
+        if (isCustomer) {
+            loader.displayImage (listOfEventsImage.get (i), holder.customerOrEventImage);
         } else if (message_bean.getCustomerImageFacebookUrl () != null &&
                            !message_bean.getCustomerImageFacebookUrl ().isEmpty ()) {
             Picasso.with (context).load (message_bean.getCustomerImageFacebookUrl ()).into (holder.customerOrEventImage);
         } else if (message_bean.getCustomerImage () != null) {
-            holder.customerOrEventImage.setImageBitmap (message_bean.getCustomerImage ());
+            loader.displayImage (message_bean.getCustomerImage (), holder.customerOrEventImage);
         }
         holder.messageBody.setText (message_bean.getLastMessage ());
         holder.customerOrEventName.setText (message_bean.getCustomer_id ());

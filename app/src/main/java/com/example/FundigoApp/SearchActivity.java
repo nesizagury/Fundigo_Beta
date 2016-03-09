@@ -91,7 +91,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnCl
 
                     historyPop.show ();//showing popup menu
                 } else {
-                    Toast.makeText (SearchActivity.this, "Not have history", Toast.LENGTH_SHORT).show ();
+                    Toast.makeText (SearchActivity.this, R.string.not_have_history, Toast.LENGTH_SHORT).show ();
                 }
             }
         });
@@ -100,7 +100,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnCl
             public boolean onQueryTextSubmit(String query) {
                 wordSearch = search.getQuery ().toString ();
                 if (wordSearch.length () == 0) {
-                    Toast.makeText (SearchActivity.this, "Input word to search", Toast.LENGTH_SHORT).show ();
+                    Toast.makeText (SearchActivity.this, R.string.input_word_to_search, Toast.LENGTH_SHORT).show ();
                 } else {
                     history.add (0, wordSearch);
                     saveHistory ();
@@ -213,7 +213,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnCl
         if (history.size () > 0) {
             saveHistory ();
         }
-        startActivity (new Intent (this, MainActivity.class));
+        finish();
     }
 
     @Override

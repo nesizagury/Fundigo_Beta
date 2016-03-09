@@ -1,6 +1,7 @@
 package com.example.FundigoApp.Events;
 
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 import java.util.Date;
@@ -162,5 +163,13 @@ public class Event extends ParseObject {
 
     public boolean getIsStadium() { //link saved in Parse for link to Even FB page
         return getBoolean ("isStadium");
+    }
+
+    public ParseFile getPic() {
+        return getParseFile("ImageFile");
+    }
+
+    public void setPic(ParseFile file) {
+        put ("ImageFile", file);
     }
 }

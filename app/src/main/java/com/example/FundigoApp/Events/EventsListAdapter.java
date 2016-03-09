@@ -2,7 +2,6 @@ package com.example.FundigoApp.Events;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.ImageView;
 import com.example.FundigoApp.DeepLinkActivity;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.StaticMethods;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +21,15 @@ public class EventsListAdapter extends BaseAdapter {
     List<EventInfo> eventList = new ArrayList<EventInfo> ();
     Context context;
     private ImageView iv_share;
-    Uri uri;
     boolean isSavedActivity;
     public int index;
+    ImageLoader loader;
 
     public EventsListAdapter(Context c, List<EventInfo> eventList, boolean isSavedActivity) {
         this.context = c;
         this.eventList = eventList;
         this.isSavedActivity = isSavedActivity;
+        loader = StaticMethods.getImageLoader (c);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class EventsListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, ViewGroup viewGroup) {
         View row = view;
         final EventListHolder eventListHolder;
 
@@ -61,11 +62,8 @@ public class EventsListAdapter extends BaseAdapter {
         }
         final EventInfo event = eventList.get (i);
 
-        if (isSavedActivity && !event.getIsSaved ()) {
-            row.setVisibility (View.INVISIBLE);
-        }
         index = i;
-        eventListHolder.image.setImageBitmap (event.imageId);
+        loader.displayImage (eventList.get (i).getPicUrl (), eventListHolder.image);
         eventListHolder.date.setText (event.getDateAsString ());
         eventListHolder.name.setText (event.getName ());
         eventListHolder.tags.setText (event.getTags ());

@@ -32,10 +32,13 @@ public class CustomerTicketsListAdapter extends ArrayAdapter<EventsSeatsInfo> {
                 TextView price = (TextView) convertView.findViewById (R.id.price);
                 Button listViewButton = (Button) convertView.findViewById (R.id.moreDetailesButton);
                 Button eventEndedButton = (Button) convertView.findViewById (R.id.eventEnded);
+                TextView purchaseDate = (TextView) convertView.findViewById (R.id.purchaseDate);
+
 
                 String priceString = String.valueOf (eventsSeatsInfo.getPrice ());
                 eventName.setText (eventsSeatsInfo.getEventInfo ().getName ());
                 eventDate.setText (eventsSeatsInfo.getEventInfo ().getDateAsString ());
+                purchaseDate.setText(eventsSeatsInfo.getPurchaseDate().toString().substring(0,20));
                 price.setText (priceString);
                 listViewButton.setTag (position);
 

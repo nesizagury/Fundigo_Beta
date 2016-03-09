@@ -37,6 +37,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import io.branch.referral.Branch;
 import io.branch.referral.BranchError;
@@ -67,8 +68,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView (R.layout.producer_avtivity_main);
 
         TabLayout tabLayout = (TabLayout) findViewById (R.id.tab_layout);
-        tabLayout.addTab (tabLayout.newTab ().setText ("Artists"));
-        tabLayout.addTab (tabLayout.newTab ().setText ("Stats"));
+        if (Locale.getDefault ().getDisplayLanguage ().equals ("עברית")) {
+            tabLayout.addTab (tabLayout.newTab ().setText ("אמנים"));
+            tabLayout.addTab (tabLayout.newTab ().setText ("מידע"));
+        } else {
+            tabLayout.addTab (tabLayout.newTab ().setText ("Artist"));
+            tabLayout.addTab (tabLayout.newTab ().setText ("State"));
+        }
+
         tabLayout.setTabGravity (TabLayout.GRAVITY_FILL);
         final ViewPager viewPager = (ViewPager) findViewById (R.id.pager);
         final TabPagerAdapter adapter = new TabPagerAdapter
@@ -246,7 +253,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
-    public boolean onPrepareOptionsMenu(Menu menu) { //Assaf- Hide the Items in Menu XML which are empty since the length of menu is less then 11
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //Hide the Items in Menu XML which are empty since the length of menu is less then 11
         try {
             super.onPrepareOptionsMenu (menu);
             int maxLength = 11;

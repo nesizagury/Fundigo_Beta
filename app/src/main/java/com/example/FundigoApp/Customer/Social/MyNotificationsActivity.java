@@ -65,19 +65,26 @@ public class MyNotificationsActivity extends AppCompatActivity implements Adapte
         } catch (ParseException e) {
             e.printStackTrace ();
         }
-        for (int i = pushObjectsList.size () - 1; i >= 0; i--) {
+        List<ParseObject> tempPushObjectsList = new ArrayList<ParseObject> ();
+        for (int i = 0; i < pushObjectsList.size (); i++) {
             ParseObject parseObject = pushObjectsList.get (i);
             EventInfo eventInfo = StaticMethods.getEventFromObjID (parseObject.getString ("EvendId"),
                                                                           GlobalVariables.ALL_EVENTS_DATA);
-            notificationsEventList.add (eventInfo);
+            if(eventInfo == null){
+                continue;
+            } else {
+                notificationsEventList.add (eventInfo);
+                tempPushObjectsList.add(pushObjectsList.get (i));
+            }
         }
+        pushObjectsList.clear ();
+        pushObjectsList.addAll (tempPushObjectsList);
     }
 
     @Override
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Intent intent = new Intent (MyNotificationsActivity.this, DetailedNotificationActivity.class);
         intent.putExtra ("Message", pushObjectsList.get (i).getString ("pushMessage").toString ());
-        intent.putExtra ("Date", notificationsEventList.get (i).getDate ());
         intent.putExtra ("EvendId", notificationsEventList.get (i).getParseObjectId ());
         startActivity (intent);
     }

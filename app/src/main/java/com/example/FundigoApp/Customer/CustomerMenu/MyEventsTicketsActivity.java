@@ -110,7 +110,7 @@ public class MyEventsTicketsActivity extends AppCompatActivity {
                 }
                 listT.deferNotifyDataSetChanged ();
             } else {
-                noTickets.setText ("No Tickets To Display");
+                noTickets.setText (R.string.no_tickets_to_display);
                 noTickets.setVisibility (View.VISIBLE);
             }
         } catch (ParseException e) {

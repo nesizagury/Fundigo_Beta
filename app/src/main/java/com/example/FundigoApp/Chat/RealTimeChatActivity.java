@@ -20,6 +20,7 @@ import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.StaticMethods;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -43,6 +44,7 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
     Button eventName;
     ImageView eventImage;
     EventInfo eventInfo;
+    ImageLoader loader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +53,12 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
         eventImage = (ImageView) findViewById (R.id.profileImage_rt_chat);
         eventName = (Button) findViewById (R.id.ProfileName_rt_chat);
         buttonSend = (Button) findViewById (R.id.btSend_rt_Chat);
-
+        loader = StaticMethods.getImageLoader (this);
         Intent intent = getIntent ();
         eventObjectId = intent.getStringExtra ("eventObjectId");
         eventInfo = StaticMethods.getEventFromObjID (eventObjectId, GlobalVariables.ALL_EVENTS_DATA);
-        eventImage.setImageBitmap (eventInfo.getImageBitmap ());
-        eventName.setText (eventInfo.getName () + " (Real Time Chat)");
+        loader.displayImage (eventInfo.getPicUrl (), eventImage);
+        eventName.setText (eventInfo.getName () + "(" + getResources ().getString (R.string.real_time_chat) + ")");
         if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
             current_user_id = GlobalVariables.CUSTOMER_PHONE_NUM;
         } else if (GlobalVariables.IS_PRODUCER) {
@@ -204,10 +206,10 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         faceBookUserId = messagesRealTimeList.get (position).getFbId ();
         AlertDialog.Builder builder = new AlertDialog.Builder (this);
-        builder.setTitle ("Visit user facebook page");
+        builder.setTitle (R.string.visit_user_facebook);
         builder.setIcon (R.mipmap.ic_mor_information);
-        builder.setPositiveButton ("Go!", listener);
-        builder.setNegativeButton ("Cancel...", listener);
+        builder.setPositiveButton (R.string.go, listener);
+        builder.setNegativeButton (R.string.cancel, listener);
 
         AlertDialog dialog = builder.create ();
         dialog.show ();

@@ -183,7 +183,7 @@ public class SelectSeatActivity extends AppCompatActivity {
             TextView priceTicket = (TextView) row.findViewById (R.id.textView8);
             ImageView image = (ImageView) row.findViewById (R.id.imageView6);
             Button buyTicket = (Button) row.findViewById (R.id.button3);
-            buyTicket.setText ("Buy Ticket");
+            buyTicket.setText (R.string.buy_ticket);
             buyTicket.setVisibility (View.GONE);
 
             row.setOnClickListener (new View.OnClickListener () {
@@ -199,7 +199,7 @@ public class SelectSeatActivity extends AppCompatActivity {
             });
             final SeatRow temp = seatList.get (position);
             title.setText (temp.title);
-            priceTicket.setText ("Price: " + temp.ticketPrice + "₪");
+            priceTicket.setText (getApplicationContext().getString(R.string.price) +" "+ temp.ticketPrice + "₪");
             image.setImageResource (temp.image);
             buyTicket.setOnClickListener (new View.OnClickListener () {
                 @Override
@@ -229,6 +229,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                         e.printStackTrace ();
                     }
                     startActivity (intentQr);
+                    finish();
                 }
             });
 

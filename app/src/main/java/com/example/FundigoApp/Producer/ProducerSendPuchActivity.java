@@ -38,7 +38,9 @@ public class ProducerSendPuchActivity extends AppCompatActivity implements View.
                     Toast.makeText (this, editText.getText (), Toast.LENGTH_SHORT).show ();
                     SimpleDateFormat sdf = new SimpleDateFormat ("dd/MM/yyyy_HH:mm:ss");
                     String currentDateandTime = sdf.format (new Date ());
+                    ParsePush.subscribeInBackground ("a" + eventObjectId);
                     ParsePush push = new ParsePush ();
+                    push.setChannel ("a" + eventObjectId);
                     ParseObject query = new ParseObject ("Push");
                     push.setMessage (editText.getText () + "(" + currentDateandTime + ")");
                     try {
@@ -47,6 +49,7 @@ public class ProducerSendPuchActivity extends AppCompatActivity implements View.
                         query.put ("Date", currentDateandTime);
                         query.put ("EvendId", eventObjectId);
                         query.save ();
+                        ParsePush.unsubscribeInBackground ("a" + eventObjectId);
                     } catch (com.parse.ParseException e) {
                         e.getStackTrace ();
                     }
