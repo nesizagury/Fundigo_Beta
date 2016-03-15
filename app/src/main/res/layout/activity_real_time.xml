@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/toolbar_up"
@@ -9,9 +9,7 @@
         android:layout_height="30dp"
         android:orientation="horizontal"
         android:weightSum="700.0"
-        android:background="#71B7E6"
-
-        >
+        android:background="#71B7E6">
 
         <ImageView
             android:id="@+id/settings_item"
@@ -29,6 +27,7 @@
             android:layout_weight="100"
             android:src="@drawable/notification_icon"
             android:background="#71B7E6"
+            android:onClick="openNotificationPage"
             android:padding="2dp"/>
 
         <Button
@@ -36,7 +35,7 @@
             android:layout_height="match_parent"
             android:layout_width="0dip"
             android:layout_weight="300"
-            android:text="@string/fundigo"
+            android:text="FUNDIGO"
             android:background="#71B7E6"
             android:textColor="#ffffff"
             android:textSize="17sp"
@@ -50,6 +49,7 @@
             android:actionViewClass="android.widget.SearchView"
             android:src="@drawable/search_icon"
             android:background="#71B7E6"
+            android:onClick="openSearch"
             android:padding="4dp"/>
 
         <ImageView
@@ -70,9 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar_up"
         android:orientation="horizontal"
-        android:weightSum="392.0"
-
-        >
+        android:weightSum="392.0">
 
         <Button
             android:id="@+id/BarEvent_button"
@@ -81,7 +79,7 @@
             android:layout_weight="130"
             android:background="#3293CD"
             android:gravity="center"
-            android:text="@string/events"
+            android:text="Events"
             android:textColor="#ffffff"
             android:textSize="15sp"
             />
@@ -99,7 +97,7 @@
             android:layout_weight="130"
             android:background="#3293CD"
             android:gravity="center"
-            android:text="@string/saved_events"
+            android:text="SavedEvents"
             android:textColor="#ffffff"
             android:textSize="15sp"
             />
@@ -117,7 +115,7 @@
             android:layout_weight="130"
             android:background="#1277AB"
             android:gravity="center"
-            android:text="@string/real_time"
+            android:text="Real-Time"
             android:textColor="#ffffff"
             android:textSize="15sp"
             />
@@ -127,11 +125,11 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/turn_on_gps_to_see_real_time_events"
+        android:text="Turn On GPS To See RealTime Events"
         android:id="@+id/turnOnGps"
         android:textSize="20sp"
         android:layout_below="@+id/toolbar"
-        android:layout_alignParentStart="true"
+
         android:background="#0f638e"
         android:autoText="true"
         android:textColor="#ffffff"
@@ -145,19 +143,19 @@
         android:layout_height="1dp"
         android:background="#c5c5c5"
         android:layout_below="@+id/textView8"
-        android:layout_alignParentStart="true"/>
+        />
 
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/gridview"
-              android:layout_width="fill_parent"
-              android:layout_height="match_parent"
-              android:columnWidth="90dp"
-              android:numColumns="2"
-              android:verticalSpacing="10dp"
-              android:horizontalSpacing="10dp"
-              android:stretchMode="columnWidth"
-              android:gravity="center"
-              android:layout_below="@+id/toolbar"
+        android:id="@+id/gridview"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="90dp"
+        android:numColumns="2"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:layout_below="@+id/toolbar"
         />
 
 

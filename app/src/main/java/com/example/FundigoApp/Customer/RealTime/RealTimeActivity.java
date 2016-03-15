@@ -115,7 +115,7 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
             eventsGridAdapter.notifyDataSetChanged ();
             turnOnGPS.setVisibility (View.GONE);
         } else {
-            StaticMethods.updateDeviceLocationGPS (this.getApplicationContext (), this);
+            StaticMethods.updateDeviceLocationGPS(this.getApplicationContext(), this);
         }
     }
 
@@ -136,11 +136,11 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
             event.setDist (distance);
             arr.add (event);
         }
-        Collections.sort (arr, new Comparator<EventInfo> () {
+        Collections.sort(arr, new Comparator<EventInfo>() {
             @Override
             public int compare(EventInfo a, EventInfo b) {
-                if (a.getDist () < b.getDist ()) return -1;
-                if (a.getDist () >= b.getDist ()) return 1;
+                if (a.getDist() < b.getDist()) return -1;
+                if (a.getDist() >= b.getDist()) return 1;
                 return 0;
             }
         });
@@ -153,8 +153,8 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         Intent newIntent = null;
         if (vId == Event.getId ()) {
             newIntent = new Intent (this, MainActivity.class);
-            startActivity (newIntent);
-            finish ();
+            startActivity(newIntent);
+            finish();
         } else if (vId == SavedEvent.getId ()) {
             newIntent = new Intent (this, SavedEventActivity.class);
             startActivity (newIntent);
@@ -168,10 +168,6 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    public void openFilterPage(View v) {
-        Intent filterPageIntent = new Intent (this, FilterPageActivity.class);
-        startActivity (filterPageIntent);
-    }
 
     @Override
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
@@ -182,10 +178,27 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         startActivity (intent);
     }
 
+    public void openFilterPage(View v) {
+        Intent filterPageIntent = new Intent (this, FilterPageActivity.class);
+        startActivity(filterPageIntent);
+    }
+
+
     public void openMenuPage(View v) {
         Intent menuPageIntent = new Intent (this, MenuActivity.class);
         startActivity (menuPageIntent);
     }
+
+    public void openNotificationPage(View v) {
+        Intent i = new Intent (this, MyNotificationsActivity.class);
+        startActivity (i);
+    }
+
+    public void openSearch(View v) {
+        Intent i = new Intent (this, SearchActivity.class);
+        startActivity (i);
+    }
+
 
     @Override
     protected void onResume() {

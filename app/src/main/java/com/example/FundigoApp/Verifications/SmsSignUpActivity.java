@@ -85,7 +85,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         forceRTLIfSupported ();
         super.onCreate (savedInstanceState);
-        setContentView (R.layout.activity_sms_varification);
+        setContentView (R.layout.activity_sms_login);
         Locale.getDefault ().getDisplayLanguage ();
         array_spinner = new String[6];
         array_spinner[0] = "050";
@@ -95,8 +95,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
         array_spinner[4] = "055";
         array_spinner[5] = "058";
         s = (Spinner) findViewById (R.id.spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this,
-                                                                        android.R.layout.simple_spinner_item,
+        ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_item,
                                                                         array_spinner);
         s.setAdapter (adapter);
 
@@ -126,7 +125,6 @@ public class SmsSignUpActivity extends AppCompatActivity {
                 if ((event != null && (event.getKeyCode () == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     usernameTE.setVisibility (View.INVISIBLE);
                     usernameTV.setVisibility (View.INVISIBLE);
-                    customerImageView = (ImageView) findViewById (R.id.imageV);
                     customerImageView.setVisibility (View.VISIBLE);
                     upload_button = (Button) findViewById (R.id.upload_button);
                     upload_button.setVisibility (View.VISIBLE);
