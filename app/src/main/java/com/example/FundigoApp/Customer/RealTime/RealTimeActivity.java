@@ -20,7 +20,6 @@ import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.Events.EventPageActivity;
 import com.example.FundigoApp.FilterPageActivity;
 import com.example.FundigoApp.GlobalVariables;
-import com.example.FundigoApp.MainActivity;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.SearchActivity;
 import com.example.FundigoApp.StaticMethods;
@@ -67,7 +66,7 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
 
         if (GlobalVariables.ALL_EVENTS_DATA.size () == 0) {
             Intent intent = new Intent (this, EventPageActivity.class);
-            StaticMethods.uploadEventsData (this, null, this.getApplicationContext (), intent);
+            StaticMethods.downloadEventsData (this, null, this.getApplicationContext (), intent);
         } else {
             if (GlobalVariables.MY_LOCATION != null  && StaticMethods.isLocationEnabled (this)) {
                 events_sorted_by_dist_data = getSortedListByDist ();
@@ -152,8 +151,6 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         int vId = v.getId ();
         Intent newIntent = null;
         if (vId == Event.getId ()) {
-            newIntent = new Intent (this, MainActivity.class);
-            startActivity (newIntent);
             finish ();
         } else if (vId == SavedEvent.getId ()) {
             newIntent = new Intent (this, SavedEventActivity.class);
@@ -186,6 +183,17 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         Intent menuPageIntent = new Intent (this, MenuActivity.class);
         startActivity (menuPageIntent);
     }
+
+    public void openNotificationPage(View v) {
+        Intent i = new Intent (this, MyNotificationsActivity.class);
+        startActivity (i);
+    }
+
+    public void openSearch(View v) {
+        Intent i = new Intent (this, SearchActivity.class);
+        startActivity (i);
+    }
+
 
     @Override
     protected void onResume() {

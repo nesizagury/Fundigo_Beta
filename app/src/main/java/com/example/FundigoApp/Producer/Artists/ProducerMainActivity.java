@@ -44,10 +44,9 @@ public class ProducerMainActivity extends Fragment implements GetEventsDataCallb
             }
         });
 
-        if (GlobalVariables.ALL_EVENTS_DATA.size () == 0) {
-            Intent intent = new Intent (this.getActivity (), EventPageActivity.class);
-            StaticMethods.uploadEventsData (this, GlobalVariables.PRODUCER_PARSE_OBJECT_ID, this.getContext (), intent);
-        }
+        Intent intent = new Intent (this.getActivity (), EventPageActivity.class);
+        StaticMethods.downloadEventsData (this, GlobalVariables.PRODUCER_PARSE_OBJECT_ID, this.getContext (), intent);
+
         artistListView.setOnItemClickListener (new AdapterView.OnItemClickListener () {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -71,7 +70,7 @@ public class ProducerMainActivity extends Fragment implements GetEventsDataCallb
         if(GlobalVariables.refreshArtistsList){
             GlobalVariables.refreshArtistsList = false;
             Intent intent = new Intent (this.getActivity (), EventPageActivity.class);
-            StaticMethods.uploadEventsData (this, GlobalVariables.PRODUCER_PARSE_OBJECT_ID, this.getContext (), intent);
+            StaticMethods.downloadEventsData (this, GlobalVariables.PRODUCER_PARSE_OBJECT_ID, this.getContext (), intent);
         }
     }
 }

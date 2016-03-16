@@ -131,7 +131,7 @@
         <item>Fashion</item>
         <item>Education</item>
         <item>Government</item>
-        <item>Home&amp;Lifestyle</item>
+        <item>Home and LifeStyle</item>
         <item>Music</item>
     </string-array>
 
@@ -171,14 +171,14 @@
     <string name="artist">Artis</string>
     <string name="description">Description</string>
     <string name="next">Next</string>
-    <string name="user_name">User Name:</string>
+    <string name="user_name">Username:</string>
     <string name="select_picture">Select Picture:</string>
 
     <string name="image_upload">Image Upload</string>
     <string name="submit">Submit</string>
     <string name="what_to_share">What would you like to share?</string>
     <string name="app_pafw">App Page</string>
-    <string name="web_page">Web Page:</string>
+    <string name="web_page">Web Page</string>
     <string name="mipo_party_real_time">Mipo Party Real Time</string>
     <string name="gust_entered">Gust\'s Entered:</string>
     <string name="qr_scanner">QR - Scanner</string>

@@ -12,6 +12,7 @@
         android:layout_marginBottom="46dp"
         android:layout_alignBottom="@+id/usernameET"
         android:layout_alignStart="@+id/usernameET"
+        android:layout_centerHorizontal="true"
         android:layout_marginLeft="2dp" />
 
 
@@ -23,6 +24,7 @@
         android:id="@+id/textView19"
         android:textSize="16sp"
         android:layout_above="@+id/emailET"
+        android:layout_centerHorizontal="true"
         android:layout_alignStart="@+id/emailET"
         android:layout_marginBottom="6dp"
         android:layout_marginLeft="2dp" />
@@ -34,6 +36,7 @@
         android:background="#ffffff"
         android:layout_above="@+id/textView10"
         android:layout_alignStart="@+id/textView10"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="24dp" />
 
     <EditText
@@ -52,6 +55,7 @@
         android:text="@string/password"
         android:id="@+id/textView20"
         android:textSize="16sp"
+        android:layout_centerHorizontal="true"
         android:layout_below="@+id/usernameET"
         android:layout_alignStart="@+id/usernameET"
         android:layout_marginTop="35dp"
@@ -64,6 +68,7 @@
         android:id="@+id/passwordET"
         android:background="#ffffff"
         android:layout_below="@+id/textView20"
+        android:layout_centerHorizontal="true"
         android:layout_alignStart="@+id/textView20" />
 
     <Button
@@ -73,12 +78,12 @@
         android:onClick="createAccount"
         android:id="@+id/button8"
         android:background="#71B7E6"
+        android:layout_centerHorizontal="true"
         android:textColor="#ffffff"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="68dp"
         android:textSize="13sp"
-        android:layout_alignEnd="@+id/textView21"
-        android:layout_alignStart="@+id/textView21" />
+        />
 
     <TextView
         android:layout_width="wrap_content"

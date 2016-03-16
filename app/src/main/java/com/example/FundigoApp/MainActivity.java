@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         if (GlobalVariables.ALL_EVENTS_DATA.size () == 0) {
             Intent intent = new Intent (this, EventPageActivity.class);
-            StaticMethods.uploadEventsData (this, null, this.context, intent);
+            StaticMethods.downloadEventsData (this, null, this.context, intent);
         } else {
             inflateCityMenu ();
             filtered_events_data.clear ();
@@ -158,35 +158,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void gpsCallback() {
-        if (GlobalVariables.CITY_GPS != null && !GlobalVariables.CITY_GPS.isEmpty ()) {
+        if (GlobalVariables.CITY_GPS != null &&
+                    !GlobalVariables.CITY_GPS.isEmpty ()) {
             GlobalVariables.cityMenuInstance = new CityMenu (GlobalVariables.ALL_EVENTS_DATA, this);
             GlobalVariables.namesCity = GlobalVariables.cityMenuInstance.getCityNames ();
             inflateCityMenu ();
-            popup.getMenu ().getItem (GlobalVariables.indexCityGPS).setTitle (GlobalVariables.namesCity[GlobalVariables.indexCityGPS]);
-            GlobalVariables.indexCityGPS = getCityIndexFromName (GlobalVariables.CITY_GPS);
-            popup.getMenu ().getItem (GlobalVariables.indexCityGPS).setTitle (GlobalVariables.CITY_GPS + "(GPS)");
-            if (!GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
-                ArrayList<EventInfo> tempEventsList =
-                        StaticMethods.filterByCityAndFilterName (
-                                                                        GlobalVariables.CITY_GPS,
-                                                                        GlobalVariables.CURRENT_FILTER_NAME,
-                                                                        GlobalVariables.ALL_EVENTS_DATA);
-                filtered_events_data.clear ();
-                filtered_events_data.addAll (tempEventsList);
-                eventsListAdapter.notifyDataSetChanged ();
-                currentCityButton.setText (GlobalVariables.CITY_GPS + "(GPS)");
+            int indexCityGps = StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS);
+            if (indexCityGps >= 0) {
+                popup.getMenu ().getItem (GlobalVariables.indexCityGPS).setTitle (GlobalVariables.namesCity[GlobalVariables.indexCityGPS]);
+                GlobalVariables.indexCityGPS = indexCityGps;
+                popup.getMenu ().getItem (GlobalVariables.indexCityGPS).setTitle (GlobalVariables.CITY_GPS + "(GPS)");
+                if (!GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
+                    ArrayList<EventInfo> tempEventsList =
+                            StaticMethods.filterByCityAndFilterName (
+                                                                            GlobalVariables.CITY_GPS,
+                                                                            GlobalVariables.CURRENT_FILTER_NAME,
+                                                                            GlobalVariables.ALL_EVENTS_DATA);
+                    filtered_events_data.clear ();
+                    filtered_events_data.addAll (tempEventsList);
+                    eventsListAdapter.notifyDataSetChanged ();
+                    currentCityButton.setText (GlobalVariables.CITY_GPS + "(GPS)");
+                }
             }
-        }
-    }
 
-    private int getCityIndexFromName(String name) {
-        for (int i = 0; i < GlobalVariables.namesCity.length; i++) {
-            String city = GlobalVariables.namesCity[i];
-            if (city.equals (name)) {
-                return i;
-            }
         }
-        return -1;
     }
 
     @Override
@@ -201,12 +196,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             filtered_events_data.clear ();
             filtered_events_data.addAll (tempEventsList);
             eventsListAdapter.notifyDataSetChanged ();
-            if (GlobalVariables.CITY_GPS != null && GlobalVariables.namesCity[GlobalVariables.indexCityChosen].equals (GlobalVariables.CITY_GPS)) {
+            if (GlobalVariables.CITY_GPS != null &&
+                        GlobalVariables.namesCity[GlobalVariables.indexCityChosen].equals (GlobalVariables.CITY_GPS) &&
+                        StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
                 currentCityButton.setText (GlobalVariables.namesCity[GlobalVariables.indexCityChosen] + "(GPS)");
             } else {
                 currentCityButton.setText (GlobalVariables.namesCity[GlobalVariables.indexCityChosen]);
             }
-        } else if (GlobalVariables.CITY_GPS != null && !GlobalVariables.CITY_GPS.isEmpty ()) {
+        } else if (GlobalVariables.CITY_GPS != null &&
+                           !GlobalVariables.CITY_GPS.isEmpty () &&
+                           StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
             ArrayList<EventInfo> tempEventsList =
                     StaticMethods.filterByCityAndFilterName (
                                                                     GlobalVariables.CITY_GPS,
@@ -216,6 +215,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             filtered_events_data.addAll (tempEventsList);
             eventsListAdapter.notifyDataSetChanged ();
             currentCityButton.setText (GlobalVariables.CITY_GPS + "(GPS)");
+        }  else if(!GlobalVariables.IS_PRODUCER){
+            ArrayList<EventInfo> tempEventsList =
+                    StaticMethods.filterByCityAndFilterName (
+                                                                    GlobalVariables.namesCity[GlobalVariables.indexCityChosen],
+                                                                    GlobalVariables.CURRENT_FILTER_NAME,
+                                                                    GlobalVariables.ALL_EVENTS_DATA);
+            filtered_events_data.clear ();
+            filtered_events_data.addAll (tempEventsList);
+            eventsListAdapter.notifyDataSetChanged ();
         }
     }
 
@@ -231,7 +239,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     public boolean onMenuItemClick(MenuItem item) {
                         GlobalVariables.indexCityChosen = GlobalVariables.popUpIDToCityIndex.get (item.getItemId ());
                         GlobalVariables.CURRENT_CITY_NAME = item.getTitle ().toString ();
-                        if (GlobalVariables.CITY_GPS != null && item.getTitle ().equals (GlobalVariables.CITY_GPS)) {
+                        if (GlobalVariables.CITY_GPS != null &&
+                                    item.getTitle ().equals (GlobalVariables.CITY_GPS) &&
+                                    StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
                             currentCityButton.setText (item.getTitle () + "(GPS)");
                         } else {
                             currentCityButton.setText (item.getTitle ());
@@ -277,7 +287,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 foundCity = false;
             }
             for (int i = 0; i < GlobalVariables.namesCity.length; i++) {
-                if (i == GlobalVariables.indexCityGPS && GlobalVariables.CITY_GPS != null) {
+                if (i == GlobalVariables.indexCityGPS &&
+                            GlobalVariables.CITY_GPS != null &&
+                            StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
                     popup.getMenu ().getItem (i).setTitle (GlobalVariables.namesCity[i] + "(GPS)");
                 } else {
                     popup.getMenu ().getItem (i).setTitle (GlobalVariables.namesCity[i]);
@@ -295,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
             if (GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
                 currentCityButton.setText (popup.getMenu ().getItem (GlobalVariables.indexCityChosen).getTitle ());
-            } else if (GlobalVariables.CITY_GPS != null) {
+            } else if (GlobalVariables.CITY_GPS != null && StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
                 currentCityButton.setText (GlobalVariables.CITY_GPS + "(GPS)");
             } else {
                 currentCityButton.setText (popup.getMenu ().getItem (0).getTitle ());

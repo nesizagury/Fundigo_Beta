@@ -45,7 +45,7 @@ public class WebBrowserActivity extends AppCompatActivity {
         view.getSettings ().setDomStorageEnabled (true);
         view.getSettings ().setLoadWithOverviewMode (true);
         view.getSettings ().setUseWideViewPort (true);
-        view.loadUrl ("https://fundigo.parseapp.com/");
+        view.loadUrl ("https://akimbomaster.parseapp.com/");
         view.setWebViewClient (new WebViewClient () {
             @Override
             public boolean shouldOverrideUrlLoading(WebView v, String url) {
