@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="Income so far"
-            android:textSize="23sp"
+            android:textSize="20sp"
             android:layout_marginTop="10dp"/>
 
 
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="0"
-            android:textSize="23sp"
+            android:textSize="20sp"
             android:textColor="#000000"
             android:layout_marginTop="10dp"/>
 
@@ -44,14 +44,14 @@
             android:layout_alignParentStart="true"
             android:layout_marginLeft="10dp"
             android:text="Number Tickets Sold"
-            android:textSize="23sp"/>
+            android:textSize="20sp"/>
             <TextView
                 android:id="@+id/numberTicketsSold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="0"
-                android:textSize="23sp"
+                android:textSize="20sp"
                 android:textColor="#000000"/>
         </LinearLayout>
     <LinearLayout
@@ -64,14 +64,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="Number Of Past Events"
-            android:textSize="23sp"/>
+            android:textSize="20sp"/>
         <TextView
             android:id="@+id/numberOfPastEvents"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="0"
-            android:textSize="23sp"
+            android:textSize="20sp"
             android:textColor="#000000"/>
     </LinearLayout>
     <LinearLayout
@@ -84,14 +84,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="Sold Ticket Price avg"
-            android:textSize="23sp"/>
+            android:textSize="20sp"/>
         <TextView
             android:id="@+id/soldTicketPriceAvg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="0"
-            android:textSize="23sp"
+            android:textSize="20sp"
             android:textColor="#000000"/>
     </LinearLayout>
     <LinearLayout
@@ -105,18 +105,18 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/soldTicketPriceAvgTV"
             android:layout_marginLeft="10dp"
-            android:text="Total Tickets \nPotantial Income"
-            android:textSize="23sp"/>
+            android:text="Potential Total Income"
+            android:textSize="20sp"/>
         <TextView
             android:id="@+id/incomeUpcoming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="0"
-            android:textSize="23sp"
+            android:textSize="20sp"
             android:layout_alignBottom="@+id/incomeUpcomingTV"
             android:layout_alignStart="@+id/numberOfUpcomingEvents"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="0dp"
             android:textColor="#000000"/>
     </LinearLayout>
     <LinearLayout
@@ -129,14 +129,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="Number Of Tickets\nAvailable"
-            android:textSize="23sp"/>
+            android:textSize="20sp"/>
         <TextView
             android:id="@+id/numberTicketsUpcoming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="0"
-            android:textSize="23sp"
+            android:textSize="20sp"
             android:layout_marginBottom="15dp"
             android:textColor="#000000"/>
     </LinearLayout>
@@ -149,15 +149,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="Number Of\nUpcoming Events"
-            android:textSize="23sp"/>
+            android:text="Number Of Upcoming \nEvents"
+            android:textSize="20sp"/>
         <TextView
             android:id="@+id/numberOfUpcomingEvents"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="0"
-            android:textSize="23sp"
+            android:textSize="20sp"
             android:textColor="#000000"/>
     </LinearLayout>
     <LinearLayout
@@ -171,14 +171,14 @@
             android:layout_below="@+id/numberOfUpcomingEventsTV"
             android:layout_marginLeft="10dp"
             android:text="Upcoming Tickets\nPrice avg"
-            android:textSize="23sp"/>
+            android:textSize="20sp"/>
         <TextView
             android:id="@+id/upcomingTicketPriceAvg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="0"
-            android:textSize="23sp"
+            android:textSize="20sp"
             android:textColor="#000000"/>
     </LinearLayout>
     </LinearLayout>

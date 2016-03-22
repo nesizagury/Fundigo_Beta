@@ -122,7 +122,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Total Tickets \nPotantial Income"
+                android:text="Potential Total \nIncome"
                 android:textSize="23sp"/>
 
             <TextView
@@ -169,7 +169,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="Number Of\nUpcoming Events"
+                android:text="Number Of Upcoming\nEvents"
                 android:textSize="23sp"/>
 
             <TextView

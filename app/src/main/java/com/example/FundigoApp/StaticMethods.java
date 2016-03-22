@@ -314,7 +314,7 @@ public class StaticMethods {
 
         }
 
-        return number;
+         return number;
     }
 
     public static void filterListsAndUpdateListAdapter(List<EventInfo> eventsListToFilter,

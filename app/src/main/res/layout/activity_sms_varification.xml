@@ -3,6 +3,14 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+   <RelativeLayout
+           android:layout_width="match_parent"
+           android:orientation="vertical"
+           android:layout_height="match_parent">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -121,4 +129,6 @@
         android:layout_alignStart="@+id/usernameTE"
         android:textColor="#a3a2a2"
         android:textSize="19sp" />
+       </RelativeLayout>
+   </ScrollView>
 </RelativeLayout>

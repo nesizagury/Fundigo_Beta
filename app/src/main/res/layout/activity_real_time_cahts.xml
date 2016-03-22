@@ -17,7 +17,7 @@
         <ImageView
             android:id="@+id/profileImage_rt_chat"
             android:layout_width="0dip"
-            android:layout_height="55dip"
+            android:layout_height="55dp"
             android:layout_weight="100"
             android:adjustViewBounds="false"
             android:background="#3293CD"
@@ -27,11 +27,11 @@
 
         <Button
             android:id="@+id/ProfileName_rt_chat"
-            android:layout_width="0dip"
-            android:layout_height="55dip"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
             android:layout_weight="300"
             android:background="#3293CD"
-            android:text="Big Fassion Event - Real Time Chat"
+            android:text="Big Fashion Event - Real Time Chat"
             android:textColor="#ffffff"
             android:textSize="15sp"
             android:gravity="center"/>

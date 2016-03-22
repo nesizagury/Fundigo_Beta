@@ -61,7 +61,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="saveCreditCard"
-        android:text="Save Crdit Card"
+        android:text="Save Credit Card"
         android:layout_below="@+id/faebook_profile"
         android:textSize="20sp"
         android:visibility="gone"/>
@@ -71,7 +71,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="deleteCreditCard"
-        android:text="Delete Crdit Card XXXX-"
+        android:text="Delete Credit Card XXXX-"
         android:layout_below="@+id/save_credit_card"
         android:textSize="20sp"
         android:visibility="gone"/>

@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
 
-        android:text="Enter Phone Number Hear"/>
+        android:text="Enter Phone Number Here"/>
 
     <EditText
         android:layout_width="match_parent"

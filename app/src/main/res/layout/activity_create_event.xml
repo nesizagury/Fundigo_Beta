@@ -40,6 +40,7 @@
 
         <TextView
             android:id="@+id/tv_name"
+            android:textSize="15sp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -49,7 +50,7 @@
             android:id="@+id/et_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="2.50"
             android:imeActionLabel="Done" />
     </LinearLayout>
 
@@ -64,7 +65,7 @@
             android:id="@+id/btn_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2.37"
             android:inputType="date"
             android:text="@string/pick_date" />
 
@@ -93,6 +94,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/tv_artist"
+                android:textSize="15sp"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -105,12 +107,11 @@
                 android:text="(Optional)" />
         </LinearLayout>
 
-
         <EditText
             android:id="@+id/et_artist"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="2.58"
             android:imeActionLabel="Done" />
     </LinearLayout>
 
@@ -126,13 +127,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textSize="15sp"
             android:text="@string/description" />
 
         <EditText
             android:id="@+id/et_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2.5"
+            android:layout_weight="2.59"
             android:imeActionLabel="Done" />
     </LinearLayout>
 

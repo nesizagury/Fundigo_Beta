@@ -79,7 +79,7 @@
         <Button
             android:id="@+id/BarEvent_button"
             android:layout_width="0dip"
-            android:layout_height="55dip"
+            android:layout_height="55dp"
             android:layout_weight="130"
             android:background="#1277AB"
             android:gravity="center"
@@ -97,7 +97,7 @@
         <Button
             android:id="@+id/BarSavedEvent_button"
             android:layout_width="0dip"
-            android:layout_height="55dip"
+            android:layout_height="55dp"
             android:layout_weight="130"
             android:background="#3293CD"
             android:gravity="center"
@@ -115,7 +115,7 @@
         <Button
             android:id="@+id/BarRealTime_button"
             android:layout_width="0dip"
-            android:layout_height="55dip"
+            android:layout_height="55dp"
             android:layout_weight="130"
             android:background="#3293CD"
             android:gravity="center"

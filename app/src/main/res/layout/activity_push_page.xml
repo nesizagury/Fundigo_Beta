@@ -70,6 +70,8 @@
         android:layout_above="@+id/linearLayout"
         android:layout_below="@+id/PushPage_date"
         android:layout_centerHorizontal="true"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
         android:layout_marginTop="5dp">
 
         <TextView
@@ -100,6 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/scrollView"
             android:layout_weight="3"
+            android:layout_marginTop="5dp"
             android:text="@string/go_to_event"
             />
     </LinearLayout>
