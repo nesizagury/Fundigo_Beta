@@ -17,11 +17,13 @@ import android.widget.Toast;
 
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -48,8 +50,8 @@ public class SelectSeatActivity extends AppCompatActivity {
         eventObjectId = intentHere1.getStringExtra ("eventObjectId");
         customerPhone = intentHere1.getStringExtra ("phone");
         ParseQuery<EventsSeats> query = new ParseQuery ("EventsSeats");
-        query.whereMatches ("eventObjectId", eventObjectId).whereDoesNotExist ("Sold");
-
+        //query.whereMatches ("eventObjectId", eventObjectId).whereDoesNotExist("Sold");
+        query.whereMatches ("eventObjectId", eventObjectId).whereNotEqualTo("CustomerPhone",null);
         seatsArray.clear ();
         try {
             List<EventsSeats> tempSeatsList = query.find ();
@@ -219,7 +221,7 @@ public class SelectSeatActivity extends AppCompatActivity {
                     intentQr.putExtra ("seatNumber", temp.title);
                     intentQr.putExtra ("eventObjectId", eventObjectId);
                     intentQr.putExtra ("isChoose", "yes");
-                    intentQr.putExtra ("seatParseObjId", temp.getParseObjId ());
+                    intentQr.putExtra("seatParseObjId", temp.getParseObjId());
                     intentQr.putExtra ("phone", customerPhone);
                     intentQr.putExtra ("eventPrice", Integer.toString (temp.ticketPrice));
                     seatsArray.get (position).setCustomerPhone (GlobalVariables.CUSTOMER_PHONE_NUM);
@@ -228,7 +230,15 @@ public class SelectSeatActivity extends AppCompatActivity {
                     } catch (ParseException e) {
                         e.printStackTrace ();
                     }
-                    startActivity (intentQr);
+                   /* HashMap<String,String> map=new HashMap<>();
+                    map.put("seatParseObjId", temp.getParseObjId());
+                    map.put("CustomerPhone", customerPhone);
+                    try
+                    {
+                        Integer result = ParseCloud.callFunction("SaveSeatTimer", map);
+                    }catch (ParseException e){e.printStackTrace();}*/
+
+                    startActivity(intentQr);
                     finish();
                 }
             });

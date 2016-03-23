@@ -43,6 +43,8 @@ import com.example.FundigoApp.Tickets.TicketsPriceActivity;
 import com.google.gson.Gson;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.Parse;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -58,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import fr.ganfra.materialspinner.MaterialSpinner;
@@ -523,10 +526,11 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
                 eventObjectId = event.getObjectId ();
                 Log.e (TAG, "objectId " + eventObjectId);
                 if (seats) {
-                    saveTicketsPrice (eventObjectId);
+                    saveTicketsPrice(eventObjectId);
                     //the producer did not chose colored seats
                 } else {
                     totalIncome = Integer.parseInt (et_price.getText ().toString ()) * Integer.parseInt (et_quantity.getText ().toString ());
+
                 }
                 Snackbar snackbar = Snackbar
                                             .make (linearLayout, "Expected income:" + totalIncome, Snackbar.LENGTH_LONG)
@@ -1017,7 +1021,91 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
     private void saveTicketsPrice(String eventObjectId) {
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences (this);
         SharedPreferences.Editor editor = sp.edit ();
-        for (int i = 1; i <= 4; i++) {
+        HashMap<String,String> map=new HashMap<>();
+        map.put("start","1");
+        map.put("end","4");
+        map.put("price", ""+sp.getInt (GlobalVariables.BLUE, 0));
+        map.put("eventObjectId",eventObjectId );
+        map.put("seatNumber","Floor " );
+        try
+        {
+            Integer result = ParseCloud.callFunction("saveTicketsPrice", map);
+        }catch (ParseException e){e.printStackTrace();}
+
+        map.put("start","11");
+        map.put("end","27");
+        map.put("price", ""+sp.getInt (GlobalVariables.ORANGE, 0));
+        map.put("eventObjectId",eventObjectId );
+        map.put("seatNumber","Orange" );
+        try
+        {
+            Integer result = ParseCloud.callFunction("saveTicketsPrice", map);
+        }catch (ParseException e){e.printStackTrace();}
+
+        map.put("start","101");
+        map.put("end","117");
+        map.put("price", ""+sp.getInt (GlobalVariables.PINK, 0));
+        map.put("eventObjectId",eventObjectId );
+        map.put("seatNumber","Pink" );
+        try
+        {
+            Integer result = ParseCloud.callFunction("saveTicketsPrice", map);
+        }catch (ParseException e){e.printStackTrace();}
+
+
+        map.put("start","121");
+        map.put("end","136");
+        map.put("price", ""+sp.getInt (GlobalVariables.PINK, 0));
+        map.put("eventObjectId",eventObjectId );
+        map.put("seatNumber","Pink" );
+        try
+        {
+            Integer result = ParseCloud.callFunction("saveTicketsPrice", map);
+        }catch (ParseException e){e.printStackTrace();}
+
+        map.put("start","201");
+        map.put("end","217");
+        map.put("price", ""+sp.getInt (GlobalVariables.YELLOW, 0));
+        map.put("eventObjectId",eventObjectId );
+        map.put("seatNumber","Yellow" );
+        try
+        {
+            Integer result = ParseCloud.callFunction("saveTicketsPrice", map);
+        }catch (ParseException e){e.printStackTrace();}
+
+
+        map.put("start","221");
+        map.put("end","236");
+        map.put("price", ""+sp.getInt (GlobalVariables.YELLOW, 0));
+        map.put("eventObjectId",eventObjectId );
+        map.put("seatNumber","Yellow" );
+        try
+        {
+            Integer result = ParseCloud.callFunction("saveTicketsPrice", map);
+        }catch (ParseException e){e.printStackTrace();}
+
+
+        map.put("start","207");
+        map.put("end","213");
+        map.put("price", ""+sp.getInt (GlobalVariables.GREEN, 0));
+        map.put("eventObjectId",eventObjectId );
+        map.put("seatNumber","green" );
+        try
+        {
+            Integer result = ParseCloud.callFunction("saveTicketsPrice", map);
+        }catch (ParseException e){e.printStackTrace();}
+
+
+        map.put("start","225");
+        map.put("end","231");
+        map.put("price", ""+sp.getInt (GlobalVariables.GREEN, 0));
+        map.put("eventObjectId",eventObjectId );
+        map.put("seatNumber","green" );
+        try
+        {
+            Integer result = ParseCloud.callFunction("saveTicketsPrice", map);
+        }catch (ParseException e){e.printStackTrace();}
+        /*for (int i = 1; i <= 4; i++) {
             EventsSeats eventsSeats = new EventsSeats ();
             eventsSeats.put ("price", sp.getInt (GlobalVariables.BLUE, 0));
             eventsSeats.put ("eventObjectId", eventObjectId);
@@ -1095,7 +1183,7 @@ public class CreateEventActivity extends Activity implements View.OnClickListene
             eventsSeats.saveInBackground ();
             greenIncome = greenIncome + 7 * sp.getInt (GlobalVariables.GREEN, 0);
         }
-
+*/
         editor.putBoolean (GlobalVariables.SEATS, false);
         editor.apply ();
     }

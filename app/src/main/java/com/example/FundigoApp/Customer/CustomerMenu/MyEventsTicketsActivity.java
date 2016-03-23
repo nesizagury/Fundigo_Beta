@@ -19,6 +19,7 @@ import com.example.FundigoApp.Tickets.CustomerTicketsListAdapter;
 import com.example.FundigoApp.Tickets.EventsSeats;
 import com.example.FundigoApp.Tickets.EventsSeatsInfo;
 import com.example.FundigoApp.Tickets.GetTicketQRCodeActivity;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -35,6 +36,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class MyEventsTicketsActivity extends AppCompatActivity {
@@ -54,6 +56,12 @@ public class MyEventsTicketsActivity extends AppCompatActivity {
 
         _adapter = new CustomerTicketsListAdapter (this, R.layout.content_events_tickets, my_tickets_list);
         listT.setAdapter (_adapter);
+//        /*HashMap<String,String> map=new HashMap<>();
+//        map.put("CustomerPhone", GlobalVariables.CUSTOMER_PHONE_NUM);
+//        try
+//        {
+//            Integer result = ParseCloud.callFunction("createQRCode", map);
+//        }catch (ParseException e){e.printStackTrace();}*/
 
         getListOfEventsTickets ();
     }

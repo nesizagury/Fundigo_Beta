@@ -31,11 +31,13 @@ import com.example.FundigoApp.MyLocation.CityMenu;
 import com.example.FundigoApp.Producer.TabPagerAdapter;
 import com.example.FundigoApp.StaticMethods.GetEventsDataCallback;
 import com.example.FundigoApp.StaticMethods.GpsICallback;
+import com.parse.ParseCloud;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate (savedInstanceState);
+        super.onCreate(savedInstanceState);
         if (GlobalVariables.IS_CUSTOMER_GUEST || GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
             createCustomerMainPage ();
         } else if (GlobalVariables.IS_PRODUCER) {

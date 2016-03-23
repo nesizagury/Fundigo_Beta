@@ -11,12 +11,16 @@ import com.devmarvel.creditcardentry.library.CreditCard;
 import com.devmarvel.creditcardentry.library.CreditCardForm;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
+import com.parse.Parse;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.Card;
 import com.stripe.android.model.Token;
 import com.stripe.exception.StripeException;
+
+import java.util.HashMap;
 
 public class SaveCreditCard extends AppCompatActivity implements View.OnClickListener {
 
@@ -25,12 +29,14 @@ public class SaveCreditCard extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate (savedInstanceState);
-        setContentView (R.layout.activity_save_credit_card);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_save_credit_card);
         saveCardButton = (Button) findViewById (R.id.saveCrditCard_buttonApplay);
-        saveCardButton.setVisibility (View.INVISIBLE);
+        saveCardButton.setVisibility(View.INVISIBLE);
         noZipForm = (CreditCardForm) findViewById (R.id.form_no_zip_SaveCard);
-        noZipForm.setOnCardValidCallback (cardValidCallback);
+        noZipForm.setOnCardValidCallback(cardValidCallback);
+
+
     }
 
     CardValidCallback cardValidCallback = new CardValidCallback () {
