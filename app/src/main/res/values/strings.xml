@@ -45,16 +45,17 @@
 
     <string-array name="autoComplateStrings">
         <item>Sport</item>
-        <item>Helth</item>
+        <item>Health</item>
         <item>Food</item>
-        <item>Drings</item>
+        <item>Drinks</item>
         <item>Event</item>
-        <item>StendUp</item>
+        <item>StandUp</item>
         <item>Music</item>
         <item>Party</item>
         <item>Schools</item>
         <item>experience</item>
     </string-array>
+
 
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_payment">PaymentActivity</string>
@@ -135,6 +136,60 @@
         <item>Music</item>
     </string-array>
 
+    <string-array name="sportFilters">
+        <item>Basketball</item>
+        <item>Football</item>
+        <item>Tennis</item>
+    </string-array>
+
+    <string-array name="travelFilters">
+        <item>Tracks</item>
+        <item>Light</item>
+        <item>Heavy</item>
+    </string-array>
+
+    <string-array name="drinkFilters">
+        <item>Beer</item>
+        <item>Whine</item>
+        <item>Vodka</item>
+    </string-array>
+
+    <string-array name="businessFilters">
+        <item>Cars sale</item>
+        <item>Clothes sale </item>
+        <item>Apartments sale </item>
+    </string-array>
+
+    <string-array name="fashionFilters">
+        <item>Koko Shanell</item>
+        <item>GAP</item>
+        <item>H_M</item>
+    </string-array>
+
+    <string-array name="musicFilters">
+        <item>Trans</item>
+        <item>Disco</item>
+        <item>Pop</item>
+    </string-array>
+
+    <string-array name="governmentFilters">
+        <item>Security</item>
+        <item>Services</item>
+        <item>Law</item>
+    </string-array>
+
+    <string-array name="homeLifeStyleFilters">
+        <item>AAA</item>
+        <item>BBB</item>
+        <item>CCC</item>
+    </string-array>
+
+    <string-array name="educationFilters">
+        <item>University</item>
+        <item>College</item>
+        <item>First Grade</item>
+    </string-array>
+
     <string-array name="atms">
         <item>Yes</item>
         <item>No</item>
@@ -162,6 +217,24 @@
         <item>Pink</item>
         <item>Orange</item>
 
+    </string-array>
+
+    <string-array name="eventPriceFilter">
+        <item>No Filter</item>
+        <item>Free</item>
+        <item>Up To 50</item>
+        <item>Up To 100</item>
+        <item>Up To 200</item>
+        <item>More then 200</item>
+    </string-array>
+
+    <string-array name="eventDateFilter">
+        <item>No Filter</item>
+        <item>Today</item>
+        <item>Tomorrow</item>
+        <item>Day After Tomorrow</item>
+        <item>Weekend</item>
+        <item>Select From Calendar</item>
     </string-array>
 
     <string name="login">LOGIN</string>
@@ -251,6 +324,7 @@
     <string name="input_message">input message</string>
     <string name="user_id">USER ID</string>
     <string name="chat_with_producer">(Chat with Producer)</string>
+    <string name="chat_with_customer">(Chat with Customer)</string>
     <string name="customer">Customer : </string>
     <string name="producer">Producer :</string>
     <string name="real_time_chat">Real Time Chat</string>
@@ -270,6 +344,7 @@
     <string name="km_away">km away</string>
     <string name="you_unsaved_this_event">You unSaved this event</string>
     <string name="you_saved_this_event">You Saved this event</string>
+    <string name="saved_in_calendar">Invitation was sent to your calendar</string>
     <string name="please_enter_valid_address">Please enter valid address</string>
     <string name="please_fill_empty_forms">Please fill empty forms</string>
     <string name="event_has_created_successfully">Event has created successfully!</string>
@@ -290,7 +365,7 @@
     <string name="see_customers_massages">See Customers\' Massages</string>
     <string name="scan_didnt_finish">Scan didn`t finish</string>
     <string name="my_content_title">My Content Title</string>
-
+    <string name="save_to_calander">Schedule the event in your calendar</string>
 
     <string name="my_content_description">My Content Description</string>
     <string name="tickets_sold">Tickets Sold</string>
@@ -342,7 +417,6 @@
     <string name="money">\$</string>
 
 
-
     <string name="cancel_push">Cancel Push</string>
     <string name="get_push">Get Push</string>
     <string name="send_push">Send Push</string>
@@ -364,5 +438,10 @@
     <string name="customer_enter">Customer Enter</string>
     <string name="sold">Sold</string>
     <string name="custme_enter">Mark That Customer Enter</string>
+    <string name="select_date">Select Date</string>
+    <string name="select_price">Select Price</string>
+    <string name="advanced_filter">Press For Advanced Filtering</string>
+    <string name="title_activity_chat_to_customers">ChatToCustomersActivity</string>
+
 
 </resources>

@@ -26,7 +26,7 @@ public class Event extends ParseObject {
     }
 
     public int getNumOfTickets() {
-        return getInt ("NumOfTickets");
+        return getInt("NumOfTickets");
     }
 
     public void setNumOfTickets(int numOfTickets) {
@@ -34,7 +34,7 @@ public class Event extends ParseObject {
     }
 
     public String getPrice() {
-        return getString ("Price");
+        return getString("Price");
     }
 
     public void setPrice(String price) {
@@ -42,7 +42,7 @@ public class Event extends ParseObject {
     }
 
     public double getX() {
-        return getDouble ("X");
+        return getDouble("X");
     }
 
     public double getY() {
@@ -90,7 +90,7 @@ public class Event extends ParseObject {
     }
 
     public Date getRealDate() {
-        return getDate ("realDate");
+        return getDate("realDate");
     }
 
     public void setRealDate(Date date) {
@@ -98,7 +98,7 @@ public class Event extends ParseObject {
     }
 
     public String getPlace() {
-        return getString ("place");
+        return getString("place");
     }
 
     public void setPlace(String place) {
@@ -143,6 +143,15 @@ public class Event extends ParseObject {
 
     public void setFilterName(String filterName) {
         put ("filterName", filterName);
+    }
+
+
+    public String getSubFilterName() {
+        return getString ("subFilterName");
+    }
+
+    public void setSubFilterName(String subFilterName) {
+        put ("subFilterName", subFilterName);
     }
 
     public String getArtist() {

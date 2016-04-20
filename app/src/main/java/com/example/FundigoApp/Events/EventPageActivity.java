@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -52,6 +53,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -70,7 +73,6 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
     Button getTicketsButton;
     Intent intent;
     Button producerPush;
-
     private String date;
     private String eventName;
     private String eventPlace;
@@ -81,8 +83,7 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
     Bitmap bitmap;
     EventInfo eventInfo;
     String i = "";
-
-
+    List<EventInfo> eventList = new ArrayList<EventInfo>();
     private String faceBookUrl;
     ImageLoader loader;
 
@@ -399,6 +400,7 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
                         intentToSend = new Intent (EventPageActivity.this, RealTimeChatActivity.class);
                         intentToSend.putExtra ("eventName", eventName);
                         intentToSend.putExtra ("eventObjectId", eventInfo.getParseObjectId ());
+                        intentToSend.putExtra ("index", intent.getIntExtra ("index", 0));
                         startActivity (intentToSend);
                     }
                     break;
@@ -434,7 +436,7 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
 
     public void checkIfChangeColorToSaveButtton() {
         if (!GlobalVariables.IS_PRODUCER) {
-            int index = intent.getIntExtra ("index", 0);
+            int index = intent.getIntExtra("index", 0);
             if (GlobalVariables.ALL_EVENTS_DATA.get (index).getIsSaved ())
                 saveButton.setImageResource (R.mipmap.whsavedd);
             else {
@@ -450,6 +452,25 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
                                                      this.getApplicationContext (),
                                                      R.mipmap.whsavedd,
                                                      R.mipmap.wh);
+        final int i = index; //Assaf added: call to calander for savifn the Event
+        boolean IsNotSaved = event.getIsSaved();
+        if (IsNotSaved) {// only if user want to save event (event is unsaved) , calendar open
+            AlertDialog.Builder _builder = new AlertDialog.Builder(this);
+            _builder.setPositiveButton(R.string.save_to_calander, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    try {
+                        saveToCalendar(i);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.e (ex.getMessage(),"save to calander excpetion");
+                    }
+                }
+            })
+                    .setCancelable(true);
+            AlertDialog _alert = _builder.create();
+            _alert.show();
+        }
     }
 
     public boolean dialogForGuestToRegister() {
@@ -636,5 +657,23 @@ public class EventPageActivity extends Activity implements View.OnClickListener 
                 }
             }
         });
+    }
+
+    private void saveToCalendar(int eventId) { //Assaf: intent to open calander diaplog and save event detailes
+        try {
+            EventInfo event = GlobalVariables.ALL_EVENTS_DATA.get (eventId);
+            Date date = event.getDate();
+            Calendar beginTime = Calendar.getInstance();
+            beginTime.setTime(date);
+            Intent intent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
+            intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime.getTimeInMillis());
+            intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, beginTime.getTimeInMillis()+1000*3600*2);// event length is 2 hours
+            intent.putExtra(CalendarContract.Events.TITLE, event.getName());
+            intent.putExtra(CalendarContract.Events.EVENT_LOCATION, event.getAddress());
+            intent.putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+            startActivity(intent);
+        } catch (Exception ex) {
+            Log.e(ex.getMessage(), "save in Calendar was failed");
+        }
     }
 }

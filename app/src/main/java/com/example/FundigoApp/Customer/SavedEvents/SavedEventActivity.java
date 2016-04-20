@@ -2,6 +2,7 @@ package com.example.FundigoApp.Customer.SavedEvents;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.FundigoApp.Customer.CustomerMenu.MenuActivity;
 import com.example.FundigoApp.Customer.RealTime.RealTimeActivity;
@@ -44,15 +46,17 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
     Button savedEvent;
     Button realTimeTab;
     static Button currentCityButton;
-
     static PopupMenu popup;
     static Context context;
     ImageView search, notification;
+    private static TextView pushViewText; //assaf: Text view for present the Push messages
+    private static SharedPreferences _sharedPref;
+    private static TextView filterTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-        setContentView (R.layout.activity_saved_event);
+        setContentView(R.layout.activity_saved_event);
         context = SavedEventActivity.this;
         list_view = (ListView) findViewById (R.id.listView);
         eventTab = (Button) findViewById (R.id.BarEvent_button);
@@ -62,9 +66,10 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
         notification.setOnClickListener (this);
         search = (ImageView) findViewById (R.id.search);
         search.setOnClickListener (this);
-
+        pushViewText = (TextView) findViewById(R.id.pushView);
         popup = new PopupMenu (SavedEventActivity.this, currentCityButton);
         currentCityButton = (Button) findViewById (R.id.city_item);
+        filterTextView = (TextView)findViewById(R.id.filterView);
 
         eventsListAdapter = new EventsListAdapter (this, filteredSavedEventsList, true);
         realTimeTab.setOnClickListener (this);
@@ -97,6 +102,9 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
                         StaticMethods.filterByCityAndFilterName (
                                                                         GlobalVariables.namesCity[GlobalVariables.indexCityChosen],
                                                                         GlobalVariables.CURRENT_FILTER_NAME,
+                                                                        GlobalVariables.CURRENT_SUB_FILTER,
+                                                                        GlobalVariables.CURRENT_DATE_FILTER,
+                                                                        GlobalVariables.CURRENT_PRICE_FILTER,
                                                                         GlobalVariables.ALL_EVENTS_DATA);
                 filteredSavedEventsList.clear ();
                 filteredSavedEventsList.addAll (getSavedEventsFromList (tempEventsListFiltered));
@@ -116,6 +124,9 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
                         StaticMethods.filterByCityAndFilterName (
                                                                         GlobalVariables.CITY_GPS,
                                                                         GlobalVariables.CURRENT_FILTER_NAME,
+                                                                        GlobalVariables.CURRENT_SUB_FILTER,
+                                                                        GlobalVariables.CURRENT_DATE_FILTER,
+                                                                         GlobalVariables.CURRENT_PRICE_FILTER,
                                                                         GlobalVariables.ALL_EVENTS_DATA);
                 filteredSavedEventsList.clear ();
                 filteredSavedEventsList.addAll (getSavedEventsFromList (tempEventsListFiltered));
@@ -131,11 +142,34 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
                 filteredSavedEventsList.clear ();
                 if (GlobalVariables.CURRENT_FILTER_NAME != null) {
                     tempEventsList = StaticMethods.filterByFilterName (GlobalVariables.CURRENT_FILTER_NAME,
-                                                                              tempEventsList);
+                            GlobalVariables.CURRENT_SUB_FILTER,
+                            GlobalVariables.CURRENT_DATE_FILTER,
+                            GlobalVariables.CURRENT_PRICE_FILTER,
+                            tempEventsList);
                 }
                 filteredSavedEventsList.addAll (getSavedEventsFromList (tempEventsList));
                 eventsListAdapter.notifyDataSetChanged ();
             }
+
+        }
+
+        String[] results = getData(); // display the filter line
+        String [] values = getResources().getStringArray(R.array.eventPriceFilter);// get values from resource
+        try {
+            if (!results[0].equals("") || !results[1].equals("") || !results[2].equals("") || !results[3].equals("")) {
+                for (int i = 0; i < results.length; i++) {
+                    if (results[i].equals(values[0])) //if the result is "No Filter" , we remove it from presemtig it in the filter view
+                    {
+                        results[i] = "";
+                    }
+                }
+                filterTextView.setVisibility(View.VISIBLE);
+                filterTextView.setText(results[0] + " " + results[1] + " " + results[2] + " " + results[3]);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.e("TAG", ex.getMessage());
         }
     }
 
@@ -155,6 +189,9 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
                             StaticMethods.filterByCityAndFilterName (
                                                                             GlobalVariables.CITY_GPS,
                                                                             GlobalVariables.CURRENT_FILTER_NAME,
+                                                                            GlobalVariables.CURRENT_SUB_FILTER,
+                                                                            GlobalVariables.CURRENT_DATE_FILTER,
+                                                                            GlobalVariables.CURRENT_PRICE_FILTER,
                                                                             GlobalVariables.ALL_EVENTS_DATA);
                     filteredSavedEventsList.clear ();
                     filteredSavedEventsList.addAll (getSavedEventsFromList (tempEventsListFiltered));
@@ -167,7 +204,7 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void eventDataCallback() {
-        inflateCityMenu ();
+        inflateCityMenu();
         getSavedEventsFromJavaList ();
         if (GlobalVariables.MY_LOCATION == null) {
             StaticMethods.updateDeviceLocationGPS (this.getApplicationContext (), this);
@@ -183,16 +220,22 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
         }
         if (GlobalVariables.CURRENT_FILTER_NAME != null) {
             tempEventsList = StaticMethods.filterByFilterName (GlobalVariables.CURRENT_FILTER_NAME,
-                                                                      tempEventsList);
+                    GlobalVariables.CURRENT_SUB_FILTER,
+                    GlobalVariables.CURRENT_DATE_FILTER,
+                    GlobalVariables.CURRENT_PRICE_FILTER,
+                    tempEventsList);
         }
         filteredSavedEventsList.clear ();
-        filteredSavedEventsList.addAll (getSavedEventsFromList (tempEventsList));
-        eventsListAdapter.notifyDataSetChanged ();
+        filteredSavedEventsList.addAll(getSavedEventsFromList(tempEventsList));
+        eventsListAdapter.notifyDataSetChanged();
         if (GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
             ArrayList<EventInfo> tempEventsListFiltered =
                     StaticMethods.filterByCityAndFilterName (
                                                                     GlobalVariables.namesCity[GlobalVariables.indexCityChosen],
                                                                     GlobalVariables.CURRENT_FILTER_NAME,
+                                                                    GlobalVariables.CURRENT_SUB_FILTER,
+                                                                    GlobalVariables.CURRENT_DATE_FILTER,
+                                                                    GlobalVariables.CURRENT_PRICE_FILTER,
                                                                     GlobalVariables.ALL_EVENTS_DATA);
             filteredSavedEventsList.clear ();
             filteredSavedEventsList.addAll (getSavedEventsFromList (tempEventsListFiltered));
@@ -211,6 +254,9 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
                     StaticMethods.filterByCityAndFilterName (
                                                                     GlobalVariables.CITY_GPS,
                                                                     GlobalVariables.CURRENT_FILTER_NAME,
+                                                                    GlobalVariables.CURRENT_SUB_FILTER,
+                                                                    GlobalVariables.CURRENT_DATE_FILTER,
+                                                                    GlobalVariables.CURRENT_PRICE_FILTER,
                                                                     GlobalVariables.ALL_EVENTS_DATA);
             filteredSavedEventsList.clear ();
             filteredSavedEventsList.addAll (getSavedEventsFromList (tempEventsListFiltered));
@@ -221,10 +267,10 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
 
     private void inflateCityMenu() {
         popup = new PopupMenu (SavedEventActivity.this, currentCityButton);//Assaf
-        popup.getMenuInflater ().inflate (R.menu.popup_city, popup.getMenu ());
+        popup.getMenuInflater ().inflate(R.menu.popup_city, popup.getMenu());
 
         if (GlobalVariables.namesCity.length == 0) {
-            loadCityNamesToPopUp ();
+            loadCityNamesToPopUp();
         } else {
             loadCityNamesToPopUp ();
         }
@@ -248,6 +294,9 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
                                 StaticMethods.filterByCityAndFilterName (
                                                                                 GlobalVariables.namesCity[GlobalVariables.indexCityChosen],
                                                                                 GlobalVariables.CURRENT_FILTER_NAME,
+                                                                                GlobalVariables.CURRENT_SUB_FILTER,
+                                                                                GlobalVariables.CURRENT_DATE_FILTER,
+                                                                                GlobalVariables.CURRENT_PRICE_FILTER,
                                                                                 GlobalVariables.ALL_EVENTS_DATA);
                         filteredSavedEventsList.clear ();
                         filteredSavedEventsList.addAll (getSavedEventsFromList (tempEventsListFiltered));
@@ -361,14 +410,14 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        StaticMethods.onActivityResult (requestCode,
-                                               data,
-                                               this);
+        StaticMethods.onActivityResult(requestCode,
+                data,
+                this);
     }
 
     public void createEvent(View view) {
         Intent intent = new Intent (SavedEventActivity.this, CreateEventActivity.class);
-        startActivity (intent);
+        startActivity(intent);
     }
 
     List<EventInfo> getSavedEventsFromList(List<EventInfo> eventInfoList) {
@@ -379,5 +428,27 @@ public class SavedEventActivity extends AppCompatActivity implements View.OnClic
             }
         }
         return tempEventsList;
+    }
+
+    public void setTextToView (String str)
+    {
+        if (pushViewText.equals(null))
+             pushViewText = (TextView) findViewById(R.id.pushView);
+
+          pushViewText.setText(str);//Assaf added: set Push notification text to the Textview by MainActivity
+    }
+
+    public String[] getData()
+    // display the filter info selected by the user.
+    {
+        _sharedPref = getSharedPreferences("filterInfo", MODE_PRIVATE);
+        String _date = _sharedPref.getString("date", "");
+        String _price = _sharedPref.getString("price", "");
+        String _mainfilter = _sharedPref.getString("mainFilter","");
+        String _subfilter = _sharedPref.getString("subFilter","");
+
+        String[] values = {_mainfilter,_subfilter,_date, _price};
+
+        return values;
     }
 }

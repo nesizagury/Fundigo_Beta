@@ -27,7 +27,8 @@ public class FilterImageAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        //return null;
+        return mNames[position];//Assaf updated.
     }
 
     @Override
@@ -38,21 +39,19 @@ public class FilterImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View grid;
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService (Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
-            grid = inflater.inflate (R.layout.grid_layout, null);
-            TextView textView = (TextView) grid.findViewById (R.id.grid_text);
-            ImageView imgView = (ImageView) grid.findViewById (R.id.grid_image);
-            textView.setText (this.mNames[position]);
-            imgView.setImageResource (this.mImages[position]);
+            grid = inflater.inflate(R.layout.grid_layout, null);
+            TextView textView = (TextView) grid.findViewById(R.id.grid_text);
+            ImageView imgView = (ImageView) grid.findViewById(R.id.grid_image);
+            textView.setText(this.mNames[position]);
+            imgView.setImageResource(this.mImages[position]);
         } else {
             grid = (View) convertView;
         }
-        if (!GlobalVariables.CURRENT_FILTER_NAME.isEmpty () && this.mNames[position].equals (GlobalVariables.CURRENT_FILTER_NAME)) {
-            grid.setBackgroundColor (Color.RED);
+        if (!GlobalVariables.CURRENT_FILTER_NAME.isEmpty() && this.mNames[position].equals(GlobalVariables.CURRENT_FILTER_NAME)) {
+            grid.setBackgroundColor(Color.RED); // mark the main filter with Red color
         }
         return grid;
     }
-
-
 }

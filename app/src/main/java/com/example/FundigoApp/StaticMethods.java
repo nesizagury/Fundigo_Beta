@@ -27,6 +27,7 @@ import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -60,6 +61,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -77,73 +79,74 @@ public class StaticMethods {
                                           String producerId,
                                           final Context context,
                                           final Intent intent) {
-        final ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
-        ParseQuery<Event> query = new ParseQuery ("Event");
+        final ArrayList<EventInfo> tempEventsList = new ArrayList<>();
+        ParseQuery<Event> query = new ParseQuery("Event");
         if (producerId != null && producerId != "") {
-            query.whereEqualTo ("producerId", producerId);
+            query.whereEqualTo("producerId", producerId);
         }
-        query.orderByDescending ("createdAt");
+        query.orderByDescending("createdAt");
         List<Event> eventParse = null;
         try {
-            eventParse = query.find ();
-            for (int i = 0; i < eventParse.size (); i++) {
-                Event event = eventParse.get (i);
-                tempEventsList.add (new EventInfo (event.getPic ().getUrl (),
-                                                          event.getRealDate (),
-                                                          getEventDateAsString (event.getRealDate ()),
-                                                          event.getName (),
-                                                          event.getTags (),
-                                                          event.getPrice (),
-                                                          event.getDescription (),
-                                                          event.getPlace (),
-                                                          event.getAddress (),
-                                                          event.getCity (),
-                                                          event.getEventToiletService (),
-                                                          event.getEventParkingService (),
-                                                          event.getEventCapacityService (),
-                                                          event.getEventATMService (),
-                                                          event.getFilterName (),
-                                                          false,
-                                                          event.getProducerId (),
-                                                          i,
-                                                          event.getX (),
-                                                          event.getY (),
-                                                          event.getArtist (),
-                                                          event.getNumOfTickets (),
-                                                          event.getObjectId (),
-                                                          event.getFbUrl (),
-                                                          event.getIsStadium ()
+            eventParse = query.find();
+            for (int i = 0; i < eventParse.size(); i++) {
+                Event event = eventParse.get(i);
+                tempEventsList.add(new EventInfo(event.getPic().getUrl(),
+                        event.getRealDate(),
+                        getEventDateAsString(event.getRealDate()),
+                        event.getName(),
+                        event.getTags(),
+                        event.getPrice(),
+                        event.getDescription(),
+                        event.getPlace(),
+                        event.getAddress(),
+                        event.getCity(),
+                        event.getEventToiletService(),
+                        event.getEventParkingService(),
+                        event.getEventCapacityService(),
+                        event.getEventATMService(),
+                        event.getFilterName(),
+                        event.getSubFilterName(),
+                        false,
+                        event.getProducerId(),
+                        i,
+                        event.getX(),
+                        event.getY(),
+                        event.getArtist(),
+                        event.getNumOfTickets(),
+                        event.getObjectId(),
+                        event.getFbUrl(),
+                        event.getIsStadium()
                 ));
             }
-            updateSavedEvents (tempEventsList, context);
-            GlobalVariables.ALL_EVENTS_DATA.clear ();
-            GlobalVariables.ALL_EVENTS_DATA.addAll (tempEventsList);
+            updateSavedEvents(tempEventsList, context);
+            GlobalVariables.ALL_EVENTS_DATA.clear();
+            GlobalVariables.ALL_EVENTS_DATA.addAll(tempEventsList);
 
             if (!GlobalVariables.IS_PRODUCER) {
-                GlobalVariables.cityMenuInstance = new CityMenu (tempEventsList, context);
-                GlobalVariables.namesCity = GlobalVariables.cityMenuInstance.getCityNames ();
-                if (!GlobalVariables.deepLinkEventObjID.equals ("")) {
-                    for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size (); i++) {
-                        if (GlobalVariables.deepLinkEventObjID.equals (GlobalVariables.ALL_EVENTS_DATA.get (i).getParseObjectId ())) {
-                            Bundle b = new Bundle ();
-                            onEventItemClick (i, GlobalVariables.ALL_EVENTS_DATA, intent);
-                            intent.putExtras (b);
-                            context.startActivity (intent);
-                            ic.eventDataCallback ();
+                GlobalVariables.cityMenuInstance = new CityMenu(tempEventsList, context);
+                GlobalVariables.namesCity = GlobalVariables.cityMenuInstance.getCityNames();
+                if (!GlobalVariables.deepLinkEventObjID.equals("")) {
+                    for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size(); i++) {
+                        if (GlobalVariables.deepLinkEventObjID.equals(GlobalVariables.ALL_EVENTS_DATA.get(i).getParseObjectId())) {
+                            Bundle b = new Bundle();
+                            onEventItemClick(i, GlobalVariables.ALL_EVENTS_DATA, intent);
+                            intent.putExtras(b);
+                            context.startActivity(intent);
+                            ic.eventDataCallback();
                             return;
                         }
                     }
                 }
             }
-            ic.eventDataCallback ();
+            ic.eventDataCallback();
         } catch (ParseException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
     }
 
     public static EventInfo getEventFromObjID(String parseObjID, List<EventInfo> eventsList) {
         for (EventInfo eventInfo : eventsList) {
-            if (eventInfo.getParseObjectId ().equals (parseObjID)) {
+            if (eventInfo.getParseObjectId().equals(parseObjID)) {
                 return eventInfo;
             }
         }
@@ -160,24 +163,24 @@ public class StaticMethods {
 
     private static void updateSavedEvents(List<EventInfo> eventsList, Context context) {
         try {
-            InputStream inputStream = context.openFileInput ("saves");
+            InputStream inputStream = context.openFileInput("saves");
             if (inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader (inputStream);
-                BufferedReader bufferedReader = new BufferedReader (inputStreamReader);
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String receiveString = "";
-                while ((receiveString = bufferedReader.readLine ()) != null) {
-                    for (int i = 0; i < eventsList.size (); i++) {
-                        if (eventsList.get (i).getParseObjectId ().equals (receiveString)) {
-                            eventsList.get (i).setIsSaved (true);
+                while ((receiveString = bufferedReader.readLine()) != null) {
+                    for (int i = 0; i < eventsList.size(); i++) {
+                        if (eventsList.get(i).getParseObjectId().equals(receiveString)) {
+                            eventsList.get(i).setIsSaved(true);
                         }
                     }
                 }
-                inputStream.close ();
+                inputStream.close();
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
     }
 
@@ -186,35 +189,35 @@ public class StaticMethods {
         boolean network_enabled = false;
         boolean passive_enabled = false;
 
-        locationManager = (LocationManager) context.getSystemService (Context.LOCATION_SERVICE);
-        locationListener = new MyLocationListener (iCallback, context);
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new MyLocationListener(iCallback, context);
         try {
-            gps_enabled = locationManager.isProviderEnabled (LocationManager.GPS_PROVIDER);
+            gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (Exception ex) {
-            ex.printStackTrace ();
+            ex.printStackTrace();
         }
         try {
-            network_enabled = locationManager.isProviderEnabled (LocationManager.NETWORK_PROVIDER);
+            network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         } catch (Exception ex) {
-            ex.printStackTrace ();
+            ex.printStackTrace();
         }
         try {
-            passive_enabled = locationManager.isProviderEnabled (LocationManager.PASSIVE_PROVIDER);
+            passive_enabled = locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
         } catch (Exception ex) {
-            ex.printStackTrace ();
+            ex.printStackTrace();
         }
         if (gps_enabled) {
-            if (ActivityCompat.checkSelfPermission (context, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission (context, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(context, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 //do none
             } else {
-                locationManager.requestLocationUpdates (LocationManager.GPS_PROVIDER, GPS_UPDATE_TIME_INTERVAL, 0, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_UPDATE_TIME_INTERVAL, 0, locationListener);
             }
         }
         if (network_enabled) {
-            locationManager.requestLocationUpdates (LocationManager.NETWORK_PROVIDER, GPS_UPDATE_TIME_INTERVAL, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, GPS_UPDATE_TIME_INTERVAL, 0, locationListener);
         }
         if (passive_enabled) {
-            locationManager.requestLocationUpdates (LocationManager.PASSIVE_PROVIDER, GPS_UPDATE_TIME_INTERVAL, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, GPS_UPDATE_TIME_INTERVAL, 0, locationListener);
         }
     }
 
@@ -223,14 +226,14 @@ public class StaticMethods {
         String locationProviders;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
-                locationMode = Settings.Secure.getInt (context.getContentResolver (), Settings.Secure.LOCATION_MODE);
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
             } catch (SettingNotFoundException e) {
-                e.printStackTrace ();
+                e.printStackTrace();
             }
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
         } else {
-            locationProviders = Settings.Secure.getString (context.getContentResolver (), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-            return !TextUtils.isEmpty (locationProviders);
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
         }
     }
 
@@ -246,11 +249,11 @@ public class StaticMethods {
         @Override
         public void onLocationChanged(Location location) {
             if (location != null) {
-                String cityGPS = findCurrentCityGPS (location);
+                String cityGPS = findCurrentCityGPS(location);
                 GlobalVariables.MY_LOCATION = location;
-                if (!cityGPS.isEmpty ()) {
+                if (!cityGPS.isEmpty()) {
                     GlobalVariables.CITY_GPS = cityGPS;
-                    ic.gpsCallback ();
+                    ic.gpsCallback();
                 }
             }
         }
@@ -268,16 +271,16 @@ public class StaticMethods {
         }
 
         public String findCurrentCityGPS(Location loc) {
-            Geocoder gcd = new Geocoder (context, Locale.ENGLISH);
+            Geocoder gcd = new Geocoder(context, Locale.ENGLISH);
             if (loc != null) {
                 List<Address> addresses = null;
                 try {
-                    addresses = gcd.getFromLocation (loc.getLatitude (), loc.getLongitude (), 1);
+                    addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
                 } catch (IOException e) {
-                    e.printStackTrace ();
+                    e.printStackTrace();
                 }
-                if (addresses != null && addresses.size () > 0) {
-                    return addresses.get (0).getLocality ();
+                if (addresses != null && addresses.size() > 0) {
+                    return addresses.get(0).getLocality();
                 }
             }
             return "";
@@ -288,23 +291,23 @@ public class StaticMethods {
         String number = "";
         String myData = "";
         try {
-            File myExternalFile = new File (Environment.getExternalStoragePublicDirectory (Environment.DIRECTORY_DOWNLOADS), "verify.txt");
-            FileInputStream fis = new FileInputStream (myExternalFile);
-            DataInputStream in = new DataInputStream (fis);
+            File myExternalFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "verify.txt");
+            FileInputStream fis = new FileInputStream(myExternalFile);
+            DataInputStream in = new DataInputStream(fis);
             BufferedReader br =
-                    new BufferedReader (new InputStreamReader (in));
+                    new BufferedReader(new InputStreamReader(in));
             String strLine;
-            while ((strLine = br.readLine ()) != null) {
+            while ((strLine = br.readLine()) != null) {
                 myData = myData + strLine;
             }
-            in.close ();
+            in.close();
         } catch (IOException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
 
         if (myData != null) {
-            if (myData.contains ("isFundigo")) {
-                String[] parts = myData.split (" ");
+            if (myData.contains("isFundigo")) {
+                String[] parts = myData.split(" ");
                 number = parts[0];
             } else
                 number = myData;
@@ -312,72 +315,514 @@ public class StaticMethods {
         }
 
         return number;
+
     }
 
     public static int getCityIndexFromName(String name) {
         for (int i = 0; i < GlobalVariables.namesCity.length; i++) {
             String city = GlobalVariables.namesCity[i];
-            if (city.equals (name)) {
+            if (city.equals(name)) {
                 return i;
             }
         }
         return -1;
     }
 
+
+    //Original filter Methods
+    //========================================================
+//    public static void filterListsAndUpdateListAdapter(List<EventInfo> eventsListToFilter,
+//                                                       EventsListAdapter eventsListAdapter,
+//                                                       String[] namesCity,
+//                                                       int indexCityChosen) {
+//        if (GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
+//            ArrayList<EventInfo> tempEventsList =
+//                    StaticMethods.filterByCityAndFilterName (
+//                                                                    namesCity[indexCityChosen],
+//                                                                    GlobalVariables.CURRENT_FILTER_NAME,
+//                                                                    GlobalVariables.ALL_EVENTS_DATA);
+//            eventsListToFilter.clear ();
+//            eventsListToFilter.addAll (tempEventsList);
+//            eventsListAdapter.notifyDataSetChanged ();
+//        } else if (GlobalVariables.CITY_GPS != null) {
+//            ArrayList<EventInfo> tempEventsList =
+//                    StaticMethods.filterByCityAndFilterName (
+//                                                                    GlobalVariables.CITY_GPS,
+//                                                                    GlobalVariables.CURRENT_FILTER_NAME,
+//                                                                    GlobalVariables.ALL_EVENTS_DATA);
+//            eventsListToFilter.clear ();
+//            eventsListToFilter.addAll (tempEventsList);
+//            eventsListAdapter.notifyDataSetChanged ();
+//        }
+//    }
+//
+//    public static List<EventInfo> filterByFilterName(String filterName, List<EventInfo> eventsListToFilter) {
+//        ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
+//        if (filterName.isEmpty ()) {
+//            return eventsListToFilter;
+//        } else {
+//            for (int i = 0; i < eventsListToFilter.size (); i++) {
+//                if (filterName.isEmpty () ||
+//                            (filterName.equals (eventsListToFilter.get (i).getFilterName ()))) {
+//                    tempEventsList.add (eventsListToFilter.get (i));
+//                }
+//            }
+//        }
+//        return tempEventsList;
+//    }
+//
+//    public static ArrayList<EventInfo> filterByCityAndFilterName(String cityName,
+//                                                                 String currentFilterName,
+//                                                                 List<EventInfo> eventsListToFilter) {
+//        ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
+//        if (cityName.equals ("All Cities") && currentFilterName.isEmpty ()) {
+//            tempEventsList.addAll (eventsListToFilter);
+//            return tempEventsList;
+//        } else {
+//            for (int i = 0; i < eventsListToFilter.size (); i++) {
+//                String cityEvent = eventsListToFilter.get (i).getCity ();
+//                if (cityName.equals ("All Cities") || (cityEvent != null && cityEvent.equals (cityName))) {
+//                    if (currentFilterName.isEmpty () ||
+//                                (currentFilterName.equals (eventsListToFilter.get (i).getFilterName ()))) {
+//                        tempEventsList.add (eventsListToFilter.get (i));
+//                    }
+//                }
+//            }
+//        }
+//        return tempEventsList;
+//    }
+//==================================================================================
+
+    //=========================== Assaf fixed Functions==============================================//
     public static void filterListsAndUpdateListAdapter(List<EventInfo> eventsListToFilter,
                                                        EventsListAdapter eventsListAdapter,
                                                        String[] namesCity,
                                                        int indexCityChosen) {
         if (GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
             ArrayList<EventInfo> tempEventsList =
-                    StaticMethods.filterByCityAndFilterName (
-                                                                    namesCity[indexCityChosen],
-                                                                    GlobalVariables.CURRENT_FILTER_NAME,
-                                                                    GlobalVariables.ALL_EVENTS_DATA);
-            eventsListToFilter.clear ();
-            eventsListToFilter.addAll (tempEventsList);
-            eventsListAdapter.notifyDataSetChanged ();
+                    StaticMethods.filterByCityAndFilterName(
+                            namesCity[indexCityChosen],
+                            GlobalVariables.CURRENT_FILTER_NAME,
+                            GlobalVariables.CURRENT_SUB_FILTER,
+                            GlobalVariables.CURRENT_DATE_FILTER,
+                            GlobalVariables.CURRENT_PRICE_FILTER,
+                            GlobalVariables.ALL_EVENTS_DATA);
+            eventsListToFilter.clear();
+            eventsListToFilter.addAll(tempEventsList);
+            eventsListAdapter.notifyDataSetChanged();
+
         } else if (GlobalVariables.CITY_GPS != null) {
             ArrayList<EventInfo> tempEventsList =
-                    StaticMethods.filterByCityAndFilterName (
-                                                                    GlobalVariables.CITY_GPS,
-                                                                    GlobalVariables.CURRENT_FILTER_NAME,
-                                                                    GlobalVariables.ALL_EVENTS_DATA);
-            eventsListToFilter.clear ();
-            eventsListToFilter.addAll (tempEventsList);
-            eventsListAdapter.notifyDataSetChanged ();
+                    StaticMethods.filterByCityAndFilterName(
+                            GlobalVariables.CITY_GPS,
+                            GlobalVariables.CURRENT_FILTER_NAME,
+                            GlobalVariables.CURRENT_SUB_FILTER,
+                            GlobalVariables.CURRENT_DATE_FILTER,
+                            GlobalVariables.CURRENT_PRICE_FILTER,
+                            GlobalVariables.ALL_EVENTS_DATA);
+
+            eventsListToFilter.clear();
+            eventsListToFilter.addAll(tempEventsList);
+            eventsListAdapter.notifyDataSetChanged();
         }
     }
 
-    public static List<EventInfo> filterByFilterName(String filterName, List<EventInfo> eventsListToFilter) {
-        ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
-        if (filterName.isEmpty ()) {
-            return eventsListToFilter;
+    public static List<EventInfo> filterByFilterName(String currentFilterName,String subFilterName,
+                                                     Date dateFilter, int priceFilter,
+                                                     List<EventInfo> eventsListToFilter) {
+        ArrayList<EventInfo> tempEventsList = new ArrayList<>();
+        Date _currentDate = new Date();
+        if (currentFilterName.isEmpty() && subFilterName.isEmpty() && dateFilter == null && priceFilter == -1) {
+            tempEventsList.addAll(eventsListToFilter);
+            return tempEventsList;
         } else {
-            for (int i = 0; i < eventsListToFilter.size (); i++) {
-                if (filterName.isEmpty () ||
-                            (filterName.equals (eventsListToFilter.get (i).getFilterName ()))) {
-                    tempEventsList.add (eventsListToFilter.get (i));
+            for (int i = 0; i < eventsListToFilter.size(); i++) {
+                String subFilterEvent = eventsListToFilter.get(i).getSubFilterName();
+                Date dateEvent = eventsListToFilter.get(i).getDate();
+                String filterEvent = eventsListToFilter.get(i).getFilterName();
+                String tempEventPrice = eventsListToFilter.get(i).getPrice();
+                int priceEvent = -1;
+                boolean IsDateEqual = false;
+                Date weekEndFilter = FilterPageActivity.addDays(_currentDate, 1000); // for check if weekend filter was activivated
+                boolean IsWeekendFilter = false;
+                boolean  IsEventInWeekEnd= false;
+
+                if (dateFilter != null && DateCompare(weekEndFilter,dateFilter)) // DateCompare(weekEndFilter,dateFilter) to check if Weekdnd filter seletced
+                {
+                    IsWeekendFilter = true; // to check if weekd end filter selected
+                    Date endofWeekDate = FilterPageActivity.getCurrentWeekend(); // end day of the week
+                    Date twoDaysBeforeEndOfWeek = FilterPageActivity.addDays(FilterPageActivity.getCurrentWeekend(), -3); // three days before
+                    if(dateEvent.after(twoDaysBeforeEndOfWeek)&& dateEvent.before(endofWeekDate)) {
+                        IsEventInWeekEnd = true;
+                    }
+                }
+
+                if (dateFilter != null && !IsWeekendFilter) // current and event date compare in case of date filter is activate
+                {
+                    IsDateEqual = DateCompare(dateEvent, dateFilter); // Isdateequal = true in all filters except when weekdend selected
+                }
+
+                // in case that price is FREE
+                if (!tempEventPrice.equals("FREE")) {
+                    priceEvent = priceHandler(eventsListToFilter.get(i).getPrice());
+                }
+
+                //==============Start point of conditions to filters====================== ///
+
+                if (currentFilterName.equals(filterEvent) & dateFilter != null // All filters
+                        & priceFilter != -1 & subFilterName.equals(subFilterEvent)) {
+                    if ((IsDateEqual && priceFilter != 201 && priceFilter >= priceEvent) || (IsDateEqual &&tempEventPrice.equals("FREE") && priceFilter == 0)) // NEED to HANDLE EOW
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                    if (priceFilter == 201 && priceEvent >= priceFilter && IsDateEqual) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                    if ((IsWeekendFilter && IsEventInWeekEnd &&priceFilter != 201 && priceFilter >= priceEvent) || (IsWeekendFilter && IsEventInWeekEnd&&tempEventPrice.equals("FREE") && priceFilter == 0))
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                    if (priceFilter == 201 && priceEvent >= priceFilter && IsWeekendFilter &IsEventInWeekEnd) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                }
+
+                else if (currentFilterName.equals(filterEvent) & dateFilter != null // main ,Price + date filters. no sub
+                        & priceFilter != -1 & subFilterName.isEmpty()) {
+                    if ((IsDateEqual && priceFilter != 201 && priceFilter >= priceEvent) || (IsDateEqual &&tempEventPrice.equals("FREE") && priceFilter == 0))
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                    if (priceFilter == 201 && priceEvent >= priceFilter && IsDateEqual) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                    if ((IsWeekendFilter && IsEventInWeekEnd &&priceFilter != 201 && priceFilter >= priceEvent) || (IsWeekendFilter && IsEventInWeekEnd&&tempEventPrice.equals("FREE") && priceFilter == 0))
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                    if (priceFilter == 201 && priceEvent >= priceFilter && IsWeekendFilter &IsEventInWeekEnd) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                }
+                else if (currentFilterName.equals(filterEvent) && dateFilter == null
+                        && priceFilter == -1 && subFilterName.isEmpty())//only main Filter
+                {
+                    tempEventsList.add(eventsListToFilter.get(i));
+                }
+
+                else if (currentFilterName.equals(filterEvent) & subFilterName.equals(subFilterEvent)
+                        && dateFilter == null && priceFilter == -1) // main + sub and no date filter and no price filters
+                {
+                    tempEventsList.add(eventsListToFilter.get(i));
+                }
+
+                else if (currentFilterName.equals(filterEvent) & subFilterName.equals(subFilterEvent) &&
+                        dateFilter != null && priceFilter == -1)// main + sub + date and no Price filter
+                {
+                    if (IsDateEqual) // NEED to HANDLE EOW
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                    if(IsWeekendFilter && IsEventInWeekEnd)
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                }
+
+                else if (currentFilterName.equals(filterEvent) & subFilterName.equals(subFilterEvent)
+                        && dateFilter == null && priceFilter != -1)// main + sub + price and no Date filter
+                {
+                    if (((priceFilter >= priceEvent && priceFilter != 201) || (tempEventPrice.equals("FREE")) && priceFilter == 0)) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                    if (priceFilter == 201 && priceEvent >= priceFilter) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                }
+
+                else if (currentFilterName.equals(filterEvent) & subFilterName.isEmpty() &
+                        dateFilter != null && priceFilter == -1)// main + date , no sub and no Price filter
+                {
+                    if (IsDateEqual) //
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                    if (IsWeekendFilter && IsEventInWeekEnd)
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                }
+
+                else if (currentFilterName.equals(filterEvent) & subFilterName.isEmpty()
+                        && dateFilter == null && priceFilter != -1)// main + price, No sub and no Date filter
+                {
+                    if (((priceFilter >= priceEvent && priceFilter != 201) || (tempEventPrice.equals("FREE")) && priceFilter == 0)) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                    if (priceFilter == 201 && priceEvent >= priceFilter) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                }
+
+                else if (currentFilterName.isEmpty() && subFilterName.isEmpty() && dateFilter != null //no main + no sub, price and date filters only
+                        && priceFilter != -1) {
+                    if (IsDateEqual && (priceFilter != 201 && priceFilter >= priceEvent) || (IsDateEqual && tempEventPrice.equals("FREE") && priceFilter == 0))  // NEED to HANDLE EOW
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                    if (priceFilter == 201 && priceEvent >= priceFilter && IsDateEqual) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                    if ((IsWeekendFilter && IsEventInWeekEnd&&priceFilter != 201 && priceFilter >= priceEvent) || (IsWeekendFilter && IsEventInWeekEnd&&tempEventPrice.equals("FREE") && priceFilter == 0))  // NEED to HANDLE EOW
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                    if (priceFilter == 201 && priceEvent >= priceFilter && IsWeekendFilter& IsEventInWeekEnd) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                }
+
+                else if (currentFilterName.isEmpty() && subFilterName.isEmpty() && dateFilter == null // price filter only
+                        && priceFilter != -1) {
+                    if ((priceFilter >= priceEvent && priceFilter != 201 || (tempEventPrice.equals("FREE") && priceFilter == 0))) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                    if (priceFilter == 201 && priceEvent >= priceFilter) {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                }
+
+                else if (currentFilterName.isEmpty() && subFilterName.isEmpty() && dateFilter != null // date filter only
+                        && priceFilter == -1) {
+                    if (IsDateEqual) // other date filters
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+                    if (IsWeekendFilter && IsEventInWeekEnd)  // weekend filter
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
                 }
             }
         }
         return tempEventsList;
     }
 
+
+
     public static ArrayList<EventInfo> filterByCityAndFilterName(String cityName,
                                                                  String currentFilterName,
+                                                                 String subFilterName, Date dateFilter, int priceFilter,
                                                                  List<EventInfo> eventsListToFilter) {
-        ArrayList<EventInfo> tempEventsList = new ArrayList<> ();
-        if (cityName.equals ("All Cities") && currentFilterName.isEmpty ()) {
-            tempEventsList.addAll (eventsListToFilter);
+        ArrayList<EventInfo> tempEventsList = new ArrayList<>();
+        Date _currentDate = new Date();
+
+        if (cityName.equals("All Cities") && currentFilterName.isEmpty() && subFilterName.isEmpty()
+                && dateFilter == null && priceFilter == -1) {
+            tempEventsList.addAll(eventsListToFilter);
             return tempEventsList;
+
         } else {
-            for (int i = 0; i < eventsListToFilter.size (); i++) {
-                String cityEvent = eventsListToFilter.get (i).getCity ();
-                if (cityName.equals ("All Cities") || (cityEvent != null && cityEvent.equals (cityName))) {
-                    if (currentFilterName.isEmpty () ||
-                                (currentFilterName.equals (eventsListToFilter.get (i).getFilterName ()))) {
-                        tempEventsList.add (eventsListToFilter.get (i));
+            for (int i = 0; i < eventsListToFilter.size(); i++) {
+                String cityEvent = eventsListToFilter.get(i).getCity();
+                String subFilterEvent = eventsListToFilter.get(i).getSubFilterName();
+                Date dateEvent = eventsListToFilter.get(i).getDate();
+                String filterEvent = eventsListToFilter.get(i).getFilterName();
+                String tempEventPrice = eventsListToFilter.get(i).getPrice();
+                int priceEvent = -1;
+                boolean IsDateEqual = false;
+                Date weekEndFilter = FilterPageActivity.addDays(_currentDate, 1000); // for check if weekend filter was activivated
+                boolean IsWeekendFilter = false;
+                boolean  IsEventInWeekEnd= false;
+
+                if (dateFilter != null && DateCompare(weekEndFilter,dateFilter)) // DateCompare(weekEndFilter,dateFilter) to check if Weekdnd filter seletced
+                {
+                    IsWeekendFilter = true; // to check if weekd end filter selected
+                    Date endofWeekDate = FilterPageActivity.getCurrentWeekend(); // end day of the week
+                    Date twoDaysBeforeEndOfWeek = FilterPageActivity.addDays(FilterPageActivity.getCurrentWeekend(), -3); // two days before
+                    if(dateEvent.after(twoDaysBeforeEndOfWeek)&& dateEvent.before(endofWeekDate)) {
+                        IsEventInWeekEnd = true;
+                    }
+                }
+
+                if (dateFilter != null && !IsWeekendFilter) // current and event date compare in case of date filter is activate
+                {
+                    IsDateEqual = DateCompare(dateEvent, dateFilter); // Isdateequal = true in all filters except when weekdend selected
+                }
+
+                 // in case that price is FREE
+                if (!tempEventPrice.equals("FREE")) {
+                    priceEvent = priceHandler(eventsListToFilter.get(i).getPrice());
+                }
+
+
+             //==============Start point of conditions to filters====================== ///
+
+
+                if (cityName.equals("All Cities") || (cityEvent != null && cityEvent.equals(cityName)))
+                {
+                    if (currentFilterName.isEmpty() & dateFilter == null // All filters empty
+                            & priceFilter == -1 & subFilterName.isEmpty())
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                    if (currentFilterName.equals(filterEvent) & dateFilter != null // All filters active
+                            & priceFilter != -1 & subFilterName.equals(subFilterEvent))
+                    {
+                        if ((IsDateEqual && priceFilter != 201 && priceFilter >= priceEvent) || (IsDateEqual &&tempEventPrice.equals("FREE") && priceFilter == 0))
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                        if (priceFilter == 201 && priceEvent >= priceFilter && IsDateEqual) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                        if ((IsWeekendFilter && IsEventInWeekEnd &&priceFilter != 201 && priceFilter >= priceEvent) || (IsWeekendFilter && IsEventInWeekEnd&&tempEventPrice.equals("FREE") && priceFilter == 0))
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                        if (priceFilter == 201 && priceEvent >= priceFilter && IsWeekendFilter &IsEventInWeekEnd) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+
+                    }
+
+                     else if (currentFilterName.equals(filterEvent) & dateFilter != null // main ,Price + date filters. no sub
+                            & priceFilter != -1 & subFilterName.isEmpty())
+                    {
+                        if ((IsDateEqual && priceFilter != 201 && priceFilter >= priceEvent) || (IsDateEqual &&tempEventPrice.equals("FREE") && priceFilter == 0))
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                        if (priceFilter == 201 && priceEvent >= priceFilter && IsDateEqual) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                        if ((IsWeekendFilter && IsEventInWeekEnd &&priceFilter != 201 && priceFilter >= priceEvent) || (IsWeekendFilter && IsEventInWeekEnd&&tempEventPrice.equals("FREE") && priceFilter == 0))
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                        if (priceFilter == 201 && priceEvent >= priceFilter && IsWeekendFilter &IsEventInWeekEnd) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+
+                    }
+
+                    else if (currentFilterName.equals(filterEvent) && dateFilter == null
+                            && priceFilter == -1 && subFilterName.isEmpty())//only main Filter
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                    else if (currentFilterName.equals(filterEvent) & subFilterName.equals(subFilterEvent)
+                            && dateFilter == null && priceFilter == -1) // main + sub and no date filter and no price filters
+                    {
+                        tempEventsList.add(eventsListToFilter.get(i));
+                    }
+
+                    else if (currentFilterName.equals(filterEvent) & subFilterName.equals(subFilterEvent) &&
+                            dateFilter != null && priceFilter == -1)// main + sub + date and no Price filter
+                    {
+                        if (IsDateEqual) // NEED to HANDLE EOW
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+
+                        if(IsWeekendFilter && IsEventInWeekEnd)
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                    }
+
+                    else if (currentFilterName.equals(filterEvent) & subFilterName.equals(subFilterEvent)
+                            && dateFilter == null && priceFilter != -1)// main + sub + price and no Date filter
+                    {
+                        if (((priceFilter >= priceEvent && priceFilter != 201) || (tempEventPrice.equals("FREE")) && priceFilter == 0)) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                        if (priceFilter == 201 && priceEvent >= priceFilter) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+
+                    }
+
+                    else if (currentFilterName.equals(filterEvent) & subFilterName.isEmpty() &
+                            dateFilter != null && priceFilter == -1)// main + date , no sub and no Price filter
+                    {
+                        if (IsDateEqual) //
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+
+                        if (IsWeekendFilter && IsEventInWeekEnd)
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                    }
+
+                    else if (currentFilterName.equals(filterEvent) & subFilterName.isEmpty()
+                            && dateFilter == null && priceFilter != -1)// main + price, No sub and no Date filter
+                    {
+                        if (((priceFilter >= priceEvent && priceFilter != 201) || (tempEventPrice.equals("FREE")) && priceFilter == 0)) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+
+                        if (priceFilter == 201 && priceEvent >= priceFilter) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+
+                    }
+
+                    else if (currentFilterName.isEmpty() && subFilterName.isEmpty() && dateFilter != null //no main + no sub, price and date filters only
+                            && priceFilter != -1) {
+                        if (IsDateEqual && (priceFilter != 201 && priceFilter >= priceEvent) || (IsDateEqual && tempEventPrice.equals("FREE") && priceFilter == 0))  // NEED to HANDLE EOW
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                        if (priceFilter == 201 && priceEvent >= priceFilter && IsDateEqual) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+
+                        if ((IsWeekendFilter && IsEventInWeekEnd&&priceFilter != 201 && priceFilter >= priceEvent) || (IsWeekendFilter && IsEventInWeekEnd&&tempEventPrice.equals("FREE") && priceFilter == 0))  // NEED to HANDLE EOW
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                        if (priceFilter == 201 && priceEvent >= priceFilter && IsWeekendFilter& IsEventInWeekEnd) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                    }
+
+                    else if (currentFilterName.isEmpty() && subFilterName.isEmpty() && dateFilter == null // price filter only
+                            && priceFilter != -1) {
+                        if ((priceFilter >= priceEvent && priceFilter != 201 || (tempEventPrice.equals("FREE") && priceFilter == 0))) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+
+                        if (priceFilter == 201 && priceEvent >= priceFilter) {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                    }
+
+                    else if (currentFilterName.isEmpty() && subFilterName.isEmpty() && dateFilter != null // date filter only
+                            && priceFilter == -1) {
+                        if (IsDateEqual) // other date filters
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+                        if (IsWeekendFilter && IsEventInWeekEnd)  // weekend filter
+                        {
+                            tempEventsList.add(eventsListToFilter.get(i));
+                        }
+
                     }
                 }
             }
@@ -385,22 +830,23 @@ public class StaticMethods {
         return tempEventsList;
     }
 
+    //==============================================================================================
     public static CustomerDetails getUserDetailsFromParseInMainThread(String customerPhoneNum) {
         String faceBookId = null;
         String picUrl = null;
         String customerName = null;
         String customerImage = null;
-        ParseQuery<MipoProfile> query = ParseQuery.getQuery (MipoProfile.class);
-        query.whereEqualTo ("number", customerPhoneNum);
+        ParseQuery<MipoProfile> query = ParseQuery.getQuery(MipoProfile.class);
+        query.whereEqualTo("number", customerPhoneNum);
         List<MipoProfile> profile = null;
         try {
-            profile = query.find ();
-            return getUserDetails (profile);
+            profile = query.find();
+            return getUserDetails(profile);
         } catch (ParseException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
         //all null
-        return new CustomerDetails (faceBookId, picUrl, customerImage, customerName);
+        return new CustomerDetails(faceBookId, picUrl, customerImage, customerName);
     }
 
     public static CustomerDetails getUserDetails(List<MipoProfile> profiles) {
@@ -408,14 +854,14 @@ public class StaticMethods {
         String customerPicFacebookUrl = null;
         String customerImage = null;
         String customerName = null;
-        if (profiles.size () > 0) {
-            MipoProfile profile = profiles.get (0);
-            faceBookId = profile.getFbId ();
-            customerPicFacebookUrl = profile.getFbUrl ();
-            customerName = profile.getName ();
-            customerImage = profile.getPic ().getUrl ();
+        if (profiles.size() > 0) {
+            MipoProfile profile = profiles.get(0);
+            faceBookId = profile.getFbId();
+            customerPicFacebookUrl = profile.getFbUrl();
+            customerName = profile.getName();
+            customerImage = profile.getPic().getUrl();
         }
-        return new CustomerDetails (faceBookId, customerPicFacebookUrl, customerImage, customerName);
+        return new CustomerDetails(faceBookId, customerPicFacebookUrl, customerImage, customerName);
     }
 
     public static CustomerDetails getUserDetailsWithBitmap(List<MipoProfile> numbers) {
@@ -423,28 +869,28 @@ public class StaticMethods {
         String customerPicFacebookUrl = null;
         Bitmap customerImage = null;
         String customerName = null;
-        if (numbers.size () > 0) {
-            MipoProfile number = numbers.get (0);
-            faceBookId = number.getFbId ();
-            customerPicFacebookUrl = number.getFbUrl ();
-            customerName = number.getName ();
+        if (numbers.size() > 0) {
+            MipoProfile number = numbers.get(0);
+            faceBookId = number.getFbId();
+            customerPicFacebookUrl = number.getFbUrl();
+            customerName = number.getName();
             ParseFile imageFile;
             byte[] data = null;
-            imageFile = (ParseFile) number.getPic ();
+            imageFile = (ParseFile) number.getPic();
             if (imageFile != null) {
                 try {
-                    data = imageFile.getData ();
+                    data = imageFile.getData();
                 } catch (ParseException e1) {
-                    e1.printStackTrace ();
+                    e1.printStackTrace();
                 }
-                customerImage = BitmapFactory.decodeByteArray (data, 0, data.length);
+                customerImage = BitmapFactory.decodeByteArray(data, 0, data.length);
             }
         }
-        CustomerDetails customerDetails = new CustomerDetails (faceBookId,
-                                                                      customerPicFacebookUrl,
-                                                                      null,
-                                                                      customerName);
-        customerDetails.setBitmap (customerImage);
+        CustomerDetails customerDetails = new CustomerDetails(faceBookId,
+                customerPicFacebookUrl,
+                null,
+                customerName);
+        customerDetails.setBitmap(customerImage);
         return customerDetails;
     }
 
@@ -453,86 +899,86 @@ public class StaticMethods {
         String picUrl = null;
         String customerName = null;
         String customerImage = null;
-        ParseQuery<MipoProfile> query = ParseQuery.getQuery (MipoProfile.class);
-        query.whereEqualTo ("number", customerPhoneNum);
+        ParseQuery<MipoProfile> query = ParseQuery.getQuery(MipoProfile.class);
+        query.whereEqualTo("number", customerPhoneNum);
         List<MipoProfile> numbers = null;
         try {
-            numbers = query.find ();
-            return getUserDetailsWithBitmap (numbers);
+            numbers = query.find();
+            return getUserDetailsWithBitmap(numbers);
         } catch (ParseException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
         //all null
-        return new CustomerDetails (faceBookId, picUrl, customerImage, customerName);
+        return new CustomerDetails(faceBookId, picUrl, customerImage, customerName);
     }
 
     public static void filterEventsByArtist(String artistName, List<EventInfo> eventsListFiltered) {
-        eventsListFiltered.clear ();
+        eventsListFiltered.clear();
         for (EventInfo eventInfo : GlobalVariables.ALL_EVENTS_DATA) {
-            if (eventInfo.getArtist () == null || eventInfo.getArtist ().isEmpty ()) {
-                if (artistName.equals (GlobalVariables.No_Artist_Events)) {
-                    eventsListFiltered.add (eventInfo);
+            if (eventInfo.getArtist() == null || eventInfo.getArtist().isEmpty()) {
+                if (artistName.equals(GlobalVariables.No_Artist_Events)) {
+                    eventsListFiltered.add(eventInfo);
                 }
-            } else if (eventInfo.getArtist ().equals (artistName)) {
-                eventsListFiltered.add (eventInfo);
+            } else if (eventInfo.getArtist().equals(artistName)) {
+                eventsListFiltered.add(eventInfo);
             }
         }
     }
 
     public static void uploadArtistData(List<Artist> artist_list) {
-        artist_list.clear ();
-        List<String> temp_artist_list = new ArrayList<String> ();
-        for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size (); i++) {
-            EventInfo eventInfo = GlobalVariables.ALL_EVENTS_DATA.get (i);
-            if (eventInfo.getArtist () != null &&
-                        !eventInfo.getArtist ().equals ("") &&
-                        !temp_artist_list.contains (eventInfo.getArtist ())) {
-                temp_artist_list.add (eventInfo.getArtist ());
-                artist_list.add (new Artist (eventInfo.getArtist ()));
+        artist_list.clear();
+        List<String> temp_artist_list = new ArrayList<String>();
+        for (int i = 0; i < GlobalVariables.ALL_EVENTS_DATA.size(); i++) {
+            EventInfo eventInfo = GlobalVariables.ALL_EVENTS_DATA.get(i);
+            if (eventInfo.getArtist() != null &&
+                    !eventInfo.getArtist().equals("") &&
+                    !temp_artist_list.contains(eventInfo.getArtist())) {
+                temp_artist_list.add(eventInfo.getArtist());
+                artist_list.add(new Artist(eventInfo.getArtist()));
             }
         }
-        artist_list.add (new Artist (GlobalVariables.No_Artist_Events));
+        artist_list.add(new Artist(GlobalVariables.No_Artist_Events));
     }
 
     public static void onEventItemClick(int positionViewItem,
                                         List<EventInfo> eventsList,
                                         Intent intent) {
-        intent.putExtra ("eventDate", eventsList.get (positionViewItem).getDate ());
-        intent.putExtra ("eventName", eventsList.get (positionViewItem).getName ());
-        intent.putExtra ("eventTags", eventsList.get (positionViewItem).getTags ());
-        intent.putExtra ("eventPrice", eventsList.get (positionViewItem).getPrice ());
-        intent.putExtra ("eventInfo", eventsList.get (positionViewItem).getInfo ());
-        intent.putExtra ("eventPlace", eventsList.get (positionViewItem).getPlace ());
-        intent.putExtra ("toilet", eventsList.get (positionViewItem).getToilet ());
-        intent.putExtra ("parking", eventsList.get (positionViewItem).getParking ());
-        intent.putExtra ("capacity", eventsList.get (positionViewItem).getCapacity ());
-        intent.putExtra ("atm", eventsList.get (positionViewItem).getAtm ());
-        intent.putExtra ("index", eventsList.get (positionViewItem).getIndexInFullList ());
-        intent.putExtra ("i", String.valueOf (positionViewItem));
-        intent.putExtra ("artist", eventsList.get (positionViewItem).getArtist ());
-        intent.putExtra ("fbUrl", eventsList.get (positionViewItem).getFbUrl ());
+        intent.putExtra("eventDate", eventsList.get(positionViewItem).getDate());
+        intent.putExtra("eventName", eventsList.get(positionViewItem).getName());
+        intent.putExtra("eventTags", eventsList.get(positionViewItem).getTags());
+        intent.putExtra("eventPrice", eventsList.get(positionViewItem).getPrice());
+        intent.putExtra("eventInfo", eventsList.get(positionViewItem).getInfo());
+        intent.putExtra("eventPlace", eventsList.get(positionViewItem).getPlace());
+        intent.putExtra("toilet", eventsList.get(positionViewItem).getToilet());
+        intent.putExtra("parking", eventsList.get(positionViewItem).getParking());
+        intent.putExtra("capacity", eventsList.get(positionViewItem).getCapacity());
+        intent.putExtra("atm", eventsList.get(positionViewItem).getAtm());
+        intent.putExtra("index", eventsList.get(positionViewItem).getIndexInFullList());
+        intent.putExtra("i", String.valueOf(positionViewItem));
+        intent.putExtra("artist", eventsList.get(positionViewItem).getArtist());
+        intent.putExtra("fbUrl", eventsList.get(positionViewItem).getFbUrl());
     }
 
     public static void onActivityResult(final int requestCode, final Intent data, Activity activity) {
         if (data != null && requestCode == GlobalVariables.REQUEST_CODE_MY_PICK) {
-            String appName = data.getComponent ().flattenToShortString ();
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences (activity);
-            String name = sp.getString ("name", null);
-            String date = sp.getString ("date", null);
-            String place = sp.getString ("place", null);
-            if (appName.equals ("com.facebook.katana/com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias")) {
+            String appName = data.getComponent().flattenToShortString();
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(activity);
+            String name = sp.getString("name", null);
+            String date = sp.getString("date", null);
+            String place = sp.getString("place", null);
+            if (appName.equals("com.facebook.katana/com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias")) {
                 ShareDialog shareDialog;
-                shareDialog = new ShareDialog (activity);
-                ShareLinkContent linkContent = new ShareLinkContent.Builder ()
-                                                       .setContentTitle ("I`m going to " + name)
-                                                       .setImageUrl (Uri.parse ("https://lh3.googleusercontent.com/-V5wz7jKaQW8/VpvKq0rwEOI/AAAAAAAAB6Y/cZoicmGpQpc/s279-Ic42/pic0.jpg"))
-                                                       .setContentDescription (
-                                                                                      "C u there at " + date + " !" + "\n" + "At " + place)
-                                                       .setContentUrl (Uri.parse ("http://eventpageURL.com/here"))
-                                                       .build ();
-                shareDialog.show (linkContent);
+                shareDialog = new ShareDialog(activity);
+                ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                        .setContentTitle("I`m going to " + name)
+                        .setImageUrl(Uri.parse("https://lh3.googleusercontent.com/-V5wz7jKaQW8/VpvKq0rwEOI/AAAAAAAAB6Y/cZoicmGpQpc/s279-Ic42/pic0.jpg"))
+                        .setContentDescription(
+                                "C u there at " + date + " !" + "\n" + "At " + place)
+                        .setContentUrl(Uri.parse("http://eventpageURL.com/here"))
+                        .build();
+                shareDialog.show(linkContent);
             } else {
-                activity.startActivity (data);
+                activity.startActivity(data);
             }
         }
     }
@@ -542,65 +988,65 @@ public class StaticMethods {
                                               final Context context,
                                               int savedImageId,
                                               int unsavedImageId) {
-        if (event.getIsSaved ()) {
-            event.setIsSaved (false);
-            save.setImageResource (unsavedImageId);
-            Toast.makeText (context, R.string.you_unsaved_this_event, Toast.LENGTH_SHORT).show ();
-            AsyncTask.execute (new Runnable () {
+        if (event.getIsSaved()) {
+            event.setIsSaved(false);
+            save.setImageResource(unsavedImageId);
+            Toast.makeText(context, R.string.you_unsaved_this_event, Toast.LENGTH_SHORT).show();
+            AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        context.deleteFile ("temp");
-                        InputStream inputStream = context.openFileInput ("saves");
-                        OutputStream outputStreamTemp = context.openFileOutput ("temp", Context.MODE_PRIVATE);
-                        BufferedReader bufferedReader = new BufferedReader (new InputStreamReader (inputStream));
-                        BufferedWriter bufferedWriter = new BufferedWriter (new OutputStreamWriter (outputStreamTemp));
-                        String lineToRemove = event.getParseObjectId ();
+                        context.deleteFile("temp");
+                        InputStream inputStream = context.openFileInput("saves");
+                        OutputStream outputStreamTemp = context.openFileOutput("temp", Context.MODE_PRIVATE);
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStreamTemp));
+                        String lineToRemove = event.getParseObjectId();
                         String currentLine;
-                        while ((currentLine = bufferedReader.readLine ()) != null) {
+                        while ((currentLine = bufferedReader.readLine()) != null) {
                             // trim newline when comparing with lineToRemove
-                            String trimmedLine = currentLine.trim ();
-                            if (trimmedLine.equals (lineToRemove)) continue;
+                            String trimmedLine = currentLine.trim();
+                            if (trimmedLine.equals(lineToRemove)) continue;
                             else {
-                                bufferedWriter.write (currentLine);
-                                bufferedWriter.write (System.getProperty ("line.separator"));
+                                bufferedWriter.write(currentLine);
+                                bufferedWriter.write(System.getProperty("line.separator"));
                             }
                         }
-                        bufferedReader.close ();
-                        bufferedWriter.close ();
-                        context.deleteFile ("saves");
-                        inputStream = context.openFileInput ("temp");
-                        outputStreamTemp = context.openFileOutput ("saves", Context.MODE_PRIVATE);
-                        bufferedReader = new BufferedReader (new InputStreamReader (inputStream));
-                        bufferedWriter = new BufferedWriter (new OutputStreamWriter (outputStreamTemp));
-                        while ((currentLine = bufferedReader.readLine ()) != null) {
-                            bufferedWriter.write (currentLine);
-                            bufferedWriter.write (System.getProperty ("line.separator"));
+                        bufferedReader.close();
+                        bufferedWriter.close();
+                        context.deleteFile("saves");
+                        inputStream = context.openFileInput("temp");
+                        outputStreamTemp = context.openFileOutput("saves", Context.MODE_PRIVATE);
+                        bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                        bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStreamTemp));
+                        while ((currentLine = bufferedReader.readLine()) != null) {
+                            bufferedWriter.write(currentLine);
+                            bufferedWriter.write(System.getProperty("line.separator"));
                         }
-                        bufferedReader.close ();
-                        bufferedWriter.close ();
+                        bufferedReader.close();
+                        bufferedWriter.close();
 
                     } catch (FileNotFoundException e) {
-                        e.printStackTrace ();
+                        e.printStackTrace();
                     } catch (IOException e) {
-                        e.printStackTrace ();
+                        e.printStackTrace();
                     }
                 }
             });
         } else {
-            event.setIsSaved (true);
-            save.setImageResource (savedImageId);
-            Toast.makeText (context, R.string.you_saved_this_event, Toast.LENGTH_SHORT).show ();
-            AsyncTask.execute (new Runnable () {
+            event.setIsSaved(true);
+            save.setImageResource(savedImageId);
+            Toast.makeText(context, R.string.you_saved_this_event, Toast.LENGTH_SHORT).show();
+            AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        OutputStream outputStream = context.openFileOutput ("saves", Context.MODE_APPEND + Context.MODE_PRIVATE);
-                        outputStream.write (event.getParseObjectId ().getBytes ());
-                        outputStream.write (System.getProperty ("line.separator").getBytes ());
-                        outputStream.close ();
+                        OutputStream outputStream = context.openFileOutput("saves", Context.MODE_APPEND + Context.MODE_PRIVATE);
+                        outputStream.write(event.getParseObjectId().getBytes());
+                        outputStream.write(System.getProperty("line.separator").getBytes());
+                        outputStream.close();
                     } catch (IOException e) {
-                        e.printStackTrace ();
+                        e.printStackTrace();
                     }
                 }
             });
@@ -608,54 +1054,54 @@ public class StaticMethods {
     }
 
     public static Bitmap getImageFromDevice(Intent data, Context context) {
-        Uri selectedImage = data.getData ();
+        Uri selectedImage = data.getData();
         ParcelFileDescriptor parcelFileDescriptor =
                 null;
         try {
-            parcelFileDescriptor = context.getContentResolver ().openFileDescriptor (selectedImage, "r");
+            parcelFileDescriptor = context.getContentResolver().openFileDescriptor(selectedImage, "r");
         } catch (FileNotFoundException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
-        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor ();
-        Bitmap image = BitmapFactory.decodeFileDescriptor (fileDescriptor);
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
         try {
-            parcelFileDescriptor.close ();
+            parcelFileDescriptor.close();
         } catch (IOException e) {
-            e.printStackTrace ();
+            e.printStackTrace();
         }
-        Matrix matrix = new Matrix ();
-        int angleToRotate = getOrientation (selectedImage, context);
-        matrix.postRotate (angleToRotate);
-        Bitmap rotatedBitmap = Bitmap.createBitmap (image,
-                                                           0,
-                                                           0,
-                                                           image.getWidth (),
-                                                           image.getHeight (),
-                                                           matrix,
-                                                           true);
+        Matrix matrix = new Matrix();
+        int angleToRotate = getOrientation(selectedImage, context);
+        matrix.postRotate(angleToRotate);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(image,
+                0,
+                0,
+                image.getWidth(),
+                image.getHeight(),
+                matrix,
+                true);
         return rotatedBitmap;
     }
 
     private static int getOrientation(Uri selectedImage, Context context) {
         int orientation = 0;
         final String[] projection = new String[]{MediaStore.Images.Media.ORIENTATION};
-        final Cursor cursor = context.getContentResolver ().query (selectedImage, projection, null, null, null);
+        final Cursor cursor = context.getContentResolver().query(selectedImage, projection, null, null, null);
         if (cursor != null) {
-            final int orientationColumnIndex = cursor.getColumnIndex (MediaStore.Images.Media.ORIENTATION);
-            if (cursor.moveToFirst ()) {
-                orientation = cursor.isNull (orientationColumnIndex) ? 0 : cursor.getInt (orientationColumnIndex);
+            final int orientationColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.ORIENTATION);
+            if (cursor.moveToFirst()) {
+                orientation = cursor.isNull(orientationColumnIndex) ? 0 : cursor.getInt(orientationColumnIndex);
             }
-            cursor.close ();
+            cursor.close();
         }
         return orientation;
     }
 
     private static String getEventDateAsString(Date eventDate) {
-        long time = eventDate.getTime ();
-        Calendar calendar = Calendar.getInstance ();
-        calendar.setTimeInMillis (time);
+        long time = eventDate.getTime();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
         String dayOfWeek = null;
-        switch (calendar.get (Calendar.DAY_OF_WEEK)) {
+        switch (calendar.get(Calendar.DAY_OF_WEEK)) {
             case 1:
                 dayOfWeek = "SUN";
                 break;
@@ -679,7 +1125,7 @@ public class StaticMethods {
                 break;
         }
         String month = null;
-        switch (calendar.get (Calendar.MONTH)) {
+        switch (calendar.get(Calendar.MONTH)) {
             case 0:
                 month = "JAN";
                 break;
@@ -717,13 +1163,13 @@ public class StaticMethods {
                 month = "DEC";
                 break;
         }
-        int day = calendar.get (Calendar.DAY_OF_MONTH);
-        int hour = calendar.get (Calendar.HOUR_OF_DAY);
-        int minute = calendar.get (Calendar.MINUTE);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
         String ampm = null;
-        if (calendar.get (Calendar.AM_PM) == Calendar.AM)
+        if (calendar.get(Calendar.AM_PM) == Calendar.AM)
             ampm = "AM";
-        else if (calendar.get (Calendar.AM_PM) == Calendar.PM)
+        else if (calendar.get(Calendar.AM_PM) == Calendar.PM)
             ampm = "PM";
 
         String min;
@@ -736,10 +1182,10 @@ public class StaticMethods {
     }
 
     public static String getDisplayedEventPrice(String eventPrice) {
-        if (eventPrice.contains ("-")) {
-            String[] prices = eventPrice.split ("-");
+        if (eventPrice.contains("-")) {
+            String[] prices = eventPrice.split("-");
             return prices[0] + "₪-" + prices[1] + "₪";
-        } else if (!eventPrice.equals ("FREE")) {
+        } else if (!eventPrice.equals("FREE")) {
             return eventPrice + "₪";
         } else {
             return eventPrice;
@@ -748,28 +1194,28 @@ public class StaticMethods {
 
     public static void updateEventInfoDromParseEvent(EventInfo eventInfo,
                                                      Event event) {
-        eventInfo.setPrice (event.getPrice ());
-        eventInfo.setAddress (event.getAddress ());
-        eventInfo.setIsStadium (event.getIsStadium ());
-        eventInfo.setParseObjectId (event.getObjectId ());
-        Date currentDate = new Date ();
-        eventInfo.setIsFutureEvent (event.getRealDate ().after (currentDate));
-        eventInfo.setArtist (event.getArtist ());
-        eventInfo.setAtm (event.getEventATMService ());
-        eventInfo.setCapacity (event.getEventCapacityService ());
-        eventInfo.setDate (event.getRealDate ());
-        eventInfo.setDateAsString (StaticMethods.getEventDateAsString (event.getRealDate ()));
-        eventInfo.setFilterName (event.getFilterName ());
-        eventInfo.setDescription (event.getDescription ());
-        eventInfo.setName (event.getName ());
-        eventInfo.setNumOfTickets (event.getNumOfTickets ());
-        eventInfo.setPlace (event.getPlace ());
-        eventInfo.setProducerId (event.getProducerId ());
-        eventInfo.setParking (event.getEventParkingService ());
-        eventInfo.setTags (event.getTags ());
-        eventInfo.setToilet (event.getEventToiletService ());
-        eventInfo.setX (event.getX ());
-        eventInfo.setY (event.getY ());
+        eventInfo.setPrice(event.getPrice());
+        eventInfo.setAddress(event.getAddress());
+        eventInfo.setIsStadium(event.getIsStadium());
+        eventInfo.setParseObjectId(event.getObjectId());
+        Date currentDate = new Date();
+        eventInfo.setIsFutureEvent(event.getRealDate().after(currentDate));
+        eventInfo.setArtist(event.getArtist());
+        eventInfo.setAtm(event.getEventATMService());
+        eventInfo.setCapacity(event.getEventCapacityService());
+        eventInfo.setDate(event.getRealDate());
+        eventInfo.setDateAsString(StaticMethods.getEventDateAsString(event.getRealDate()));
+        eventInfo.setFilterName(event.getFilterName());
+        eventInfo.setDescription(event.getDescription());
+        eventInfo.setName(event.getName());
+        eventInfo.setNumOfTickets(event.getNumOfTickets());
+        eventInfo.setPlace(event.getPlace());
+        eventInfo.setProducerId(event.getProducerId());
+        eventInfo.setParking(event.getEventParkingService());
+        eventInfo.setTags(event.getTags());
+        eventInfo.setToilet(event.getEventToiletService());
+        eventInfo.setX(event.getX());
+        eventInfo.setY(event.getY());
     }
 
     public static ImageLoader getImageLoader(Context context) {
@@ -777,23 +1223,55 @@ public class StaticMethods {
         ImageLoader imageLoader = null;
         DisplayImageOptions options = null;
 
-        options = new DisplayImageOptions.Builder ()
-                          .cacheOnDisk (true)
-                          .cacheInMemory (true)
-                          .bitmapConfig (Bitmap.Config.RGB_565)
-                          .imageScaleType (ImageScaleType.EXACTLY)
-                          .resetViewBeforeLoading (true)
-                          .build ();
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder (context)
-                                                  .defaultDisplayImageOptions (options)
-                                                  .threadPriority (Thread.MAX_PRIORITY)
-                                                  .threadPoolSize (4)
-                                                  .memoryCache (new WeakMemoryCache ())
-                                                  .denyCacheImageMultipleSizesInMemory ()
-                                                  .build ();
-        imageLoader = ImageLoader.getInstance ();
-        imageLoader.init (config);
+        options = new DisplayImageOptions.Builder()
+                .cacheOnDisk(true)
+                .cacheInMemory(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .imageScaleType(ImageScaleType.EXACTLY)
+                .resetViewBeforeLoading(true)
+                .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
+                .defaultDisplayImageOptions(options)
+                .threadPriority(Thread.MAX_PRIORITY)
+                .threadPoolSize(4)
+                .memoryCache(new WeakMemoryCache())
+                .denyCacheImageMultipleSizesInMemory()
+                .build();
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.init(config);
 
         return imageLoader;
     }
+
+    private static Integer priceHandler(String price)// parse the price (x-y) got from Parse and take the minmum value
+    {
+        StringBuilder sb = new StringBuilder(price);
+        int result;
+        String tempPrice = "";
+        try {
+            result = sb.indexOf("-");
+            if (result != -1) {
+                tempPrice = sb.substring(0, result);
+            } else {
+                tempPrice = price;
+            }
+        } catch (Exception Ex) {
+            Log.e("TAG", Ex.getMessage());
+        }
+        return Integer.parseInt(tempPrice);
+    }
+
+    private static boolean DateCompare(Date filterDate, Date eventDate) // compare only date withut hours
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+
+        boolean IsCompare = dateFormat.format(filterDate).equals(dateFormat.format(eventDate));
+
+        if (IsCompare)
+            return true;
+        else
+            return false;
+    }
+
 }
+

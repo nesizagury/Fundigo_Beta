@@ -58,8 +58,8 @@ public class MessageAdapter extends BaseAdapter {
     @SuppressLint("InflateParams")
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        final MessageChat messageChat = allMessagesList.get (position);
-        boolean isSend = messageChat.getIsSend ();
+        final MessageChat messageChat = allMessagesList.get(position);
+        boolean isSend = messageChat.getIsSend();
 
         ViewHolder viewHolder = null;
         if (convertView == null) {
@@ -125,12 +125,13 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder.textTextView.setText (messageChat.getContent ());
                 break;
         }
+
         return convertView;
     }
 
     public static boolean inSameDay(Date date1, Date Date2) {
         Calendar calendar = Calendar.getInstance ();
-        calendar.setTime (date1);
+        calendar.setTime(date1);
         int year1 = calendar.get (Calendar.YEAR);
         int day1 = calendar.get (Calendar.DAY_OF_YEAR);
 
@@ -149,4 +150,6 @@ public class MessageAdapter extends BaseAdapter {
         public TextView sendTimeTextView;
         public boolean isSend = true;
     }
+
+
 }

@@ -7,14 +7,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.GlobalVariables;
@@ -28,7 +27,7 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RealTimeChatActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class RealTimeChatActivity extends AppCompatActivity {//implements AdapterView.OnItemClickListener  {
 
     private EditText editTextMessage;
     private ListView listViewChat;
@@ -45,19 +44,20 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
     ImageView eventImage;
     EventInfo eventInfo;
     ImageLoader loader;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate (savedInstanceState);
-        setContentView (R.layout.activity_real_time_cahts);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_real_time_cahts);
         eventImage = (ImageView) findViewById (R.id.profileImage_rt_chat);
         eventName = (Button) findViewById (R.id.ProfileName_rt_chat);
         buttonSend = (Button) findViewById (R.id.btSend_rt_Chat);
-        loader = StaticMethods.getImageLoader (this);
-        Intent intent = getIntent ();
-        eventObjectId = intent.getStringExtra ("eventObjectId");
-        eventInfo = StaticMethods.getEventFromObjID (eventObjectId, GlobalVariables.ALL_EVENTS_DATA);
-        loader.displayImage (eventInfo.getPicUrl (), eventImage);
+        loader = StaticMethods.getImageLoader(this);
+        intent = getIntent();
+        eventObjectId = intent.getStringExtra("eventObjectId");
+        eventInfo = StaticMethods.getEventFromObjID(eventObjectId, GlobalVariables.ALL_EVENTS_DATA);
+        loader.displayImage(eventInfo.getPicUrl(), eventImage);
         eventName.setText (eventInfo.getName () + "(" + getResources ().getString (R.string.real_time_chat) + ")");
         if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
             current_user_id = GlobalVariables.CUSTOMER_PHONE_NUM;
@@ -73,45 +73,46 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
         messageFirstLoad = true;
         mAdapter = new MessageAdapter (this, chatMessagesList, true);
 
-        listViewChat.setAdapter (mAdapter);
-        setupMessagePosting ();
-        handler.postDelayed (runnable, 0);
+        listViewChat.setAdapter(mAdapter);
+        setupMessagePosting();
+        handler.postDelayed(runnable, 0);
+
+
     }
 
     private void setupMessagePosting() {
-        buttonSend.setOnClickListener (new View.OnClickListener () {
+        buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String body = editTextMessage.getText ().toString ();
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences (RealTimeChatActivity.this);
-                String name = sp.getString (GlobalVariables.FB_NAME, null);
-                String pic_url = sp.getString (GlobalVariables.FB_PIC_URL, null);
-                String fb_id = sp.getString (GlobalVariables.FB_ID, null);
-                MsgRealTime message = new MsgRealTime ();
-                message.setUserId (current_user_id);
+                String body = editTextMessage.getText().toString();
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(RealTimeChatActivity.this);
+                String name = sp.getString(GlobalVariables.FB_NAME, null);
+                String pic_url = sp.getString(GlobalVariables.FB_PIC_URL, null);
+                String fb_id = sp.getString(GlobalVariables.FB_ID, null);
+                MsgRealTime message = new MsgRealTime();
+                message.setUserId(current_user_id);
                 if (GlobalVariables.IS_PRODUCER) {
-                    message.setIsProducer (true);
+                    message.setIsProducer(true);
                 } else if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
-                    message.setIsProducer (false);
+                    message.setIsProducer(false);
                 }
-                message.setBody (body);
-                message.setEventObjectId (eventObjectId);
+                message.setBody(body);
+                message.setEventObjectId(eventObjectId);
                 if (name != null && pic_url != null && fb_id != null) {
-                    message.setSenderName (name);
-                    message.setPicUrl (pic_url);
-                    message.setFbId (fb_id);
+                    message.setSenderName(name);
+                    message.setPicUrl(pic_url);
+                    message.setFbId(fb_id);
                 }
                 try {
-                    message.save ();
+                    message.save();
                 } catch (ParseException e) {
-                    e.printStackTrace ();
+                    e.printStackTrace();
                 }
-                editTextMessage.setText ("");
-                getAllMessagesInMainThread ();
+                editTextMessage.setText("");
+                getAllMessagesInMainThread();
             }
         });
-        listViewChat.setOnItemClickListener (this);
-    }
+     }
 
     private Runnable runnable = new Runnable () {
         @Override
@@ -123,8 +124,8 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
 
     private void getAllMessagesInMainThread() {
         ParseQuery<MsgRealTime> query = ParseQuery.getQuery (MsgRealTime.class);
-        query.whereEqualTo ("eventObjectId", eventObjectId);
-        query.orderByAscending ("createdAt");
+        query.whereEqualTo("eventObjectId", eventObjectId);
+        query.orderByAscending("createdAt");
         List<MsgRealTime> messages = null;
         try {
             messages = query.find ();
@@ -136,22 +137,22 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
 
     private void getAllMessagesInBackground() {
         ParseQuery<MsgRealTime> query = ParseQuery.getQuery (MsgRealTime.class);
-        query.whereEqualTo ("eventObjectId", eventObjectId);
-        query.orderByAscending ("createdAt");
-        query.findInBackground (new FindCallback<MsgRealTime> () {
+        query.whereEqualTo("eventObjectId", eventObjectId);
+        query.orderByAscending("createdAt");
+        query.findInBackground(new FindCallback<MsgRealTime>() {
             public void done(List<MsgRealTime> messages, ParseException e) {
                 if (e == null) {
-                    getMessagesData (messages);
+                    getMessagesData(messages);
                 } else {
-                    e.printStackTrace ();
+                    e.printStackTrace();
                 }
             }
         });
     }
 
     private void getMessagesData(List<MsgRealTime> messages) {
-        chatMessagesList.clear ();
-        messagesRealTimeList.clear ();
+        chatMessagesList.clear();
+        messagesRealTimeList.clear();
         messagesRealTimeList.addAll (messages);
         for (int i = 0; i < messages.size (); i++) {
             MsgRealTime msg = messages.get (i);
@@ -192,28 +193,16 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
 
     @Override
     public void onPause() {
-        super.onPause ();
-        handler.removeCallbacks (runnable);
+        super.onPause();
+        handler.removeCallbacks(runnable);
     }
 
     @Override
     public void onResume() {
-        super.onResume ();
-        handler.postDelayed (runnable, 500);
+        super.onResume();
+        handler.postDelayed(runnable, 500);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        faceBookUserId = messagesRealTimeList.get (position).getFbId ();
-        AlertDialog.Builder builder = new AlertDialog.Builder (this);
-        builder.setTitle (R.string.visit_user_facebook);
-        builder.setIcon (R.mipmap.ic_mor_information);
-        builder.setPositiveButton (R.string.go, listener);
-        builder.setNegativeButton (R.string.cancel, listener);
-
-        AlertDialog dialog = builder.create ();
-        dialog.show ();
-    }
 
     DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener () {
         @Override
@@ -237,6 +226,28 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
             return new Intent (Intent.ACTION_VIEW, Uri.parse ("fb://facewebmodal/f?href=" + facebookUrl));
         } catch (Exception e) {
             return new Intent (Intent.ACTION_VIEW, Uri.parse ("https://www.facebook.com/app_scoped_user_id/" + userId));
+        }
+    }
+
+
+    public void startMessageWithCustomer (View view)
+    {
+
+        final Intent chatintent = new Intent (this,ChatToCustomersActivity.class);
+
+        try {
+           int position = listViewChat.getPositionForView(view); //text view postion in the list view
+            String senderCustomer = chatMessagesList.get(position).getFromUserName(); // get the sender name of the chat message
+            if (!GlobalVariables.CUSTOMER_PHONE_NUM.equals(senderCustomer)) {// in case the chat is with other and not with himself
+                chatintent.putExtra("customer_phone", current_user_id);
+                chatintent.putExtra("senderCustomer", senderCustomer);
+                chatintent.putExtra("index", intent.getIntExtra("index", 0));// even index in All Events Liost
+                startActivity(chatintent);
+            }
+            else
+                Toast.makeText(this,"you selected to open chat with yourself",Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace ();
         }
     }
 }

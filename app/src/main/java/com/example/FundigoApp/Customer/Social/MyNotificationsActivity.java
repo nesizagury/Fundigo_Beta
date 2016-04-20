@@ -85,7 +85,12 @@ public class MyNotificationsActivity extends AppCompatActivity implements Adapte
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Intent intent = new Intent (MyNotificationsActivity.this, DetailedNotificationActivity.class);
         intent.putExtra ("Message", pushObjectsList.get (i).getString ("pushMessage").toString ());
-        intent.putExtra ("EvendId", notificationsEventList.get (i).getParseObjectId ());
-        startActivity (intent);
+        intent.putExtra("EvendId", notificationsEventList.get(i).getParseObjectId());
+        startActivity(intent);
+    }
+
+    public List<ParseObject> getNotificationsList ()// Assaf added: for get the list of notifications and display
+    {
+       return pushObjectsList;
     }
 }

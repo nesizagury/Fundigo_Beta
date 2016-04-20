@@ -3,6 +3,7 @@ package com.example.FundigoApp;
 import android.app.Application;
 
 import com.example.FundigoApp.Chat.Message;
+import com.example.FundigoApp.Chat.MessageToCustomer;
 import com.example.FundigoApp.Chat.MsgRealTime;
 import com.example.FundigoApp.Chat.Room;
 import com.example.FundigoApp.Customer.CustomerMenu.CreditCard;
@@ -39,8 +40,9 @@ public class Fundigo extends Application {
             e.printStackTrace ();
         }
         ParseInstallation.getCurrentInstallation ().getObjectId ();
-        ParseObject.registerSubclass (Event.class);
+        ParseObject.registerSubclass(Event.class);
         ParseObject.registerSubclass (Message.class);
+        ParseObject.registerSubclass (MessageToCustomer.class);
         ParseObject.registerSubclass (Room.class);
         ParseObject.registerSubclass (MsgRealTime.class);
         ParseObject.registerSubclass (EventsSeats.class);
