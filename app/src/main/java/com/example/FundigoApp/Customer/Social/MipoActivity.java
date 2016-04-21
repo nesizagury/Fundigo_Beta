@@ -50,14 +50,14 @@ public class MipoActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void downloadProfiles() {
-        ParseQuery<MipoProfile> query = new ParseQuery ("Profile");
+        ParseQuery<Profile> query = new ParseQuery ("Profile");
         query.orderByDescending ("createdAt");
         query.whereExists ("lastSeen");
-        List<MipoProfile> profilesList = null;
+        List<Profile> profilesList = null;
         try {
             profilesList = query.find ();
             for (int i = 0; i < profilesList.size (); i++) {
-                MipoProfile profile = profilesList.get (i);
+                Profile profile = profilesList.get (i);
                 mipoUsers.add (new MipoUser (null,
                                                     profile.getName (), profile.getNumber ()));
 

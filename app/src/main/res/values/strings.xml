@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name"></string>
+    <string name="app_name">FUNDIGO</string>
 
     <string name="filterPageName">Filter</string>
 
@@ -135,6 +135,60 @@
         <item>Music</item>
     </string-array>
 
+    <string-array name="sportFilters">
+        <item>Basketball</item>
+        <item>Football</item>
+        <item>Tennis</item>
+    </string-array>
+
+    <string-array name="travelFilters">
+        <item>Tracks</item>
+        <item>Light</item>
+        <item>Heavy</item>
+    </string-array>
+
+    <string-array name="drinkFilters">
+        <item>Beer</item>
+        <item>Whine</item>
+        <item>Vodka</item>
+    </string-array>
+
+    <string-array name="businessFilters">
+        <item>Cars sale</item>
+        <item>Clothes sale </item>
+        <item>Apartments sale </item>
+    </string-array>
+
+    <string-array name="fashionFilters">
+        <item>Koko Shanell</item>
+        <item>GAP</item>
+        <item>H_M</item>
+    </string-array>
+
+    <string-array name="musicFilters">
+        <item>Trans</item>
+        <item>Disco</item>
+        <item>Pop</item>
+    </string-array>
+
+    <string-array name="governmentFilters">
+        <item>Security</item>
+        <item>Services</item>
+        <item>Law</item>
+    </string-array>
+
+    <string-array name="homeLifeStyleFilters">
+        <item>AAA</item>
+        <item>BBB</item>
+        <item>CCC</item>
+    </string-array>
+
+    <string-array name="educationFilters">
+        <item>University</item>
+        <item>College</item>
+        <item>First Grade</item>
+    </string-array>
+
     <string-array name="atms">
         <item>Yes</item>
         <item>No</item>
@@ -164,6 +218,24 @@
 
     </string-array>
 
+    <string-array name="eventPriceFilter">
+        <item>No Filter</item>
+        <item>Free</item>
+        <item>Up To 50</item>
+        <item>Up To 100</item>
+        <item>Up To 200</item>
+        <item>More then 200</item>
+    </string-array>
+
+    <string-array name="eventDateFilter">
+        <item>No Filter</item>
+        <item>Today</item>
+        <item>Tomorrow</item>
+        <item>Day After Tomorrow</item>
+        <item>Weekend</item>
+        <item>Select From Calendar</item>
+    </string-array>
+
     <string name="login">LOGIN</string>
     <string name="create_event">Create Event</string>
     <string name="name">Name:</string>
@@ -180,7 +252,7 @@
     <string name="app_pafw">App Page</string>
     <string name="web_page">Web Page</string>
     <string name="mipo_party_real_time">Mipo Party Real Time</string>
-    <string name="gust_entered">Gust\'s Entered:</string>
+    <string name="gust_entered">Guest\'s Entered:</string>
     <string name="qr_scanner">QR - Scanner</string>
     <string name="push">Push:</string>
     v
@@ -192,7 +264,7 @@
     <string name="events_stats">Events Stats</string>
     <string name="list_of_my_events_and_tickets">List of My Events and Tickets</string>
     <string name="enter_phone_number_hear">Enter Phone Number Hear</string>
-    <string name="start_downlaod">Start Downlaod</string>
+    <string name="start_downlaod">Start Download</string>
     <string name="add">Add</string>
     <string name="create_new_producer">Create New Producer</string>
     <string name="events">Events</string>
@@ -205,7 +277,7 @@
     <string name="phone_number">Phone Number:</string>
     <string name="price">Price:</string>
     <string name="new_text">New Text</string>
-    <string name="massage">Massage</string>
+    <string name="massage">Message</string>
     <string name="event_name">Event Name</string>
     <string name="date">Date</string>
     <string name="go_to_event">Go To Event</string>
@@ -217,7 +289,7 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="finish_reistration">Finish Reistration</string>
-    <string name="create_your_fundigo_account">Create Your Funfigo Account</string>
+    <string name="create_your_fundigo_account">Create Your Fundigo Account</string>
     <string name="insert_image">Insert Image</string>
     <string name="signup">Signup</string>
     <string name="upload">Upload</string>
@@ -251,6 +323,7 @@
     <string name="input_message">input message</string>
     <string name="user_id">USER ID</string>
     <string name="chat_with_producer">(Chat with Producer)</string>
+    <string name="chat_with_customer">(Chat with Customer)</string>
     <string name="customer">Customer : </string>
     <string name="producer">Producer :</string>
     <string name="real_time_chat">Real Time Chat</string>
@@ -270,6 +343,7 @@
     <string name="km_away">km away</string>
     <string name="you_unsaved_this_event">You unSaved this event</string>
     <string name="you_saved_this_event">You Saved this event</string>
+    <string name="saved_in_calendar">Invitation was sent to your calendar</string>
     <string name="please_enter_valid_address">Please enter valid address</string>
     <string name="please_fill_empty_forms">Please fill empty forms</string>
     <string name="event_has_created_successfully">Event has created successfully!</string>
@@ -290,7 +364,7 @@
     <string name="see_customers_massages">See Customers\' Massages</string>
     <string name="scan_didnt_finish">Scan didn`t finish</string>
     <string name="my_content_title">My Content Title</string>
-
+    <string name="save_to_calander">Schedule the event in your calendar</string>
 
     <string name="my_content_description">My Content Description</string>
     <string name="tickets_sold">Tickets Sold</string>
@@ -364,5 +438,10 @@
     <string name="customer_enter">Customer Enter</string>
     <string name="sold">Sold</string>
     <string name="custme_enter">Mark That Customer Enter</string>
+    <string name="select_date">Select Date</string>
+    <string name="select_price">Select Price</string>
+    <string name="advanced_filter">Press For Advanced Filtering</string>
+    <string name="title_activity_chat_to_customers">ChatToCustomersActivity</string>
+
 
 </resources>

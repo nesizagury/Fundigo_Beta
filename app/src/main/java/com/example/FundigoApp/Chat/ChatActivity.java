@@ -18,7 +18,8 @@ import com.example.FundigoApp.Customer.CustomerDetails;
 import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
-import com.example.FundigoApp.StaticMethods;
+import com.example.FundigoApp.StaticMethod.FileAndImageMethods;
+import com.example.FundigoApp.StaticMethod.UserDetailsMethod;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.FindCallback;
 import com.parse.ParseACL;
@@ -53,7 +54,7 @@ public class ChatActivity extends Activity {
         super.onCreate (savedInstanceState);
         this.requestWindowFeature (Window.FEATURE_NO_TITLE);
         setContentView (R.layout.activity_main_chat);
-        loader = StaticMethods.getImageLoader(this);
+        loader = FileAndImageMethods.getImageLoader (this);
         profileImage = (ImageView) findViewById (R.id.profileImage_chat);
         profileName = (Button) findViewById (R.id.ProfileName_chat);
         profileFaceBook = (Button) findViewById (R.id.ProfileFacebook_chat);
@@ -85,7 +86,7 @@ public class ChatActivity extends Activity {
     }
 
     private void updateUserDetailsFromParse() {
-        CustomerDetails customerDetails = StaticMethods.getUserDetailsFromParseInMainThread (customerPhone);
+        CustomerDetails customerDetails = UserDetailsMethod.getUserDetailsFromParseInMainThread (customerPhone);
         if (customerDetails.getFaceBookId () == null || customerDetails.getFaceBookId ().isEmpty ()) {
             profileFaceBook.setText ("");
             profileFaceBook.setClickable (false);

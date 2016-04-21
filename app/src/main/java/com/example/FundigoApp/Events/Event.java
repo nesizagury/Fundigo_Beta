@@ -172,4 +172,12 @@ public class Event extends ParseObject {
     public void setPic(ParseFile file) {
         put ("ImageFile", file);
     }
+
+    public String getSubFilterName() {
+        return getString ("subFilterName");
+    }
+
+    public void setSubFilterName(String subFilterName) {
+        put ("subFilterName", subFilterName);
+    }
 }

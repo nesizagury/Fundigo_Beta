@@ -2,9 +2,13 @@ package com.example.FundigoApp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.FundigoApp.Customer.CustomerMenu.MenuActivity;
@@ -27,14 +32,21 @@ import com.example.FundigoApp.Events.CreateEventActivity;
 import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.Events.EventPageActivity;
 import com.example.FundigoApp.Events.EventsListAdapter;
+import com.example.FundigoApp.Filter.FilterPageActivity;
 import com.example.FundigoApp.MyLocation.CityMenu;
 import com.example.FundigoApp.Producer.TabPagerAdapter;
-import com.example.FundigoApp.StaticMethods.GetEventsDataCallback;
-import com.example.FundigoApp.StaticMethods.GpsICallback;
+import com.example.FundigoApp.StaticMethod.EventDataMethods;
+import com.example.FundigoApp.StaticMethod.EventDataMethods.GetEventsDataCallback;
+import com.example.FundigoApp.StaticMethod.FilterMethods;
+import com.example.FundigoApp.StaticMethod.GPSMethods;
+import com.example.FundigoApp.StaticMethod.GPSMethods.GpsICallback;
+import com.example.FundigoApp.StaticMethod.GeneralStaticMethods;
+import com.parse.ParseObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -42,7 +54,10 @@ import java.util.Locale;
 import io.branch.referral.Branch;
 import io.branch.referral.BranchError;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, GetEventsDataCallback, GpsICallback {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
+                                                                       View.OnClickListener,
+                                                                       GetEventsDataCallback,
+                                                                       GpsICallback {
 
     ListView list_view;
     private static List<EventInfo> filtered_events_data = new ArrayList<EventInfo> ();
@@ -50,9 +65,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button event, savedEvent, realTime;
     static Button currentCityButton;
     ImageView search, notification;
-
+    private static TextView pushViewText;
     static PopupMenu popup;
     Context context;
+    private Thread t1;
+    private static SharedPreferences _sharedPref;
+    private static TextView filterTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         realTime.setOnClickListener (this);
         event.setOnClickListener (this);
         savedEvent.setOnClickListener (this);
+        filterTextView = (TextView) findViewById (R.id.filterView);
 
         search = (ImageView) findViewById (R.id.search);
         search.setOnClickListener (this);
@@ -125,20 +145,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         if (GlobalVariables.ALL_EVENTS_DATA.size () == 0) {
             Intent intent = new Intent (this, EventPageActivity.class);
-            StaticMethods.downloadEventsData (this, null, this.context, intent);
+            EventDataMethods.downloadEventsData (this, null, this.context, intent);
         } else {
             inflateCityMenu ();
             filtered_events_data.clear ();
             filtered_events_data.addAll (GlobalVariables.ALL_EVENTS_DATA);
             eventsListAdapter.notifyDataSetChanged ();
-            StaticMethods.filterListsAndUpdateListAdapter (filtered_events_data,
+            FilterMethods.filterListsAndUpdateListAdapter (filtered_events_data,
                                                                   eventsListAdapter,
                                                                   GlobalVariables.namesCity,
                                                                   GlobalVariables.indexCityChosen);
             if (GlobalVariables.MY_LOCATION == null) {
-                StaticMethods.updateDeviceLocationGPS (this.context, this);
+                GPSMethods.updateDeviceLocationGPS (this.context, this);
             }
         }
+        pushViewText = (TextView) findViewById (R.id.pushView);
+        PushDisplay display = new PushDisplay (); // Assaf :execute the the push notifications display in the Textview
+        display.execute ();
     }
 
     @Override
@@ -147,12 +170,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         filtered_events_data.addAll (GlobalVariables.ALL_EVENTS_DATA);
         eventsListAdapter.notifyDataSetChanged ();
         inflateCityMenu ();//assaf added to call this message here and not from OnCreate
-        StaticMethods.filterListsAndUpdateListAdapter (filtered_events_data,
+        FilterMethods.filterListsAndUpdateListAdapter (filtered_events_data,
                                                               eventsListAdapter,
                                                               GlobalVariables.namesCity,
                                                               GlobalVariables.indexCityChosen);
         if (GlobalVariables.MY_LOCATION == null) {
-            StaticMethods.updateDeviceLocationGPS (this.context, this);
+            GPSMethods.updateDeviceLocationGPS (this.context, this);
         }
     }
 
@@ -163,16 +186,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             GlobalVariables.cityMenuInstance = new CityMenu (GlobalVariables.ALL_EVENTS_DATA, this);
             GlobalVariables.namesCity = GlobalVariables.cityMenuInstance.getCityNames ();
             inflateCityMenu ();
-            int indexCityGps = StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS);
+            int indexCityGps = GPSMethods.getCityIndexFromName (GlobalVariables.CITY_GPS);
             if (indexCityGps >= 0) {
                 popup.getMenu ().getItem (GlobalVariables.indexCityGPS).setTitle (GlobalVariables.namesCity[GlobalVariables.indexCityGPS]);
                 GlobalVariables.indexCityGPS = indexCityGps;
                 popup.getMenu ().getItem (GlobalVariables.indexCityGPS).setTitle (GlobalVariables.CITY_GPS + "(GPS)");
                 if (!GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
                     ArrayList<EventInfo> tempEventsList =
-                            StaticMethods.filterByCityAndFilterName (
+                            FilterMethods.filterByCityAndFilterName (
                                                                             GlobalVariables.CITY_GPS,
                                                                             GlobalVariables.CURRENT_FILTER_NAME,
+                                                                            GlobalVariables.CURRENT_SUB_FILTER,
+                                                                            GlobalVariables.CURRENT_DATE_FILTER,
+                                                                            GlobalVariables.CURRENT_PRICE_FILTER,
                                                                             GlobalVariables.ALL_EVENTS_DATA);
                     filtered_events_data.clear ();
                     filtered_events_data.addAll (tempEventsList);
@@ -187,43 +213,71 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         super.onResume ();
-        if (GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
-            ArrayList<EventInfo> tempEventsList =
-                    StaticMethods.filterByCityAndFilterName (
-                                                                    GlobalVariables.namesCity[GlobalVariables.indexCityChosen],
-                                                                    GlobalVariables.CURRENT_FILTER_NAME,
-                                                                    GlobalVariables.ALL_EVENTS_DATA);
-            filtered_events_data.clear ();
-            filtered_events_data.addAll (tempEventsList);
-            eventsListAdapter.notifyDataSetChanged ();
-            if (GlobalVariables.CITY_GPS != null &&
-                        GlobalVariables.namesCity[GlobalVariables.indexCityChosen].equals (GlobalVariables.CITY_GPS) &&
-                        StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
-                currentCityButton.setText (GlobalVariables.namesCity[GlobalVariables.indexCityChosen] + "(GPS)");
+        if (!GlobalVariables.IS_PRODUCER) {
+            if (GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
+                ArrayList<EventInfo> tempEventsList =
+                        FilterMethods.filterByCityAndFilterName (
+                                                                        GlobalVariables.namesCity[GlobalVariables.indexCityChosen],
+                                                                        GlobalVariables.CURRENT_FILTER_NAME,
+                                                                        GlobalVariables.CURRENT_SUB_FILTER,
+                                                                        GlobalVariables.CURRENT_DATE_FILTER,
+                                                                        GlobalVariables.CURRENT_PRICE_FILTER,
+                                                                        GlobalVariables.ALL_EVENTS_DATA);
+                filtered_events_data.clear ();
+                filtered_events_data.addAll (tempEventsList);
+                eventsListAdapter.notifyDataSetChanged ();
+                if (GlobalVariables.CITY_GPS != null &&
+                            GlobalVariables.namesCity[GlobalVariables.indexCityChosen].equals (GlobalVariables.CITY_GPS) &&
+                            GPSMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
+                    currentCityButton.setText (GlobalVariables.namesCity[GlobalVariables.indexCityChosen] + "(GPS)");
+                } else {
+                    currentCityButton.setText (GlobalVariables.namesCity[GlobalVariables.indexCityChosen]);
+                }
+            } else if (GlobalVariables.CITY_GPS != null &&
+                               !GlobalVariables.CITY_GPS.isEmpty () &&
+                               GPSMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
+                ArrayList<EventInfo> tempEventsList =
+                        FilterMethods.filterByCityAndFilterName (
+                                                                        GlobalVariables.CITY_GPS,
+                                                                        GlobalVariables.CURRENT_FILTER_NAME,
+                                                                        GlobalVariables.CURRENT_SUB_FILTER,
+                                                                        GlobalVariables.CURRENT_DATE_FILTER,
+                                                                        GlobalVariables.CURRENT_PRICE_FILTER,
+                                                                        GlobalVariables.ALL_EVENTS_DATA);
+                filtered_events_data.clear ();
+                filtered_events_data.addAll (tempEventsList);
+                eventsListAdapter.notifyDataSetChanged ();
+                currentCityButton.setText (GlobalVariables.CITY_GPS + "(GPS)");
             } else {
-                currentCityButton.setText (GlobalVariables.namesCity[GlobalVariables.indexCityChosen]);
+                ArrayList<EventInfo> tempEventsList =
+                        FilterMethods.filterByCityAndFilterName (
+                                                                        GlobalVariables.namesCity[GlobalVariables.indexCityChosen],
+                                                                        GlobalVariables.CURRENT_FILTER_NAME,
+                                                                        GlobalVariables.CURRENT_SUB_FILTER,
+                                                                        GlobalVariables.CURRENT_DATE_FILTER,
+                                                                        GlobalVariables.CURRENT_PRICE_FILTER,
+                                                                        GlobalVariables.ALL_EVENTS_DATA);
+                filtered_events_data.clear ();
+                filtered_events_data.addAll (tempEventsList);
+                eventsListAdapter.notifyDataSetChanged ();
             }
-        } else if (GlobalVariables.CITY_GPS != null &&
-                           !GlobalVariables.CITY_GPS.isEmpty () &&
-                           StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
-            ArrayList<EventInfo> tempEventsList =
-                    StaticMethods.filterByCityAndFilterName (
-                                                                    GlobalVariables.CITY_GPS,
-                                                                    GlobalVariables.CURRENT_FILTER_NAME,
-                                                                    GlobalVariables.ALL_EVENTS_DATA);
-            filtered_events_data.clear ();
-            filtered_events_data.addAll (tempEventsList);
-            eventsListAdapter.notifyDataSetChanged ();
-            currentCityButton.setText (GlobalVariables.CITY_GPS + "(GPS)");
-        }  else if(!GlobalVariables.IS_PRODUCER){
-            ArrayList<EventInfo> tempEventsList =
-                    StaticMethods.filterByCityAndFilterName (
-                                                                    GlobalVariables.namesCity[GlobalVariables.indexCityChosen],
-                                                                    GlobalVariables.CURRENT_FILTER_NAME,
-                                                                    GlobalVariables.ALL_EVENTS_DATA);
-            filtered_events_data.clear ();
-            filtered_events_data.addAll (tempEventsList);
-            eventsListAdapter.notifyDataSetChanged ();
+        }
+        // display the filter line
+        try {
+            String[] results = getData ();
+            String[] values = getResources ().getStringArray (R.array.eventPriceFilter);
+            if (!results[0].equals ("") || !results[1].equals ("") || !results[2].equals ("") || !results[3].equals ("")) {
+                for (int i = 0; i < results.length; i++) {
+                    if (results[i].equals (values[0])) //if the result is "No Filter" , we remove it from presemtig it in the filter view
+                    {
+                        results[i] = "";
+                    }
+                }
+                filterTextView.setVisibility (View.VISIBLE);
+                filterTextView.setText (results[0] + " " + results[1] + " " + results[2] + " " + results[3]);
+            }
+        } catch (Exception ex) {
+            Log.e ("TAG", ex.getMessage ());
         }
     }
 
@@ -241,15 +295,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         GlobalVariables.CURRENT_CITY_NAME = item.getTitle ().toString ();
                         if (GlobalVariables.CITY_GPS != null &&
                                     item.getTitle ().equals (GlobalVariables.CITY_GPS) &&
-                                    StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
+                                    GPSMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
                             currentCityButton.setText (item.getTitle () + "(GPS)");
                         } else {
                             currentCityButton.setText (item.getTitle ());
                         }
                         ArrayList<EventInfo> tempEventsList =
-                                StaticMethods.filterByCityAndFilterName (
+                                FilterMethods.filterByCityAndFilterName (
                                                                                 GlobalVariables.namesCity[GlobalVariables.indexCityChosen],
                                                                                 GlobalVariables.CURRENT_FILTER_NAME,
+                                                                                GlobalVariables.CURRENT_SUB_FILTER,
+                                                                                GlobalVariables.CURRENT_DATE_FILTER,
+                                                                                GlobalVariables.CURRENT_PRICE_FILTER,
                                                                                 GlobalVariables.ALL_EVENTS_DATA);
                         filtered_events_data.clear ();
                         filtered_events_data.addAll (tempEventsList);
@@ -289,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             for (int i = 0; i < GlobalVariables.namesCity.length; i++) {
                 if (i == GlobalVariables.indexCityGPS &&
                             GlobalVariables.CITY_GPS != null &&
-                            StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
+                            GPSMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
                     popup.getMenu ().getItem (i).setTitle (GlobalVariables.namesCity[i] + "(GPS)");
                 } else {
                     popup.getMenu ().getItem (i).setTitle (GlobalVariables.namesCity[i]);
@@ -307,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
             if (GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
                 currentCityButton.setText (popup.getMenu ().getItem (GlobalVariables.indexCityChosen).getTitle ());
-            } else if (GlobalVariables.CITY_GPS != null && StaticMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
+            } else if (GlobalVariables.CITY_GPS != null && GPSMethods.getCityIndexFromName (GlobalVariables.CITY_GPS) >= 0) {
                 currentCityButton.setText (GlobalVariables.CITY_GPS + "(GPS)");
             } else {
                 currentCityButton.setText (popup.getMenu ().getItem (0).getTitle ());
@@ -353,16 +410,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Bundle b = new Bundle ();
         Intent intent = new Intent (this, EventPageActivity.class);
-        StaticMethods.onEventItemClick (i, filtered_events_data, intent);
+        EventDataMethods.onEventItemClick (i, filtered_events_data, intent);
         intent.putExtras (b);
         startActivity (intent);
     }
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        StaticMethods.onActivityResult (requestCode,
-                                               data,
-                                               this);
+        GeneralStaticMethods.onActivityResult (requestCode,
+                                                      data,
+                                                      this);
     }
 
     public void createEvent(View view) {
@@ -386,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             if (GlobalVariables.deepLink_params.equals (filtered_events_data.get (i).getParseObjectId ())) {
                                 Intent intent = new Intent (context, EventPageActivity.class);
                                 Bundle b = new Bundle ();
-                                StaticMethods.onEventItemClick (i, GlobalVariables.ALL_EVENTS_DATA, intent);
+                                EventDataMethods.onEventItemClick (i, GlobalVariables.ALL_EVENTS_DATA, intent);
                                 intent.putExtras (b);
                                 context.startActivity (intent);
                                 i = filtered_events_data.size ();
@@ -404,5 +461,144 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNewIntent(Intent intent) {
         this.setIntent (intent);
+    }
+
+    private class PushDisplay extends AsyncTask<Void, List<ParseObject>, String> { // Display Push Events in Text View banner
+        List<ParseObject> pushObjectsList = new ArrayList<ParseObject> ();
+        MyNotificationsActivity getPushForDisplay = new MyNotificationsActivity ();
+        //        SavedEventActivity savedEveAct = new SavedEventActivity();
+//        RealTimeActivity realTimeAct = new RealTimeActivity();
+        int ThreadCounter = 0;
+
+        @Override
+        protected String doInBackground(Void... params) {
+            // the push notifications
+            boolean IsRUN = true;
+            String result = null;
+            try {
+                while (IsRUN) {
+                    getPushForDisplay.getNotification ();//calling this class to get notifications from Parse
+                    pushObjectsList = getPushForDisplay.getNotificationsList ();//calling this class to get notifications
+                    publishProgress (pushObjectsList);
+                    try {
+                        Thread.sleep (300000);// collect Push messages from Parse each 5 minutes
+                        pushObjectsList.clear ();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace ();
+                    }
+                }
+            } catch (Exception ex) {
+                Log.e (ex.getMessage (), "error");
+            }
+            return result;
+        }
+
+        @Override
+        protected void onProgressUpdate(final List<ParseObject>... values) {
+            //super.onProgressUpdate(values);
+            final Boolean IsTrue = true;
+            final Handler hand = getHandler ();
+
+            Runnable runnable = new Runnable () {
+                @Override
+                public void run() {
+                    synchronized (this) {
+                        while (IsTrue) {
+                            try {
+                                for (List<ParseObject> list : values)
+                                    for (final ParseObject obj : list) {
+                                        try {
+                                            Thread.sleep (4000);// present text with interval of 4 sec
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace ();
+                                            //Thread.currentThread().interrupt();
+                                        }
+                                        Message msg = hand.obtainMessage ();
+                                        Bundle bund = new Bundle ();
+
+                                        bund.putString ("text", obj.getString ("pushMessage"));
+                                        msg.setData (bund);
+                                        // hand.sendMessage(msg);
+                                        hand.sendMessage (msg);
+                                    }
+                            } catch (Exception ex) {
+                                Log.e (ex.getMessage (), "errors in method");
+                            }
+                        }
+                    }
+                }
+            };
+
+            try {
+                if (ThreadCounter > 0) {
+                    t1.interrupt ();
+                    Thread.currentThread ().interrupt ();
+                    ThreadCounter--;
+                }
+                t1 = new Thread (runnable);
+                t1.join ();
+                t1.start ();
+                ThreadCounter++;
+
+            } catch (Exception ex) {
+                Log.e (ex.getMessage (), "thread exception");
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        try {
+            super.onDestroy ();
+            _sharedPref = getSharedPreferences ("filterInfo", MODE_PRIVATE);
+            _sharedPref.edit ().clear ().commit ();
+            System.exit (0);     // for kill  background Threads that operate the Endless loop of present the push messages
+        } catch (Exception ex) {
+            Log.e (ex.getMessage (), "onDestroy exception");
+        }
+    }
+
+    public String[] getData()
+    // display the filter info selected by the user.
+    {
+        _sharedPref = getSharedPreferences ("filterInfo", MODE_PRIVATE);
+        String _date = _sharedPref.getString ("date", "");
+        String _price = _sharedPref.getString ("price", "");
+        String _mainfilter = _sharedPref.getString ("mainFilter", "");
+        String _subfilter = _sharedPref.getString ("subFilter", "");
+
+        String[] _results = {_mainfilter, _subfilter, _date, _price};
+
+        return _results;
+    }
+
+    private static class mainHandler extends Handler {
+        //Using a weak reference means you won't prevent garbage collection
+        private final WeakReference<MainActivity> mainWeakReference;
+        SavedEventActivity savedEveAct = new SavedEventActivity ();
+        RealTimeActivity realTimeAct = new RealTimeActivity ();
+
+        public mainHandler(MainActivity mainInstance) {
+            mainWeakReference = new WeakReference<MainActivity> (mainInstance);
+        }
+
+        @Override
+        public void handleMessage(Message handleMessage) {
+            try {
+                MainActivity mainA = mainWeakReference.get ();
+                if (mainA != null) {
+                    pushViewText.setText (handleMessage.getData ().getString ("text"));
+                    savedEveAct.setTextToView (handleMessage.getData ().getString ("text"));
+                    realTimeAct.setTextToView (handleMessage.getData ().getString ("text"));
+                }
+            } catch (Exception ex) {
+                Log.e (ex.getMessage (), "exception in setText");
+            }
+        }
+
+    }
+
+    public Handler getHandler() {
+        return new mainHandler (this);
     }
 }

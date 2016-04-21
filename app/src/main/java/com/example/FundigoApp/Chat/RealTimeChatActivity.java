@@ -7,10 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,7 +17,8 @@ import android.widget.ListView;
 import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
-import com.example.FundigoApp.StaticMethods;
+import com.example.FundigoApp.StaticMethod.EventDataMethods;
+import com.example.FundigoApp.StaticMethod.FileAndImageMethods;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -28,7 +27,7 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RealTimeChatActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class RealTimeChatActivity extends AppCompatActivity {//implements AdapterView.OnItemClickListener
 
     private EditText editTextMessage;
     private ListView listViewChat;
@@ -40,11 +39,12 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
     private String eventObjectId;
     String current_user_id;
     private Button buttonSend;
-    private static String faceBookUserId;
+    //private static String faceBookUserId;
     Button eventName;
     ImageView eventImage;
     EventInfo eventInfo;
     ImageLoader loader;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +53,10 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
         eventImage = (ImageView) findViewById (R.id.profileImage_rt_chat);
         eventName = (Button) findViewById (R.id.ProfileName_rt_chat);
         buttonSend = (Button) findViewById (R.id.btSend_rt_Chat);
-        loader = StaticMethods.getImageLoader (this);
-        Intent intent = getIntent ();
+        loader = FileAndImageMethods.getImageLoader (this);
+        intent = getIntent ();
         eventObjectId = intent.getStringExtra ("eventObjectId");
-        eventInfo = StaticMethods.getEventFromObjID (eventObjectId, GlobalVariables.ALL_EVENTS_DATA);
+        eventInfo = EventDataMethods.getEventFromObjID (eventObjectId, GlobalVariables.ALL_EVENTS_DATA);
         loader.displayImage (eventInfo.getPicUrl (), eventImage);
         eventName.setText (eventInfo.getName () + "(" + getResources ().getString (R.string.real_time_chat) + ")");
         if (GlobalVariables.IS_CUSTOMER_REGISTERED_USER) {
@@ -110,7 +110,7 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
                 getAllMessagesInMainThread ();
             }
         });
-        listViewChat.setOnItemClickListener (this);
+//        listViewChat.setOnItemClickListener (this);
     }
 
     private Runnable runnable = new Runnable () {
@@ -202,33 +202,33 @@ public class RealTimeChatActivity extends AppCompatActivity implements AdapterVi
         handler.postDelayed (runnable, 500);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        faceBookUserId = messagesRealTimeList.get (position).getFbId ();
-        AlertDialog.Builder builder = new AlertDialog.Builder (this);
-        builder.setTitle (R.string.visit_user_facebook);
-        builder.setIcon (R.mipmap.ic_mor_information);
-        builder.setPositiveButton (R.string.go, listener);
-        builder.setNegativeButton (R.string.cancel, listener);
+//    @Override
+//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        faceBookUserId = messagesRealTimeList.get (position).getFbId ();
+//        AlertDialog.Builder builder = new AlertDialog.Builder (this);
+//        builder.setTitle (R.string.visit_user_facebook);
+//        builder.setIcon (R.mipmap.ic_mor_information);
+//        builder.setPositiveButton (R.string.go, listener);
+//        builder.setNegativeButton (R.string.cancel, listener);
+//
+//        AlertDialog dialog = builder.create ();
+//        dialog.show ();
+//    }
 
-        AlertDialog dialog = builder.create ();
-        dialog.show ();
-    }
-
-    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener () {
-        @Override
-
-        public void onClick(DialogInterface dialog, int which) {
-            switch (which) {
-                case DialogInterface.BUTTON_POSITIVE:
-                    startActivity (getOpenFacebookIntent (faceBookUserId));
-                    break;
-                case DialogInterface.BUTTON_NEGATIVE:
-                    dialog.dismiss ();
-                    break;
-            }
-        }
-    };
+//    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener () {
+//        @Override
+//
+//        public void onClick(DialogInterface dialog, int which) {
+//            switch (which) {
+//                case DialogInterface.BUTTON_POSITIVE:
+//                    startActivity (getOpenFacebookIntent (faceBookUserId));
+//                    break;
+//                case DialogInterface.BUTTON_NEGATIVE:
+//                    dialog.dismiss ();
+//                    break;
+//            }
+//        }
+//    };
 
     public Intent getOpenFacebookIntent(String userId) {
         String facebookUrl = "https://www.facebook.com/" + userId;

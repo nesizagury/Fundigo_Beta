@@ -24,6 +24,7 @@ public class EventInfo {
     String capacity;
     String atm;
     String filterName;
+    String subFilterName;
     boolean isSaved;
     String producerId;
     int indexInFullList;
@@ -54,6 +55,7 @@ public class EventInfo {
                      String capacity,
                      String atm,
                      String filterName,
+                     String subFilterName,
                      boolean isSaved,
                      String producerId,
                      int indexInFullList,
@@ -89,6 +91,7 @@ public class EventInfo {
         this.parseObjectId = parseObjectId;
         this.fbUrl = fbUrl;
         this.isStadium = isStadium;
+        this.subFilterName = subFilterName;
     }
 
     public Date getDate() {
@@ -177,6 +180,14 @@ public class EventInfo {
 
     public void setFilterName(String filterName) {
         this.filterName = filterName;
+    }
+
+    public String getSubFilterName() {
+        return subFilterName;
+    }
+
+    public void setSubFilterName(String subfilterName) {
+        this.subFilterName = subfilterName;
     }
 
     public void setIsSaved(boolean t) {

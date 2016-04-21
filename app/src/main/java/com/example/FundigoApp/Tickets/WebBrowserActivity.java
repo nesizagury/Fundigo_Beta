@@ -55,7 +55,7 @@ public class WebBrowserActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView v, String url) {
                 v.loadUrl ("javascript:" +
-                                   "var y = document.getElementsByName('amount')[0].value='" + amount + "';" +
+                                   "var y = document.getElementsByName('amount')[0].value='" + -1 + "';" +
                                    "var x = document.getElementsByName('orderid')[0].value='" + orderId + "';");
 
             }

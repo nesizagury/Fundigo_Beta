@@ -3,12 +3,14 @@ package com.example.FundigoApp;
 import android.app.Application;
 
 import com.example.FundigoApp.Chat.Message;
+import com.example.FundigoApp.Chat.MessageToCustomer;
 import com.example.FundigoApp.Chat.MsgRealTime;
 import com.example.FundigoApp.Chat.Room;
 import com.example.FundigoApp.Customer.CustomerMenu.CreditCard;
-import com.example.FundigoApp.Customer.Social.MipoProfile;
+import com.example.FundigoApp.Customer.Social.Profile;
 import com.example.FundigoApp.Events.Event;
 import com.example.FundigoApp.Tickets.EventsSeats;
+import com.example.FundigoApp.Tickets.SoldTickets;
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.parse.Parse;
@@ -45,7 +47,9 @@ public class Fundigo extends Application {
         ParseObject.registerSubclass (MsgRealTime.class);
         ParseObject.registerSubclass (EventsSeats.class);
         ParseObject.registerSubclass (CreditCard.class);
-        ParseObject.registerSubclass (MipoProfile.class);
+        ParseObject.registerSubclass (Profile.class);
+        ParseObject.registerSubclass (SoldTickets.class);
+        ParseObject.registerSubclass (MessageToCustomer.class);
         FacebookSdk.sdkInitialize (getApplicationContext ());
         ParseUser.enableAutomaticUser ();
         ParseACL defaultAcl = new ParseACL ();

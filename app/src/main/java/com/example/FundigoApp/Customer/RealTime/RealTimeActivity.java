@@ -1,11 +1,13 @@
 package com.example.FundigoApp.Customer.RealTime;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -18,13 +20,16 @@ import com.example.FundigoApp.Customer.SavedEvents.SavedEventActivity;
 import com.example.FundigoApp.Customer.Social.MyNotificationsActivity;
 import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.Events.EventPageActivity;
-import com.example.FundigoApp.FilterPageActivity;
+import com.example.FundigoApp.Filter.FilterPageActivity;
 import com.example.FundigoApp.GlobalVariables;
 import com.example.FundigoApp.R;
 import com.example.FundigoApp.SearchActivity;
-import com.example.FundigoApp.StaticMethods;
-import com.example.FundigoApp.StaticMethods.GetEventsDataCallback;
-import com.example.FundigoApp.StaticMethods.GpsICallback;
+import com.example.FundigoApp.StaticMethod.EventDataMethods;
+import com.example.FundigoApp.StaticMethod.FilterMethods;
+import com.example.FundigoApp.StaticMethod.GPSMethods;
+import com.example.FundigoApp.StaticMethod.GPSMethods.GpsICallback;
+import com.example.FundigoApp.StaticMethod.GeneralStaticMethods;
+import com.example.FundigoApp.StaticMethod.EventDataMethods.GetEventsDataCallback;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -32,7 +37,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class RealTimeActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, GetEventsDataCallback, GpsICallback {
+public class RealTimeActivity extends AppCompatActivity implements View.OnClickListener,
+                                                                           AdapterView.OnItemClickListener,
+                                                                           GetEventsDataCallback,
+                                                                           GpsICallback {
 
     private GridView gridView;
     private Button Event, RealTime, SavedEvent;
@@ -41,6 +49,9 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
     private static List<EventInfo> events_data_filtered = new ArrayList<EventInfo> ();
     EventsGridAdapter eventsGridAdapter;
     ImageView search, notification;
+    private static TextView pushViewText; //assaf: Text view for present the Push messages
+    private static SharedPreferences _sharedPref;
+    private static TextView filterTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,24 +69,26 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         notification.setOnClickListener (this);
         search = (ImageView) findViewById (R.id.search);
         search.setOnClickListener (this);
-
+        pushViewText = (TextView) findViewById (R.id.pushView);
+        filterTextView = (TextView) findViewById (R.id.filterView);
         RealTime.setTextColor (Color.WHITE);
-        if (GlobalVariables.MY_LOCATION == null && !StaticMethods.isLocationEnabled (this)) {
+        if (GlobalVariables.MY_LOCATION == null && !GPSMethods.isLocationEnabled (this)) {
             turnOnGps ();
         }
 
         if (GlobalVariables.ALL_EVENTS_DATA.size () == 0) {
             Intent intent = new Intent (this, EventPageActivity.class);
-            StaticMethods.downloadEventsData (this, null, this.getApplicationContext (), intent);
+            EventDataMethods.downloadEventsData (this, null, this.getApplicationContext (), intent);
         } else {
-            if (GlobalVariables.MY_LOCATION != null  && StaticMethods.isLocationEnabled (this)) {
+            if (GlobalVariables.MY_LOCATION != null && GPSMethods.isLocationEnabled (this)) {
                 events_sorted_by_dist_data = getSortedListByDist ();
                 List<EventInfo> tempFilteredList =
-                        StaticMethods.filterByFilterName (GlobalVariables.CURRENT_FILTER_NAME, events_sorted_by_dist_data);
+                        FilterMethods.filterByFilterName (GlobalVariables.CURRENT_FILTER_NAME,
+                                                                 GlobalVariables.CURRENT_SUB_FILTER, GlobalVariables.CURRENT_DATE_FILTER, GlobalVariables.CURRENT_PRICE_FILTER, events_sorted_by_dist_data);
                 events_data_filtered.clear ();
                 events_data_filtered.addAll (tempFilteredList);
             } else {
-                StaticMethods.updateDeviceLocationGPS (this.getApplicationContext (), this);
+                GPSMethods.updateDeviceLocationGPS (this.getApplicationContext (), this);
             }
         }
 
@@ -95,7 +108,11 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         if (GlobalVariables.ALL_EVENTS_DATA.size () > 0) {
             events_sorted_by_dist_data = getSortedListByDist ();
             List<EventInfo> tempFilteredList =
-                    StaticMethods.filterByFilterName (GlobalVariables.CURRENT_FILTER_NAME, events_sorted_by_dist_data);
+                    FilterMethods.filterByFilterName (GlobalVariables.CURRENT_FILTER_NAME,
+                                                             GlobalVariables.CURRENT_SUB_FILTER,
+                                                             GlobalVariables.CURRENT_DATE_FILTER,
+                                                             GlobalVariables.CURRENT_PRICE_FILTER,
+                                                             events_sorted_by_dist_data);
             events_data_filtered.clear ();
             events_data_filtered.addAll (tempFilteredList);
             eventsGridAdapter.notifyDataSetChanged ();
@@ -108,13 +125,17 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         if (GlobalVariables.MY_LOCATION != null) {
             events_sorted_by_dist_data = getSortedListByDist ();
             List<EventInfo> tempFilteredList =
-                    StaticMethods.filterByFilterName (GlobalVariables.CURRENT_FILTER_NAME, events_sorted_by_dist_data);
+                    FilterMethods.filterByFilterName (GlobalVariables.CURRENT_FILTER_NAME,
+                                                             GlobalVariables.CURRENT_SUB_FILTER,
+                                                             GlobalVariables.CURRENT_DATE_FILTER,
+                                                             GlobalVariables.CURRENT_PRICE_FILTER,
+                                                             events_sorted_by_dist_data);
             events_data_filtered.clear ();
             events_data_filtered.addAll (tempFilteredList);
             eventsGridAdapter.notifyDataSetChanged ();
             turnOnGPS.setVisibility (View.GONE);
         } else {
-            StaticMethods.updateDeviceLocationGPS (this.getApplicationContext (), this);
+            GPSMethods.updateDeviceLocationGPS (this.getApplicationContext (), this);
         }
     }
 
@@ -155,7 +176,7 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
         } else if (vId == SavedEvent.getId ()) {
             newIntent = new Intent (this, SavedEventActivity.class);
             startActivity (newIntent);
-            finish();
+            finish ();
         } else if (v.getId () == search.getId ()) {
             newIntent = new Intent (this, SearchActivity.class);
             startActivity (newIntent);
@@ -174,7 +195,7 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
     public void onItemClick(AdapterView<?> av, View view, int i, long l) {
         Bundle b = new Bundle ();
         Intent intent = new Intent (this, EventPageActivity.class);
-        StaticMethods.onEventItemClick (i, events_data_filtered, intent);
+        EventDataMethods.onEventItemClick (i, events_data_filtered, intent);
         intent.putExtras (b);
         startActivity (intent);
     }
@@ -199,16 +220,62 @@ public class RealTimeActivity extends AppCompatActivity implements View.OnClickL
     protected void onResume() {
         super.onResume ();
         List<EventInfo> tempFilteredList =
-                StaticMethods.filterByFilterName (GlobalVariables.CURRENT_FILTER_NAME, events_sorted_by_dist_data);
+                FilterMethods.filterByFilterName (GlobalVariables.CURRENT_FILTER_NAME,
+                                                         GlobalVariables.CURRENT_SUB_FILTER,
+                                                         GlobalVariables.CURRENT_DATE_FILTER,
+                                                         GlobalVariables.CURRENT_PRICE_FILTER,
+                                                         events_sorted_by_dist_data);
         events_data_filtered.clear ();
         events_data_filtered.addAll (tempFilteredList);
         eventsGridAdapter.notifyDataSetChanged ();
+        if (GlobalVariables.MY_LOCATION != null && GPSMethods.isLocationEnabled (this))
+            displayFilterLine (); // to display filter selected by user only if GPS enabled and list is display
     }
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        StaticMethods.onActivityResult (requestCode,
-                                               data,
-                                               this);
+        GeneralStaticMethods.onActivityResult (requestCode,
+                                                      data,
+                                                      this);
+    }
+
+    public void setTextToView(String str) {
+        if (pushViewText.equals (null))
+            pushViewText = (TextView) findViewById (R.id.pushView);
+
+        pushViewText.setText (str);//Assaf added: set Push notification text to the Textview by MainActivity
+    }
+
+    public String[] getData()
+    // display the filter info selected by the user.
+    {
+        _sharedPref = getSharedPreferences ("filterInfo", MODE_PRIVATE);
+        String _date = _sharedPref.getString ("date", "");
+        String _price = _sharedPref.getString ("price", "");
+        String _mainfilter = _sharedPref.getString ("mainFilter", "");
+        String _subfilter = _sharedPref.getString ("subFilter", "");
+
+        String[] values = {_mainfilter, _subfilter, _date, _price};
+
+        return values;
+    }
+
+    private void displayFilterLine() {
+        try {
+            String[] results = getData (); // display the filter line
+            String[] values = getResources ().getStringArray (R.array.eventPriceFilter);
+            if (!results[0].equals ("") || !results[1].equals ("") || !results[2].equals ("") || !results[3].equals ("")) {
+                for (int i = 0; i < results.length; i++) {
+                    if (results[i].equals (values[0])) //if the result is "No Filter" , we remove it from presemtig it in the filter view
+                    {
+                        results[i] = "";
+                    }
+                }
+                filterTextView.setVisibility (View.VISIBLE);
+                filterTextView.setText (results[0] + " " + results[1] + " " + results[2] + " " + results[3]);
+            }
+        } catch (Exception ex) {
+            Log.e ("TAG", ex.getMessage ());
+        }
     }
 }

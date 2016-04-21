@@ -51,7 +51,77 @@
         <item>מקצועי</item>
     </string-array>
 
+    <string-array name="eventPriceFilter">
+        <item>ללא סינון</item>
+        <item>חינם</item>
+        <item>עד 50</item>
+        <item>עד 100</item>
+        <item>עד 200</item>
+        <item>מעל 200</item>
+    </string-array>
 
+    <string-array name="eventDateFilter">
+        <item>ללא סינון</item>
+        <item>היום</item>
+        <item>מחר</item>
+        <item>מחרתיים</item>
+        <item>סוף שבוע</item>
+        <item>בחר מלוח שנה</item>
+    </string-array>
+
+    <string-array name="sportFilters">
+        <item>כדורסל</item>
+        <item>כדורגל</item>
+        <item>טניס</item>
+    </string-array>
+
+    <string-array name="travelFilters">
+        <item>טרקים</item>
+        <item>טיול קל</item>
+        <item>טיול קשה</item>
+    </string-array>
+
+    <string-array name="drinkFilters">
+        <item>בירה</item>
+        <item>יין</item>
+        <item>וודקה</item>
+    </string-array>
+
+    <string-array name="businessFilters">
+        <item>מכירת מכוניות</item>
+        <item>מכירת בגדים</item>
+        <item>מכירת דירות </item>
+    </string-array>
+
+    <string-array name="fashionFilters">
+        <item>קוקו שאנל</item>
+        <item>גאפ</item>
+        <item>אייג אנד אם</item>
+    </string-array>
+
+    <string-array name="musicFilters">
+        <item>טראנס</item>
+        <item>דיסקו</item>
+        <item>פופ</item>
+    </string-array>
+
+    <string-array name="governmentFilters">
+        <item>בטחון</item>
+        <item>שירותים</item>
+        <item>משפטים</item>
+    </string-array>
+
+    <string-array name="homeLifeStyleFilters">
+        <item>אאא</item>
+        <item>בבב</item>
+        <item>גגגג</item>
+    </string-array>
+
+    <string-array name="educationFilters">
+        <item>אוניברסיטה</item>
+        <item>מכללה</item>
+        <item>תואר ראשון</item>
+    </string-array>
 
     <string name="pref_header_general">כללי</string>
 
@@ -296,6 +366,9 @@
     <string name="cancel_push">בטל התראות</string>
     <string name="get_push">קבל התראות</string>
     <string name="sen_push">שלח התראות</string>
+    <string name="select_date">בחר תאריך</string>
+    <string name="select_price">בחר מחיר</string>
+    <string name="advanced_filter">לחץ להפניה לסינון מתקדם</string>
 
 
 </resources>

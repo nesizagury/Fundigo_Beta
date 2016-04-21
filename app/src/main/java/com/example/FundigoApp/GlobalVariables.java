@@ -6,6 +6,7 @@ import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.MyLocation.CityMenu;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,6 +40,9 @@ public class GlobalVariables {
     public static Location MY_LOCATION = null;
     public static String CURRENT_FILTER_NAME = "";
     public static String CURRENT_CITY_NAME = "";
+    public static String CURRENT_SUB_FILTER =""; // no sub filter
+    public static Date CURRENT_DATE_FILTER = null; //means no date Filter
+    public static int CURRENT_PRICE_FILTER= -1;// -1 means no filter
     public static boolean SAVED_ACTIVITY_RUNNING = false;
     public static boolean USER_CHOSEN_CITY_MANUALLY = false;
 
@@ -52,4 +56,6 @@ public class GlobalVariables {
 
     public static boolean refreshArtistsList = false;
     public static ArrayList<String> userChanels = new ArrayList<> ();
+    //in millis
+    public static final int GPS_UPDATE_TIME_INTERVAL = 10000;
 }
