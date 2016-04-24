@@ -110,10 +110,10 @@
 
         <meta-data
             android:name="com.parse.APPLICATION_ID"
-            android:value="zHbkCgWz7FPRNK0E3mnB7HwRgEuKalaqnADvr8qK"/>
+            android:value="Sy2wzHjEYMSlZVjcFl0NJZx9YRgsaXIBDivezzSH"/>
         <meta-data
             android:name="com.parse.CLIENT_KEY"
-            android:value="KOerUm6IRSMz4gPOqNAsNVn0QsCHVWC0SIWI3tle"/>
+            android:value="ONZ3CWcDmdd71SmWSZmd7fWCaWzrIgNK3BCvMj2r"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
