@@ -1,6 +1,5 @@
 package com.example.FundigoApp.Chat;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -13,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.FundigoApp.Events.EventInfo;
 import com.example.FundigoApp.GlobalVariables;
@@ -237,6 +237,27 @@ public class RealTimeChatActivity extends AppCompatActivity {//implements Adapte
             return new Intent (Intent.ACTION_VIEW, Uri.parse ("fb://facewebmodal/f?href=" + facebookUrl));
         } catch (Exception e) {
             return new Intent (Intent.ACTION_VIEW, Uri.parse ("https://www.facebook.com/app_scoped_user_id/" + userId));
+        }
+    }
+
+    public void startMessageWithCustomer (View view)
+    {
+
+        final Intent chatintent = new Intent (this,ChatToCustomersActivity.class);
+
+        try {
+            int position = listViewChat.getPositionForView(view); //text view postion in the list view
+            String senderCustomer = chatMessagesList.get(position).getFromUserName(); // get the sender name of the chat message
+            if (!GlobalVariables.CUSTOMER_PHONE_NUM.equals(senderCustomer)) {// in case the chat is with other and not with himself
+                chatintent.putExtra("customer_phone", current_user_id);
+                chatintent.putExtra("senderCustomer", senderCustomer);
+                chatintent.putExtra("index", intent.getIntExtra("index", 0));// even index in All Events Liost
+                startActivity(chatintent);
+            }
+            else
+                Toast.makeText (this, "you selected to open chat with yourself", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace ();
         }
     }
 }

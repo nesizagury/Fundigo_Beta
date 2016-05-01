@@ -41,7 +41,9 @@ import com.example.FundigoApp.StaticMethod.FilterMethods;
 import com.example.FundigoApp.StaticMethod.GPSMethods;
 import com.example.FundigoApp.StaticMethod.GPSMethods.GpsICallback;
 import com.example.FundigoApp.StaticMethod.GeneralStaticMethods;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,9 +70,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static TextView pushViewText;
     static PopupMenu popup;
     Context context;
-    private Thread t1;
     private static SharedPreferences _sharedPref;
     private static TextView filterTextView;
+    PushDisplay display;
 
 
     @Override
@@ -160,8 +162,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
         pushViewText = (TextView) findViewById (R.id.pushView);
-        PushDisplay display = new PushDisplay (); // Assaf :execute the the push notifications display in the Textview
-        display.execute ();
     }
 
     @Override
@@ -214,6 +214,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume ();
         if (!GlobalVariables.IS_PRODUCER) {
+            display = new PushDisplay (); // Assaf :execute the the push notifications display in the Textview
+            display.execute ();
             if (GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
                 ArrayList<EventInfo> tempEventsList =
                         FilterMethods.filterByCityAndFilterName (
@@ -261,23 +263,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 filtered_events_data.addAll (tempEventsList);
                 eventsListAdapter.notifyDataSetChanged ();
             }
-        }
-        // display the filter line
-        try {
-            String[] results = getData ();
-            String[] values = getResources ().getStringArray (R.array.eventPriceFilter);
-            if (!results[0].equals ("") || !results[1].equals ("") || !results[2].equals ("") || !results[3].equals ("")) {
-                for (int i = 0; i < results.length; i++) {
-                    if (results[i].equals (values[0])) //if the result is "No Filter" , we remove it from presemtig it in the filter view
-                    {
-                        results[i] = "";
+            // display the filter line
+            try {
+                String[] results = getData ();
+                String[] values = getResources ().getStringArray (R.array.eventPriceFilter);
+                if (!results[0].equals ("") || !results[1].equals ("") || !results[2].equals ("") || !results[3].equals ("")) {
+                    for (int i = 0; i < results.length; i++) {
+                        if (results[i].equals (values[0])) //if the result is "No Filter" , we remove it from presemtig it in the filter view
+                        {
+                            results[i] = "";
+                        }
                     }
+                    filterTextView.setVisibility (View.VISIBLE);
+                    filterTextView.setText (results[0] + " " + results[1] + " " + results[2] + " " + results[3]);
                 }
-                filterTextView.setVisibility (View.VISIBLE);
-                filterTextView.setText (results[0] + " " + results[1] + " " + results[2] + " " + results[3]);
+            } catch (Exception ex) {
+                Log.e ("TAG", ex.getMessage ());
             }
-        } catch (Exception ex) {
-            Log.e ("TAG", ex.getMessage ());
         }
     }
 
@@ -463,86 +465,49 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         this.setIntent (intent);
     }
 
-    private class PushDisplay extends AsyncTask<Void, List<ParseObject>, String> { // Display Push Events in Text View banner
+    private class PushDisplay extends AsyncTask<Void, String, String> { // Display Push Events in Text View banner
         List<ParseObject> pushObjectsList = new ArrayList<ParseObject> ();
-        MyNotificationsActivity getPushForDisplay = new MyNotificationsActivity ();
-        //        SavedEventActivity savedEveAct = new SavedEventActivity();
-//        RealTimeActivity realTimeAct = new RealTimeActivity();
-        int ThreadCounter = 0;
 
         @Override
         protected String doInBackground(Void... params) {
-            // the push notifications
-            boolean IsRUN = true;
-            String result = null;
+            ParseQuery<ParseObject> query = ParseQuery.getQuery ("Push");
+            query.orderByDescending ("createdAt");
             try {
-                while (IsRUN) {
-                    getPushForDisplay.getNotification ();//calling this class to get notifications from Parse
-                    pushObjectsList = getPushForDisplay.getNotificationsList ();//calling this class to get notifications
-                    publishProgress (pushObjectsList);
-                    try {
-                        Thread.sleep (300000);// collect Push messages from Parse each 5 minutes
-                        pushObjectsList.clear ();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace ();
+                pushObjectsList = query.find ();
+            } catch (ParseException e) {
+                e.printStackTrace ();
+            }
+            // the push notifications
+            try {
+                while (true) {
+                    for (ParseObject parseObject : pushObjectsList) {
+                        if(isCancelled ()){
+                            return "";
+                        }
+                        publishProgress (parseObject.getString ("pushMessage"));
+                        try {
+                            Thread.sleep (4000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace ();
+                        }
                     }
                 }
             } catch (Exception ex) {
                 Log.e (ex.getMessage (), "error");
             }
-            return result;
+            return "";
         }
 
         @Override
-        protected void onProgressUpdate(final List<ParseObject>... values) {
-            //super.onProgressUpdate(values);
-            final Boolean IsTrue = true;
+        protected void onProgressUpdate(String... text) {
             final Handler hand = getHandler ();
 
-            Runnable runnable = new Runnable () {
-                @Override
-                public void run() {
-                    synchronized (this) {
-                        while (IsTrue) {
-                            try {
-                                for (List<ParseObject> list : values)
-                                    for (final ParseObject obj : list) {
-                                        try {
-                                            Thread.sleep (4000);// present text with interval of 4 sec
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace ();
-                                            //Thread.currentThread().interrupt();
-                                        }
-                                        Message msg = hand.obtainMessage ();
-                                        Bundle bund = new Bundle ();
+            Message msg = hand.obtainMessage ();
+            Bundle bund = new Bundle ();
 
-                                        bund.putString ("text", obj.getString ("pushMessage"));
-                                        msg.setData (bund);
-                                        // hand.sendMessage(msg);
-                                        hand.sendMessage (msg);
-                                    }
-                            } catch (Exception ex) {
-                                Log.e (ex.getMessage (), "errors in method");
-                            }
-                        }
-                    }
-                }
-            };
-
-            try {
-                if (ThreadCounter > 0) {
-                    t1.interrupt ();
-                    Thread.currentThread ().interrupt ();
-                    ThreadCounter--;
-                }
-                t1 = new Thread (runnable);
-                t1.join ();
-                t1.start ();
-                ThreadCounter++;
-
-            } catch (Exception ex) {
-                Log.e (ex.getMessage (), "thread exception");
-            }
+            bund.putString ("text", text[0]);
+            msg.setData (bund);
+            hand.sendMessage (msg);
         }
     }
 
@@ -600,5 +565,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public Handler getHandler() {
         return new mainHandler (this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause ();  // Always call the superclass method first
+        if(display != null) {
+            display.cancel (true);
+        }
     }
 }

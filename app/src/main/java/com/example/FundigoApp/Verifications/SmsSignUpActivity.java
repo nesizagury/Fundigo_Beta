@@ -3,6 +3,7 @@ package com.example.FundigoApp.Verifications;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -43,6 +44,7 @@ import com.sinch.verification.CodeInterceptionException;
 import com.sinch.verification.Config;
 import com.sinch.verification.IncorrectCodeException;
 import com.sinch.verification.InvalidInputException;
+import com.sinch.verification.PhoneNumberUtils;
 import com.sinch.verification.ServiceErrorException;
 import com.sinch.verification.SinchVerification;
 import com.sinch.verification.Verification;
@@ -87,7 +89,7 @@ public class SmsSignUpActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        forceRTLIfSupported ();
+        //forceRTLIfSupported ();
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_sms_login);
         Locale.getDefault ().getDisplayLanguage ();
@@ -116,10 +118,10 @@ public class SmsSignUpActivity extends AppCompatActivity {
                              (event.getKeyCode () == KeyEvent.KEYCODE_ENTER)) ||
                             (actionId == EditorInfo.IME_ACTION_DONE)) {
                     area = s.getSelectedItem ().toString ();
-                    //username = usernameTE.getText ().toString ();
+                    username = usernameTE.getText ().toString ();
                     phone_number_to_verify = getNumber (phoneET.getText ().toString (), area);
-                    //getUserPreviousDetails (area + phoneET.getText ().toString ());
-                    smsVerify (phone_number_to_verify);
+                    getUserPreviousDetails (area + phoneET.getText ().toString ());
+                    smsVerify (area + phoneET.getText ().toString ());
                 }
                 return false;
             }
@@ -298,18 +300,19 @@ public class SmsSignUpActivity extends AppCompatActivity {
     }
 
     public void smsVerify(String phone_number) {
-        Config config = SinchVerification.config ().applicationKey ("b9ee3da5-0dc9-40aa-90aa-3d30320746f3").context (getApplicationContext ()).build ();
-        VerificationListener listener = new MyVerificationListener ();
-        Verification verification = SinchVerification.createSmsVerification (config, phone_number, listener);
+        Config config = SinchVerification.config ().applicationKey("b9ee3da5-0dc9-40aa-90aa-3d30320746f3").context(getApplicationContext()).build();
+        VerificationListener listener = new MyVerificationListener();
+        String defaultRegion = PhoneNumberUtils.getDefaultCountryIso (this);
+        String phoneNumberInE164 = PhoneNumberUtils.formatNumberToE164(phone_number, defaultRegion);
+        Verification verification = SinchVerification.createSmsVerification(config, phoneNumberInE164, listener);
         verification.initiate ();
     }
 
     class MyVerificationListener implements VerificationListener {
         @Override
         public void onInitiated() {
-
+            // Verification initiated
         }
-
         @Override
         public void onInitiationFailed(Exception e) {
             if (e instanceof InvalidInputException) {
@@ -323,9 +326,9 @@ public class SmsSignUpActivity extends AppCompatActivity {
                 e.printStackTrace ();
             }
         }
-
         @Override
         public void onVerified() {
+            // Verification successful
             usernameTV.setVisibility (View.VISIBLE);
             usernameTE.setVisibility (View.VISIBLE);
             phoneET.setVisibility (View.INVISIBLE);
@@ -339,16 +342,18 @@ public class SmsSignUpActivity extends AppCompatActivity {
         public void onVerificationFailed(Exception e) {
             if (e instanceof InvalidInputException) {
                 // Incorrect number or code provided
-                Toast.makeText (getApplicationContext (), R.string.invalid_phone_number_try_again, Toast.LENGTH_SHORT).show ();
                 e.printStackTrace ();
             } else if (e instanceof CodeInterceptionException) {
                 // Intercepting the verification code automatically failed, input the code manually with verify()
                 e.printStackTrace ();
             } else if (e instanceof IncorrectCodeException) {
+                // The verification code provided was incorrect
                 e.printStackTrace ();
             } else if (e instanceof ServiceErrorException) {
+                // Sinch service error
                 e.printStackTrace ();
             } else {
+                // Other system error, such as UnknownHostException in case of network error
                 e.printStackTrace ();
             }
         }
@@ -397,13 +402,13 @@ public class SmsSignUpActivity extends AppCompatActivity {
     }
 
 
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        super.onConfigurationChanged (newConfig);
-//        if (locale != null) {
-//            newConfig.locale = locale;
-//            Locale.setDefault (locale);
-//            getBaseContext ().getResources ().updateConfiguration (newConfig, getBaseContext ().getResources ().getDisplayMetrics ());
-//        }
-//    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged (newConfig);
+        if (locale != null) {
+            newConfig.locale = locale;
+            Locale.setDefault (locale);
+            getBaseContext ().getResources ().updateConfiguration (newConfig, getBaseContext ().getResources ().getDisplayMetrics ());
+        }
+    }
 }
