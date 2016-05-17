@@ -214,8 +214,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onResume() {
         super.onResume ();
         if (!GlobalVariables.IS_PRODUCER) {
-            display = new PushDisplay (); // Assaf :execute the the push notifications display in the Textview
-            display.execute ();
+            //display = new PushDisplay (); // Assaf :execute the the push notifications display in the Textview
+            //display.execute ();
             if (GlobalVariables.USER_CHOSEN_CITY_MANUALLY) {
                 ArrayList<EventInfo> tempEventsList =
                         FilterMethods.filterByCityAndFilterName (
