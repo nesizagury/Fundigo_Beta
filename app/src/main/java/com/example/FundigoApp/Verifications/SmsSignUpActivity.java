@@ -1,6 +1,7 @@
 package com.example.FundigoApp.Verifications;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -52,6 +53,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -355,15 +357,13 @@ public class SmsSignUpActivity extends AppCompatActivity {
     }
 
     void saveToFile(String phone_number) {
-        phone_number = phone_number + " isFundigo";
-        File myExternalFile = new File (Environment.getExternalStoragePublicDirectory (Environment.DIRECTORY_DOWNLOADS), "verify.txt");
         try {
-            FileOutputStream fos = new FileOutputStream (myExternalFile);
-            fos.write (phone_number.getBytes ());
-            fos.close ();
-            Log.e ("number", phone_number);
-        } catch (IOException e) {
-            e.printStackTrace ();
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput("Fundigo", Context.MODE_PRIVATE));
+            outputStreamWriter.write(phone_number);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Login", "File write failed: " + e.toString());
         }
 
     }

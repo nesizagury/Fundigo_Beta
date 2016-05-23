@@ -27,6 +27,7 @@ import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -285,33 +286,31 @@ public class StaticMethods {
     }
 
     public static String getCustomerPhoneNumFromFile(Context context) {
-        String number = "";
-        String myData = "";
+        String ret = "";
+
         try {
-            File myExternalFile = new File (Environment.getExternalStoragePublicDirectory (Environment.DIRECTORY_DOWNLOADS), "verify.txt");
-            FileInputStream fis = new FileInputStream (myExternalFile);
-            DataInputStream in = new DataInputStream (fis);
-            BufferedReader br =
-                    new BufferedReader (new InputStreamReader (in));
-            String strLine;
-            while ((strLine = br.readLine ()) != null) {
-                myData = myData + strLine;
+            InputStream inputStream = context.openFileInput("Fundigo");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
             }
-            in.close ();
+        }
+        catch (FileNotFoundException e) {
+            Log.e("a", "File not found: " + e.toString());
         } catch (IOException e) {
-            e.printStackTrace ();
+            Log.e("a", "Can not read file: " + e.toString());
         }
-
-        if (myData != null) {
-            if (myData.contains ("isFundigo")) {
-                String[] parts = myData.split (" ");
-                number = parts[0];
-            } else
-                number = myData;
-
-        }
-
-        return number;
+        return ret;
     }
 
     public static int getCityIndexFromName(String name) {

@@ -116,11 +116,12 @@ public class MipoActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
         final Intent intent = new Intent (Intent.ACTION_MAIN, null);
-        intent.addCategory (Intent.CATEGORY_LAUNCHER);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
         final ComponentName cn = new ComponentName ("com.example.mipo",
-                                                           "com.example.mipo.MainPageActivity");
+                                                           "com.example.mipo.FromFundigo");
         intent.setComponent (cn);
-        intent.putExtra ("fundigo", "fun");
+        intent.putExtra("fundigo", "fun");
+        intent.putExtra("userNumber",GlobalVariables.CUSTOMER_PHONE_NUM);
         intent.putExtra ("index", mipoUsers.get (position).getUserPhone ());
         intent.setFlags (Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity (intent);
